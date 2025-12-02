@@ -10,230 +10,193 @@
     --card: #1a1a1a;
     --accent: #ff0066;
     --accent2: #00ff99;
-    --text: #f0f0f0;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
     background: var(--bg);
-    color: var(--text);
+    color: white;
     font-family: 'Segoe UI', Arial, sans-serif;
     min-height: 100vh;
-    padding: 15px 10px 130px 10px;
+    padding: 15px 90px 140px 15px;
     background: linear-gradient(135deg, #0d0d0d 0%, #1a0033 100%);
   }
   h1 {
     text-align:center;
-    font-size: 3rem;
+    font-size: 2.8rem;
     background: linear-gradient(90deg, #ff0066, #00ff99);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin: 20px 0 10px;
-    text-shadow: 0 0 20px rgba(255,0,102,0.5);
+    margin: 15px 0 8px;
   }
+  #ipInput {
+    display: block;
+    width: 110px;
+    margin: 0 auto 12px;
+    padding: 8px;
+    font-size: 1rem;
+    text-align: center;
+    background: #222;
+    color: #0f9;
+    border: 1px solid #444;
+    border-radius: 10px;
+  }
+
   section {
     background: var(--card);
-    border-radius: 20px;
-    padding: 22px;
-    margin: 20px auto;
-    max-width: 500px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    border-radius: 16px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    max-width: 100%;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.8);
     border: 1px solid #333;
   }
-  .btn-group {
+
+  /* All main buttons same size + inline */
+  .btn-row {
     display: flex;
-    gap: 15px;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
     flex-wrap: wrap;
-    margin: 20px 0;
   }
-  button.big {
-    padding: 22px 40px;
-    font-size: 1.6rem;
+  button.main {
+    padding: 10px 16px;
+    font-size: 0.95rem;
     font-weight: bold;
     border: none;
-    border-radius: 18px;
-    color: white;
-    cursor: pointer;
-    min-width: 200px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.7);
-    transition: all 0.3s;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    animation: pulse 2s infinite;
+    border-radius: 12px;
+    min-width: 86px;
+    flex: 1;
   }
   #subrBtn    { background: linear-gradient(45deg, #ff0066, #ff3366); }
   #captionBtn { background: linear-gradient(45deg, #9b59b6, #e91e63); }
-  button.big:active { transform: scale(0.94); }
-  @keyframes pulse {
-    0%,100% { box-shadow: 0 0 20px var(--accent); }
-    50% { box-shadow: 0 0 45px var(--accent); }
-  }
   button.reset {
     background: #333;
     color: #fff;
     border: 2px solid var(--accent);
-    padding: 16px 26px;
-    border-radius: 14px;
-    font-weight: bold;
-    font-size: 1rem;
   }
-  button.toggle {
-    display: block;
-    margin: 15px auto;
-    padding: 10px 20px;
-    background: #222;
-    border: 1px solid #444;
-    border-radius: 10px;
-    color: #999;
-    font-size: 0.9rem;
-  }
-  ul {
-    list-style: none;
-    max-height: 340px;
-    overflow-y: auto;
-    padding: 10px;
-    background: #111;
-    border-radius: 12px;
-    border: 1px solid #333;
-  }
-  li {
-    padding: 14px;
-    background: #222;
-    margin: 8px 0;
-    border-radius: 10px;
+
+  /* Stats + List button on same line */
+  .footer-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #aaa;
   }
+  .footer-row button.toggle {
+    background: #222;
+    color: #999;
+    border: 1px solid #444;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+  }
+
+  ul {
+    list-style: none;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 8px;
+    background: #111;
+    border-radius: 10px;
+    border: 1px solid #333;
+    margin-top: 8px;
+  }
+  li { padding: 10px; background: #222; margin: 6px 0; border-radius: 8px; display: flex; align-items: center; gap: 10px; }
   li.checked { opacity: 0.4; text-decoration: line-through; }
-  .delete {
-    margin-left: auto;
-    background: none;
-    border: none;
-    color: var(--accent);
-    font-size: 26px;
-    cursor: pointer;
-  }
+  .delete { margin-left: auto; background: none; border: none; color: var(--accent); font-size: 24px; }
+
+  /* FABs — perfect spacing */
   .fab-container {
     position: fixed;
     bottom: 20px;
-    right: 15px;
+    right: 16px;
     display: flex;
     flex-direction: column;
     gap: 16px;
     z-index: 9999;
   }
   .fab {
-    width: 70px;
-    height: 70px;
+    width: 68px; height: 68px;
     border-radius: 50%;
     border: none;
     color: white;
-    font-size: 30px;
+    font-size: 28px;
     font-weight: bold;
-    box-shadow: 0 6px 25px rgba(0,0,0,0.8);
-    cursor: pointer;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.9);
     animation: float 3s ease-in-out infinite;
   }
-  .fab:active { transform: scale(0.9); }
+  .fab:active { transform: scale(0.92); }
   #fabD    { background: linear-gradient(45deg, #e91e63, #ff0066); }
   #fabN    { background: linear-gradient(45deg, #00ff99, #00cc77); }
   #fabOF   { background: linear-gradient(45deg, #2196f3, #00bcd4); }
   #fabLink { background: linear-gradient(45deg, #9c27b0, #e040fb); }
-  @keyframes float {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-  }
-  footer {
-    text-align:center;
-    color:#666;
-    margin-top:15px;
-    font-size:0.9rem;
-  }
-    /* IP & Rotation Section */
-  .glass-card {
-    background: rgba(20,20,40,0.6);
-    backdrop-filter: blur(12px);
-    border-radius: 16px;
-    border: 1px solid rgba(255,0,102,0.2);
-    margin: 20px auto;
-    max-width: 500px;
-    overflow: hidden;
-  }
-  .collapsible-header {
-    background: rgba(255,0,102,0.15);
-    padding: 14px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #00ff99;
-    text-align: center;
-    font-size: 1.1rem;
-  }
-  .section { transition: all 0.4s ease; overflow: hidden; }
-  .section.open { max-height: 500px; padding: 16px; }
-  .section { max-height: 0; padding: 0 16px; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+  /* IP section unchanged */
+  .glass-card { background:rgba(20,20,40,0.6); backdrop-filter:blur(12px); border-radius:16px; border:1px solid rgba(255,0,102,0.2); margin:18px 0; overflow:hidden; }
+  .collapsible-header { background:rgba(255,0,102,0.15); padding:12px; cursor:pointer; font-weight:bold; color:#00ff99; text-align:center; font-size:1rem; }
+  .section { transition:all 0.4s ease; overflow:hidden; }
+  .section.open { max-height:500px; padding:14px; }
+  .section { max-height:0; padding:0 14px; }
 </style>
 </head>
 <body>
-
 <h1>BEAST MODE</h1>
+<input type="text" id="ipInput" placeholder="IP last part" value="1" maxlength="3">
 
 <!-- SUBREDDIT -->
 <section>
-  <div class="btn-group">
-    <button id="subrBtn" class="big">SUBR</button>
-    <button id="subrReset" class="reset">Reset</button>
+  <div class="btn-row">
+    <button id="subrBtn" class="main">SUBR</button>
+    <button id="subrReset" class="main reset">Reset</button>
   </div>
-  <button class="toggle" id="toggleSub">List</button>
+  <div class="footer-row">
+    <span>Done <span id="subDone">0</span> / <span id="subCount">0</span></span>
+    <button class="toggle" id="toggleSub">List</button>
+  </div>
   <ul id="subList" style="display:none;"></ul>
-  <footer>Done <span id="subDone">0</span> / <span id="subCount">0</span></footer>
 </section>
 
 <!-- CAPTION -->
 <section>
-  <div class="btn-group">
-    <button id="captionBtn" class="big">CAPTION</button>
-    <button id="captionReset" class="reset">Reset</button>
+  <div class="btn-row">
+    <button id="captionBtn" class="main">CAPTION</button>
+    <button id="captionReset" class="main reset">Reset</button>
   </div>
-  <button class="toggle" id="toggleCap">List</button>
+  <div class="footer-row">
+    <span>Used <span id="capUsed">0</span> / <span id="capCount">0</span></span>
+    <button class="toggle" id="toggleCap">List</button>
+  </div>
   <ul id="captionList" style="display:none;"></ul>
-  <footer>Used <span id="capUsed">0</span> / <span id="capCount">0</span></footer>
 </section>
 
- <!-- IP & ROTATION SECTION -->
+<!-- IP & ROTATION -->
 <div class="glass-card">
   <div class="collapsible-header open" onclick="toggleSection('ipSection')">
     <span>IP & Rotation</span>
   </div>
   <div id="ipSection" class="section open">
-    <div style="display:flex; gap:5px; margin:6px 0 7px;">
-
-      <button id="rotateBtn" onclick="rotateIP()" style="padding:8px 12px; font-size:13px; border-radius:10px; background:#ff0066; color:white; border:none;">
-        Go
-      </button>
-      <input id="rotateLink" placeholder="URL" style="flex:1; padding:8px; font-size:13px; border-radius:10px; border:none;" />
-      
+    <div style="display:flex; gap:5px; margin:6px 0;">
+      <button id="rotateBtn" onclick="rotateIP()" style="padding:8px 12px; font-size:13px; border-radius:10px; background:#ff0066; color:white;">Go</button>
+      <input id="rotateLink" placeholder="URL" style="flex:1; padding:8px; font-size:13px; border-radius:10px;" />
     </div>
     <div id="ipContainer" style="background:rgba(10,10,30,0.95); border-radius:12px; padding:12px; text-align:center; font-family:monospace; border:1px solid #333;">
-      <div style="color:#0af; font-size:9px; text-transform:uppercase; opacity:0.8;">
-        Old → <span id="oldIP">—</span>
-      </div>
-      <div id="ip" style="color:#0f9; font-size:16px; font-weight:bold; letter-spacing:1px; margin:8px 0;">
-        Loading...
-      </div>
-      <button id="refreshBtn" onclick="refreshAndOpen()" style="margin-top:8px; padding:10px 16px; background:#111; color:#0f9; border-radius:10px; font-size:11px; font-weight:bold; border:1px solid #0f9;">
-        Refresh + Scam
-      </button>
+      <div style="color:#0af; font-size:9px; opacity:0.8;">Old → <span id="oldIP">—</span></div>
+      <div id="ip" style="color:#0f9; font-size:16px; font-weight:bold; margin:8px 0;">Loading...</div>
+      <button id="refreshBtn" onclick="refreshAndOpen()" style="padding:10px 16px; background:#111; color:#0f9; border:1px solid #0f9; border-radius:10px; font-size:11px;">Refresh + Scam</button>
     </div>
   </div>
 </div>
-  
+
 <!-- FLOATING BUTTONS -->
 <div class="fab-container">
-  <button id="fabD" class="fab" title="DM opener">D</button>
-  <button id="fabN" class="fab" title="Name">N</button>
-  <button id="fabOF" class="fab" title="OF line">OF</button>
-  <button id="fabLink" class="fab" title="Link">⛓️</button>
+  <button id="fabD"    class="fab">D</button>
+  <button id="fabN"    class="fab">N</button>
+  <button id="fabOF"   class="fab">OF</button>
+  <button id="fabLink" class="fab">Link</button>
 </div>
 
 <script>
@@ -430,17 +393,36 @@ document.getElementById('captionBtn').onclick = () => {
   if(captions.length===0) return alert("Empty!");
   const unused = captions.filter(c => !capUsed[c]);
   if(unused.length===0){
-    capUsed = {}; save(); render('captionList',captions,capUsed); updateStats();
+    capUsed = {}; 
+    save(); 
+    render('captionList',captions,capUsed); 
+    updateStats();
     alert("All captions used → auto-reset!");
   }
-  const pick = unused.length ? unused[Math.floor(Math.random()*unused.length)] : captions[Math.floor(Math.random()*captions.length)];
+  const pick = unused.length 
+    ? unused[Math.floor(Math.random()*unused.length)] 
+    : captions[Math.floor(Math.random()*captions.length)];
+  
   navigator.clipboard.writeText(pick);
-  capUsed[pick] = true; save(); render('captionList',captions,capUsed); updateStats();
-  window.open('https://www.reddit.com/', '_blank');
+  capUsed[pick] = true; 
+  save(); 
+  render('captionList',captions,capUsed); 
+  updateStats();
+
+  // REMOVED: window.open('https://www.reddit.com/', '_blank');
+  // REPLACED WITH:
+  triggerLua();   // Now triggers your Lua script exactly like the FABs
 };
 
-// FABs — FINAL VERSION: Opens Reddit ONLY the very first time
-let hasOpenedReddit = false;  // ← remembers if we already jumped to the app
+function triggerLua() {
+  const ipPart = document.getElementById("ipInput").value.trim();
+  if (!ipPart || isNaN(ipPart)) return; // safety
+  const url = `http://192.168.1.${ipPart}:8080/control/start_playing?path=/test.lua`;
+  fetch(url).catch(() => {}); // fire and forget
+}
+
+// ——— FABs: copy + trigger Lua script ———
+let hasTriggered = false; // optional: trigger only once or every time — I made it every time (fastest)
 
 const randomNoRepeat = (arr, used) => {
   const unused = arr.filter(x => !used[x]);
@@ -448,13 +430,7 @@ const randomNoRepeat = (arr, used) => {
   const pick = unused.length ? unused[Math.floor(Math.random()*unused.length)] : arr[Math.floor(Math.random()*arr.length)];
   navigator.clipboard.writeText(pick);
   used[pick] = true; save();
-
-  // ONLY open Reddit app on the VERY FIRST tap (when coming from Safari)
-  if (!hasOpenedReddit && !navigator.userAgent.includes('Reddit')) {
-    hasOpenedReddit = true;
-    openRedditApp();
-  }
-  // After that → just copy, never open Reddit again
+  triggerLua(); // ← SENDS THE REQUEST EVERY CLICK
 };
 
 document.getElementById('fabD').onclick    = () => randomNoRepeat(dmTexts, dmUsed);
@@ -463,10 +439,7 @@ document.getElementById('fabOF').onclick   = () => randomNoRepeat(ofLines, ofUse
 document.getElementById('fabLink').onclick = () => { 
   navigator.clipboard.writeText(linkUrl); 
   alert("Link copied");
-  if (!hasOpenedReddit && !navigator.userAgent.includes('Reddit')) {
-    hasOpenedReddit = true;
-    openRedditApp();
-  }
+  triggerLua();
 };
 
 // Resets & toggles
@@ -547,13 +520,6 @@ function toggleSection(id) {
   el.classList.toggle('open');
 }
  
-function openRedditApp() {
-  const iframe = document.createElement('iframe');
-  iframe.style.display = 'none';
-  iframe.src = 'reddit://';
-  document.body.appendChild(iframe);
-  setTimeout(() => document.body.removeChild(iframe), 1000);
-}
 </script>
 </body>
 </html>
