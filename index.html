@@ -150,6 +150,28 @@
     margin-top:15px;
     font-size:0.9rem;
   }
+    /* IP & Rotation Section */
+  .glass-card {
+    background: rgba(20,20,40,0.6);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    border: 1px solid rgba(255,0,102,0.2);
+    margin: 20px auto;
+    max-width: 500px;
+    overflow: hidden;
+  }
+  .collapsible-header {
+    background: rgba(255,0,102,0.15);
+    padding: 14px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #00ff99;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+  .section { transition: all 0.4s ease; overflow: hidden; }
+  .section.open { max-height: 500px; padding: 16px; }
+  .section { max-height: 0; padding: 0 16px; }
 </style>
 </head>
 <body>
@@ -178,6 +200,32 @@
   <footer>Used <span id="capUsed">0</span> / <span id="capCount">0</span></footer>
 </section>
 
+ <!-- IP & ROTATION SECTION -->
+<div class="glass-card">
+  <div class="collapsible-header open" onclick="toggleSection('ipSection')">
+    <span>IP & Rotation</span>
+  </div>
+  <div id="ipSection" class="section open">
+    <div style="display:flex; gap:5px; margin:6px 0 7px;">
+      <input id="rotateLink" placeholder="URL" style="flex:1; padding:8px; font-size:13px; border-radius:10px; border:none;" />
+      <button id="rotateBtn" onclick="rotateIP()" style="padding:8px 12px; font-size:13px; border-radius:10px; background:#ff0066; color:white; border:none;">
+        Go
+      </button>
+    </div>
+    <div id="ipContainer" style="background:rgba(10,10,30,0.95); border-radius:12px; padding:12px; text-align:center; font-family:monospace; border:1px solid #333;">
+      <div style="color:#0af; font-size:9px; text-transform:uppercase; opacity:0.8;">
+        Old → <span id="oldIP">—</span>
+      </div>
+      <div id="ip" style="color:#0f9; font-size:16px; font-weight:bold; letter-spacing:1px; margin:8px 0;">
+        Loading...
+      </div>
+      <button id="refreshBtn" onclick="refreshAndOpen()" style="margin-top:8px; padding:10px 16px; background:#111; color:#0f9; border-radius:10px; font-size:11px; font-weight:bold; border:1px solid #0f9;">
+        Refresh + Scam
+      </button>
+    </div>
+  </div>
+</div>
+  
 <!-- FLOATING BUTTONS -->
 <div class="fab-container">
   <button id="fabD"    class="fab" title="DM opener">D</button>
@@ -407,6 +455,78 @@ document.getElementById('subrReset').onclick = () => { if(confirm("Reset subs?")
 document.getElementById('captionReset').onclick = () => { if(confirm("Reset captions?")){ capUsed={}; save(); render('captionList',captions,capUsed); updateStats(); }};
 document.getElementById('toggleSub').onclick = () => document.getElementById('subList').style.display = document.getElementById('subList').style.display==='block'?'none':'block';
 document.getElementById('toggleCap').onclick = () => document.getElementById('captionList').style.display = document.getElementById('captionList').style.display==='block'?'none':'block';
+
+// ——— IP & ROTATION ———
+let userIP = '';
+let previousIP = '';
+let scamalyticsWindow = null;
+
+fetch('https://api.ipify.org?format=json')
+  .then(res => res.json())
+  .then(data => {
+    userIP = data.ip;
+    document.getElementById("ip").textContent = userIP;
+    document.getElementById("oldIP").textContent = "No previous IP";
+  })
+  .catch(() => {
+    document.getElementById("ip").textContent = "Failed to load IP.";
+  });
+
+function rotateIP() {
+  const btn = document.getElementById("rotateBtn");
+  const url = document.getElementById("rotateLink").value.trim();
+  if (!url) return alert("Enter a URL");
+  const oldText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = "Rotating...";
+  fetch(url).catch(() => {});
+  setTimeout(() => {
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("ip").textContent = data.ip;
+      })
+      .finally(() => {
+        btn.innerHTML = oldText;
+        btn.disabled = false;
+      });
+  }, 3000);
+}
+
+function refreshAndOpen() {
+  const btn = document.getElementById("refreshBtn");
+  const oldText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = "Loading...";
+  if (!scamalyticsWindow || scamalyticsWindow.closed) {
+    scamalyticsWindow = window.open('about:blank', '_blank');
+  }
+  fetch('https://api.ipify.org?format=json')
+    .then(res => res.json())
+    .then(data => {
+      const newIP = data.ip;
+      if (userIP) {
+        previousIP = userIP;
+        document.getElementById("oldIP").textContent = previousIP;
+      }
+      userIP = newIP;
+      document.getElementById("ip").textContent = userIP;
+      scamalyticsWindow.location.href = `https://scamalytics.com/ip/${userIP}`;
+      scamalyticsWindow.focus();
+      btn.style.backgroundColor = previousIP && previousIP !== userIP ? "#2e7d32" : "#d32f2f";
+      btn.innerHTML = previousIP && previousIP !== userIP ? "Changed!" : "No Change";
+    })
+    .catch(() => {
+      btn.style.backgroundColor = "#b71c1c";
+      btn.innerHTML = "Failed";
+    })
+    .finally(() => btn.disabled = false);
+}
+
+function toggleSection(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
 </script>
 </body>
 </html>
