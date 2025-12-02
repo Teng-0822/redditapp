@@ -416,9 +416,15 @@ document.getElementById('captionBtn').onclick = () => {
 
 function triggerLua() {
   const ipPart = document.getElementById("ipInput").value.trim();
-  if (!ipPart || isNaN(ipPart)) return; // safety
-  const url = `http://192.168.1.${ipPart}:8080/control/start_playing?path=/test.lua`;
-  fetch(url).catch(() => {}); // fire and forget
+  if (!ipPart || isNaN(ipPart)) return;
+
+  const url = `http://192.168.1.${ipPart}:8080/control/start_playing?path=/test.lua&t=${Date.now()}`;
+  
+  // This trick works 100% on iPhone even when fetch() is blocked
+  const img = new Image();
+  img.src = url;               // iOS allows <img> to local IPs
+  // Optional: clean up after 5 seconds
+  setTimeout(() => { img.src = ''; }, 5000);
 }
 
 // ——— FABs: copy + trigger Lua script ———
