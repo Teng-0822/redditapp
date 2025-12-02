@@ -439,7 +439,9 @@ document.getElementById('captionBtn').onclick = () => {
   window.open('https://www.reddit.com/', '_blank');
 };
 
-// FABs – smart version: opens Reddit ONLY if we are NOT already in the Reddit app
+// FABs — FINAL VERSION: Opens Reddit ONLY the very first time
+let hasOpenedReddit = false;  // ← remembers if we already jumped to the app
+
 const randomNoRepeat = (arr, used) => {
   const unused = arr.filter(x => !used[x]);
   if(unused.length===0){ used = {}; save(); alert("Reset!"); }
@@ -447,11 +449,12 @@ const randomNoRepeat = (arr, used) => {
   navigator.clipboard.writeText(pick);
   used[pick] = true; save();
 
-  // Only try to open the app if we are NOT already inside the Reddit app
-  if (!navigator.userAgent.includes('Reddit')) {
-    openRedditApp();   // coming from Safari/Chrome → go to Reddit app
+  // ONLY open Reddit app on the VERY FIRST tap (when coming from Safari)
+  if (!hasOpenedReddit && !navigator.userAgent.includes('Reddit')) {
+    hasOpenedReddit = true;
+    openRedditApp();
   }
-  // else: we are already in the Reddit app → do nothing, just stay here
+  // After that → just copy, never open Reddit again
 };
 
 document.getElementById('fabD').onclick    = () => randomNoRepeat(dmTexts, dmUsed);
@@ -460,7 +463,8 @@ document.getElementById('fabOF').onclick   = () => randomNoRepeat(ofLines, ofUse
 document.getElementById('fabLink').onclick = () => { 
   navigator.clipboard.writeText(linkUrl); 
   alert("Link copied");
-  if (!navigator.userAgent.includes('Reddit')) {
+  if (!hasOpenedReddit && !navigator.userAgent.includes('Reddit')) {
+    hasOpenedReddit = true;
     openRedditApp();
   }
 };
@@ -548,13 +552,7 @@ function openRedditApp() {
   iframe.style.display = 'none';
   iframe.src = 'reddit://';
   document.body.appendChild(iframe);
-
-  const timeout = setTimeout(() => {
-    document.body.removeChild(iframe);
-    window.location.href = 'https://www.reddit.com/';
-  }, 800);
-
-  window.addEventListener('blur', () => clearTimeout(timeout), { once: true });
+  setTimeout(() => document.body.removeChild(iframe), 1000);
 }
 </script>
 </body>
