@@ -439,14 +439,19 @@ document.getElementById('captionBtn').onclick = () => {
   window.open('https://www.reddit.com/', '_blank');
 };
 
-// FABs – NOW OPENS REDDIT APP + copies text
+// FABs – smart version: opens Reddit ONLY if we are NOT already in the Reddit app
 const randomNoRepeat = (arr, used) => {
   const unused = arr.filter(x => !used[x]);
   if(unused.length===0){ used = {}; save(); alert("Reset!"); }
   const pick = unused.length ? unused[Math.floor(Math.random()*unused.length)] : arr[Math.floor(Math.random()*arr.length)];
   navigator.clipboard.writeText(pick);
   used[pick] = true; save();
-  openRedditApp(); // ← THIS OPENS THE REDDIT APP
+
+  // Only try to open the app if we are NOT already inside the Reddit app
+  if (!navigator.userAgent.includes('Reddit')) {
+    openRedditApp();   // coming from Safari/Chrome → go to Reddit app
+  }
+  // else: we are already in the Reddit app → do nothing, just stay here
 };
 
 document.getElementById('fabD').onclick    = () => randomNoRepeat(dmTexts, dmUsed);
@@ -454,8 +459,10 @@ document.getElementById('fabN').onclick    = () => randomNoRepeat(names, nameUse
 document.getElementById('fabOF').onclick   = () => randomNoRepeat(ofLines, ofUsed);
 document.getElementById('fabLink').onclick = () => { 
   navigator.clipboard.writeText(linkUrl); 
-  alert("Link copied"); 
-  openRedditApp(); // ← ALSO OPENS REDDIT APP
+  alert("Link copied");
+  if (!navigator.userAgent.includes('Reddit')) {
+    openRedditApp();
+  }
 };
 
 // Resets & toggles
@@ -536,7 +543,6 @@ function toggleSection(id) {
   el.classList.toggle('open');
 }
  
-// ——— ADD THIS FUNCTION AT THE VERY END OF YOUR <script>
 function openRedditApp() {
   const iframe = document.createElement('iframe');
   iframe.style.display = 'none';
@@ -550,7 +556,6 @@ function openRedditApp() {
 
   window.addEventListener('blur', () => clearTimeout(timeout), { once: true });
 }
-
 </script>
 </body>
 </html>
