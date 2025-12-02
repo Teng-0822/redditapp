@@ -230,10 +230,10 @@
   
 <!-- FLOATING BUTTONS -->
 <div class="fab-container">
-  <button id="fabD"    class="fab" title="DM opener">D</button>
-  <button id="fabN"    class="fab" title="Name">N</button>
-  <button id="fabOF"   class="fab" title="OF line">OF</button>
-  <button id="fabLink" class="fab" title="Link">⛓️</button>
+  <button id="fabD" class="fab" title="DM opener" onclick="openRedditApp()">D</button>
+  <button id="fabN" class="fab" title="Name" onclick="openRedditApp()">N</button>
+  <button id="fabOF" class="fab" title="OF line" onclick="openRedditApp()">OF</button>
+  <button id="fabLink" class="fab" title="Link" onclick="openRedditApp()">⛓️</button>
 </div>
 
 <script>
@@ -529,6 +529,32 @@ function toggleSection(id) {
   const el = document.getElementById(id);
   el.classList.toggle('open');
 }
+
+function openRedditApp() {
+  // 1. Build the universal link that the Reddit app recognises
+  const redditAppURL = 'reddit://';               // opens the app home screen
+  // const redditAppURL = 'reddit://r/yourSub';   // <-- optional: open a specific sub
+
+  // 2. Build a fallback URL that opens Safari
+  const fallbackURL = 'https://www.reddit.com/';
+
+  // 3. Create a hidden <iframe> – iOS will launch the app instantly
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = redditAppURL;
+  document.body.appendChild(iframe);
+
+  // 4. After a short delay, clean up the iframe and open Safari if the app didn’t launch
+  const timeout = setTimeout(() => {
+    document.body.removeChild(iframe);
+    // If we are still on the same page → the app didn’t open → go to web version
+    window.location.href = fallbackURL;
+  }, 800);   // 800 ms is enough for the app to take over
+
+  // 5. If the app *does* open, iOS pauses the page → clear the timeout
+  window.addEventListener('blur', () => clearTimeout(timeout), { once: true });
+}
+  
 </script>
 </body>
 </html>
