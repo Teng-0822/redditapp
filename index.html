@@ -41,7 +41,7 @@
     border-radius: 10px;
   }
 
-  /* Dropdowns */
+  /* DROPDOWNS */
   .dropdown {
     background: var(--card);
     border-radius: 18px;
@@ -54,11 +54,15 @@
   .dropdown-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 20px;
-    padding: 18px 20px;
+    justify-content: space-between;
+    padding: 18px 24px;
     cursor: pointer;
     background: rgba(255,255,255,0.03);
+  }
+  .center-btn {
+    flex: 1;
+    display: flex;
+    justify-content: center;
   }
   .dropdown-header button {
     padding: 11px 40px;
@@ -71,10 +75,22 @@
   }
   #subrBtn    { background: linear-gradient(45deg, #ff0066, #ff3366); }
   #captionBtn { background: linear-gradient(45deg, #9b59b6, #e91e63); }
+
+  .ip-header {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #0f9;
+    flex: 1;
+    text-align: left;
+    padding-left: 8px;
+  }
+
   .arrow {
     font-size: 28px;
-    transition: transform 0.3s;
+    transition: transform 0.3s ease;
     color: #aaa;
+    min-width: 50px;
+    text-align: right;
   }
   .arrow.open { transform: rotate(180deg); }
 
@@ -86,7 +102,7 @@
     background: rgba(0,0,0,0.3);
   }
   .dropdown-content.open {
-    max-height: 500px;
+    max-height: 600px;
     padding: 16px 20px;
   }
   .content-row {
@@ -111,7 +127,6 @@
     border: 1px solid #444;
   }
 
-  /* LIST — SCROLLABLE + FADE + PERFECT X ALIGNMENT */
   ul {
     list-style: none;
     max-height: 260px;
@@ -121,7 +136,7 @@
     border-radius: 10px;
     border: 1px solid #333;
     margin-top: 12px;
-    -webkit-overflow-scrolling: touch; /* Smooth scroll on iPhone */
+    -webkit-overflow-scrolling: touch;
   }
   li {
     padding: 12px;
@@ -164,19 +179,8 @@
     cursor: pointer;
   }
 
-  /* IP SECTION — BUTTONS NOW HAVE COLOR */
-  .glass-card {
-    background: rgba(20,20,40,0.6);
-    backdrop-filter: blur(12px);
-    border-radius: 18px;
-    border: 1px solid rgba(255,0,102,0.2);
-    margin: 20px auto;
-    max-width: 420px;
-    overflow: hidden;
-  }
   #rotateBtn {
     padding: 8px 12px;
-    font-size: 13px;
     border-radius: 10px;
     background: #ff0066;
     color: white;
@@ -191,7 +195,6 @@
     font-size: 11px;
   }
 
-  /* FAB DOCK */
   .fab-container {
     position: fixed;
     bottom: 18px;
@@ -218,7 +221,6 @@
   }
   .fab:active { transform: scale(0.9); }
 
-  /* Toast */
   #toast {
     position: fixed;
     bottom: 110px;
@@ -248,7 +250,7 @@
 <!-- SUBREDDIT DROPDOWN -->
 <div class="dropdown">
   <div class="dropdown-header" onclick="toggleDropdown('sub')">
-    <button id="subrBtn">SUBR</button>
+    <div class="center-btn"><button id="subrBtn">SUBR</button></div>
     <span class="arrow" id="subArrow">👇🏼</span>
   </div>
   <div class="dropdown-content" id="subContent">
@@ -256,13 +258,10 @@
       <span>Done <span id="subDone">0</span> / <span id="subCount">0</span></span>
       <div style="display:flex; gap:8px;">
         <button id="subrReset">Reset</button>
-        <button id="addSubBtn" style="background:#00ff99; color:#000; border:none; padding:8px 16px; border-radius:12px; font-weight:bold;">+ Add</button>
+        <button id="addSubBtn" style="background:#00ff99;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">+ Add</button>
       </div>
     </div>
-    <div class="content-row">
-      <span></span>
-      <button class="toggle" id="toggleSub">List</button>
-    </div>
+    <div class="content-row"><span></span><button class="toggle" id="toggleSub">List</button></div>
     <ul id="subList" style="display:none;"></ul>
   </div>
 </div>
@@ -270,7 +269,7 @@
 <!-- CAPTION DROPDOWN -->
 <div class="dropdown">
   <div class="dropdown-header" onclick="toggleDropdown('cap')">
-    <button id="captionBtn">CAPTION</button>
+    <div class="center-btn"><button id="captionBtn">CAPTION</button></div>
     <span class="arrow" id="capArrow">👇🏼</span>
   </div>
   <div class="dropdown-content" id="capContent">
@@ -278,31 +277,31 @@
       <span>Used <span id="capUsed">0</span> / <span id="capCount">0</span></span>
       <div style="display:flex; gap:8px;">
         <button id="captionReset">Reset</button>
-        <button id="addCapBtn" style="background:#00ff99; color:#000; border:none; padding:8px 16px; border-radius:12px; font-weight:bold;">+ Add</button>
+        <button id="addCapBtn" style="background:#00ff99;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">+ Add</button>
       </div>
     </div>
-    <div class="content-row">
-      <span></span>
-      <button class="toggle" id="toggleCap">List</button>
-    </div>
+    <div class="content-row"><span></span><button class="toggle" id="toggleCap">List</button></div>
     <ul id="captionList" style="display:none;"></ul>
   </div>
 </div>
 
-<!-- IP & ROTATION -->
-<div class="glass-card">
-  <div class="collapsible-header open" onclick="toggleSection('ipSection')">
-    <span>IP & Rotation</span>
+<!-- IP & ROTATION DROPDOWN -->
+<div class="dropdown">
+  <div class="dropdown-header" onclick="toggleDropdown('ip')">
+    <div class="ip-header"><span id="ipHeader">Loading IP...</span></div>
+    <span class="arrow" id="ipArrow">👇🏼</span>
   </div>
-  <div id="ipSection" class="section open">
-    <div style="display:flex; gap:5px; margin:10px 0;">
-      <button id="rotateBtn" onclick="rotateIP()">Go</button>
-      <input id="rotateLink" placeholder="http://87.120..." style="flex:1; padding:8px; border-radius:10px;" />
-    </div>
-    <div id="ipContainer" style="background:rgba(10,10,30,0.95); border-radius:12px; padding:14px; text-align:center; font-family:monospace; border:1px solid #333;">
-      <div style="color:#0af; font-size:10px;">Old → <span id="oldIP">—</span></div>
-      <div id="ip" style="color:#0f9; font-size:17px; font-weight:bold; margin:10px 0;">Loading...</div>
-      <button id="refreshBtn" onclick="refreshAndOpen()">Refresh + Scam</button>
+  <div class="dropdown-content" id="ipContent">
+    <div style="padding:10px 0;">
+      <div style="display:flex; gap:5px; margin:10px 0;">
+        <button id="rotateBtn" onclick="rotateIP()">Go</button>
+        <input id="rotateLink" placeholder="http://87.120..." style="flex:1;padding:8px;border-radius:10px;background:#222;border:1px solid #444;color:white;" />
+      </div>
+      <div style="background:rgba(10,10,30,0.95);border-radius:12px;padding:14px;text-align:center;font-family:monospace;border:1px solid #333;">
+        <div style="color:#0af;font-size:10px;">Old to <span id="oldIP">—</span></div>
+        <div id="ip" style="color:#0f9;font-size:17px;font-weight:bold;margin:10px 0;">Loading...</div>
+        <button id="refreshBtn" onclick="refreshAndOpen()">Refresh + Scam</button>
+      </div>
     </div>
   </div>
 </div>
@@ -315,7 +314,7 @@
 </div>
 
 <div id="toast"></div>
-  
+
 <script>
 // ← All the powerful code from the previous version is still here (unchanged)
 // Only the UI labels above the buttons have been removed as requested.
@@ -461,8 +460,10 @@ const save = () => {
 };
 
 function toggleDropdown(type) {
-  const content = document.getElementById(type + 'Content');
-  const arrow = document.getElementById(type + 'Arrow');
+  const map = { sub: 'subContent', cap: 'capContent', ip: 'ipContent' };
+  const arrowMap = { sub: 'subArrow', cap: 'capArrow', ip: 'ipArrow' };
+  const content = document.getElementById(map[type]);
+  const arrow = document.getElementById(arrowMap[type]);
   content.classList.toggle('open');
   arrow.classList.toggle('open');
 }
@@ -473,33 +474,13 @@ const render = (id, data, used) => {
   data.forEach((item, i) => {
     const li = document.createElement('li');
     li.className = used[item] ? 'checked' : '';
-    li.innerHTML = `
-      <input type="checkbox" ${used[item] ? 'checked' : ''}>
-      <div class="text">${item}</div>
-      <button class="delete">X</button>
-    `;
-    li.querySelector('input').onchange = () => {
-      used[item] = !used[item];
-      save(); render(id, data, used); updateStats();
-    };
-    li.querySelector('.delete').onclick = () => {
-      if (confirm('Delete?')) {
-        data.splice(i, 1);
-        delete used[item];
-        save(); render(id, data, used); updateStats();
-      }
-    };
+    li.innerHTML = `<input type="checkbox" ${used[item]?'checked':''}>
+                    <div class="text">${item}</div>
+                    <button class="delete">X</button>`;
+    li.querySelector('input').onchange = () => { used[item] = !used[item]; save(); render(id,data,used); updateStats(); };
+    li.querySelector('.delete').onclick = () => { if(confirm('Delete?')){ data.splice(i,1); delete used[item]; save(); render(id,data,used); updateStats(); }};
     ul.appendChild(li);
   });
-};
-
-document.getElementById('toggleSub').onclick = () => {
-  const list = document.getElementById('subList');
-  list.style.display = list.style.display === 'block' ? 'none' : 'block';
-};
-document.getElementById('toggleCap').onclick = () => {
-  const list = document.getElementById('captionList');
-  list.style.display = list.style.display === 'block' ? 'none' : 'block';
 };
 
 const updateStats = () => {
@@ -507,13 +488,13 @@ const updateStats = () => {
   document.getElementById('subDone').textContent = Object.values(subChecked).filter(v=>v).length;
   document.getElementById('capCount').textContent = captions.length;
   document.getElementById('capUsed').textContent = Object.values(capUsed).filter(v=>v).length;
+  updateIPHeader();
 };
 
 render('subList', subs, subChecked);
 render('captionList', captions, capUsed);
 updateStats();
 
-// SUBR
 document.getElementById('subrBtn').onclick = () => {
   if(subs.length===0) return alert("Empty!");
   let attempts=0;
@@ -529,216 +510,94 @@ document.getElementById('subrBtn').onclick = () => {
     subIndex = (subIndex + 1) % subs.length;
   }
   subChecked = {}; subIndex = 0; save(); render('subList',subs,subChecked); updateStats();
-  alert("All done → auto-reset!");
+  alert("All done to auto-reset!");
 };
 
-// CAPTION
 document.getElementById('captionBtn').onclick = () => {
   if(captions.length===0) return alert("Empty!");
   const unused = captions.filter(c => !capUsed[c]);
-  if(unused.length===0){
-    capUsed = {}; 
-    save(); 
-    render('captionList',captions,capUsed); 
-    updateStats();
-    alert("All captions used → auto-reset!");
-  }
-  const pick = unused.length 
-    ? unused[Math.floor(Math.random()*unused.length)] 
-    : captions[Math.floor(Math.random()*captions.length)];
-  
+  if(unused.length===0){ capUsed={}; save(); render('captionList',captions,capUsed); updateStats(); alert("All used to reset!"); }
+  const pick = unused.length ? unused[Math.floor(Math.random()*unused.length)] : captions[Math.floor(Math.random()*captions.length)];
   navigator.clipboard.writeText(pick);
-  capUsed[pick] = true; 
-  save(); 
-  render('captionList',captions,capUsed); 
-  updateStats();
-
-  // REMOVED: window.open('https://www.reddit.com/', '_blank');
-  // REPLACED WITH:
-  triggerLua();   // Now triggers your Lua script exactly like the FABs
+  capUsed[pick] = true; save(); render('captionList',captions,capUsed); updateStats();
+  triggerLua();
 };
 
 function triggerLua() {
   const ipPart = document.getElementById("ipInput").value.trim();
   if (!ipPart || isNaN(ipPart)) return;
-
   const url = `http://192.168.1.${ipPart}:8080/control/start_playing?path=/test.lua&t=${Date.now()}`;
-  
-  // This trick works 100% on iPhone even when fetch() is blocked
-  const img = new Image();
-  img.src = url;               // iOS allows <img> to local IPs
-  // Optional: clean up after 5 seconds
-  setTimeout(() => { img.src = ''; }, 5000);
+  new Image().src = url;
 }
 
-// ——— FABs: copy + trigger Lua + TOAST instead of alert ———
 const randomNoRepeat = (arr, used) => {
   const unused = arr.filter(x => !used[x]);
-  if(unused.length===0){ 
-    Object.keys(used).forEach(k => delete used[k]); 
-    save(); 
-    showToast("Reset!");  // ← Toast instead of alert
-    return randomNoRepeat(arr, used);
-  }
+  if(unused.length===0){ Object.keys(used).forEach(k=>delete used[k]); save(); showToast("Reset!"); return randomNoRepeat(arr, used); }
   const pick = unused[Math.floor(Math.random()*unused.length)];
-  navigator.clipboard.writeText(pick);
-  used[pick] = true; 
-  save();
-  triggerLua();
+  navigator.clipboard.writeText(pick); used[pick] = true; save(); triggerLua();
 };
 
-document.getElementById('fabD').onclick     = () => randomNoRepeat(dmTexts, dmUsed);
-document.getElementById('fabN').onclick     = () => randomNoRepeat(names, nameUsed);
-document.getElementById('fabOF').onclick    = () => randomNoRepeat(ofLines, ofUsed);
-document.getElementById('fabLink').onclick  = () => { 
-  navigator.clipboard.writeText(linkUrl); 
-  showToast("Link copied");  // ← Toast instead of alert
-  triggerLua();
-};
+document.getElementById('fabD').onclick = () => randomNoRepeat(dmTexts, dmUsed);
+document.getElementById('fabN').onclick = () => randomNoRepeat(names, nameUsed);
+document.getElementById('fabOF').onclick = () => randomNoRepeat(ofLines, ofUsed);
+document.getElementById('fabLink').onclick = () => { navigator.clipboard.writeText(linkUrl); showToast("Link copied"); triggerLua(); };
 
-// Resets & toggles
 document.getElementById('subrReset').onclick = () => { if(confirm("Reset subs?")){ subChecked={}; subIndex=0; save(); render('subList',subs,subChecked); updateStats(); }};
 document.getElementById('captionReset').onclick = () => { if(confirm("Reset captions?")){ capUsed={}; save(); render('captionList',captions,capUsed); updateStats(); }};
-document.getElementById('toggleSub').onclick = () => document.getElementById('subList').style.display = document.getElementById('subList').style.display==='block'?'none':'block';
-document.getElementById('toggleCap').onclick = () => document.getElementById('captionList').style.display = document.getElementById('captionList').style.display==='block'?'none':'block';
 
-// ——— IP & ROTATION ———
-let userIP = '';
-let previousIP = '';
-let scamalyticsWindow = null;
+document.getElementById('toggleSub').onclick = () => { const l = document.getElementById('subList'); l.style.display = l.style.display==='block'?'none':'block'; };
+document.getElementById('toggleCap').onclick = () => { const l = document.getElementById('captionList'); l.style.display = l.style.display==='block'?'none':'block'; };
+
+document.getElementById('addSubBtn').onclick = (e) => { e.stopPropagation(); const s=prompt("Subreddit (no r/):"); if(s && s.trim() && !subs.includes(s.trim())){ subs.push(s.trim()); save(); render('subList',subs,subChecked); updateStats(); showToast("Added!"); } else if(s) showToast("Already exists"); };
+document.getElementById('addCapBtn').onclick = (e) => { e.stopPropagation(); const c=prompt("New caption:"); if(c && c.trim() && !captions.includes(c.trim())){ captions.push(c.trim()); save(); render('captionList',captions,capUsed); updateStats(); showToast("Added!"); } else if(c) showToast("Already exists"); };
+
+let userIP = '', previousIP = '', scamalyticsWindow = null;
+
+function updateIPHeader() {
+  const ip = document.getElementById('ip').textContent;
+  document.getElementById('ipHeader').textContent = (ip && ip !== 'Loading...' && !ip.includes('Failed') && !ip.includes('Offline')) ? ip : 'No IP';
+}
 
 fetch('https://api.ipify.org?format=json')
-  .then(res => res.json())
-  .then(data => {
-    userIP = data.ip;
-    document.getElementById("ip").textContent = userIP;
-    document.getElementById("oldIP").textContent = "No previous IP";
-  })
-  .catch(() => {
-    document.getElementById("ip").textContent = "Failed to load IP.";
-  });
+  .then(r => r.json())
+  .then(d => { userIP = d.ip; document.getElementById("ip").textContent = userIP; updateIPHeader(); })
+  .catch(() => { document.getElementById("ip").textContent = "Offline"; updateIPHeader(); });
 
 function rotateIP() {
   const btn = document.getElementById("rotateBtn");
-  const urlInput = document.getElementById("rotateLink");
-  const url = urlInput.value.trim();
-  
-  if (!url) return alert("Enter a rotation URL");
-
-  // Save original color so we can restore it exactly
-  const originalColor = btn.style.backgroundColor || "#ff0066";
-
-  btn.disabled = true;
-  btn.innerHTML = "Starting...";
-
-  // Trigger rotation using Image trick (bypasses iOS fetch block)
-  const img = new Image();
-  img.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
-
-  // 8-second countdown
-  let secondsLeft = 8;
-  btn.innerHTML = `Wait ${secondsLeft}s...`;
-  const timer = setInterval(() => {
-    secondsLeft--;
-    if (secondsLeft > 0) {
-      btn.innerHTML = `Wait ${secondsLeft}s...`;
-    } else {
-      btn.innerHTML = "Done!";
-      clearInterval(timer);
-    }
-  }, 1000);
-
-  // After countdown → restore original text + color + enable button
-  setTimeout(() => {
-    btn.innerHTML = "Go";
-    btn.style.backgroundColor = originalColor;  // ← Forces original pink back
-    btn.disabled = false;
-  }, 8500);
+  const url = document.getElementById("rotateLink").value.trim();
+  if (!url) return alert("Enter URL");
+  btn.disabled = true; btn.innerHTML = "Starting...";
+  new Image().src = url + (url.includes('?')?'&':'?') + 't=' + Date.now();
+  let s = 8; const i = setInterval(()=>{ s--; btn.innerHTML = s>0 ? `Wait ${s}s...` : "Done!"; if(s<=0) clearInterval(i); },1000);
+  setTimeout(()=>{ btn.innerHTML="Go"; btn.disabled=false; refreshAndOpen(); },9000);
 }
 
 function refreshAndOpen() {
-  const btn = document.getElementById("refreshBtn");
-  const oldText = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = "Loading...";
-  if (!scamalyticsWindow || scamalyticsWindow.closed) {
-    scamalyticsWindow = window.open('about:blank', '_blank');
-  }
+  const btn = document.getElementById("refreshBtn"); btn.disabled=true; btn.innerHTML="Loading...";
+  if (!scamalyticsWindow || scamalyticsWindow.closed) scamalyticsWindow = window.open('about:blank','_blank');
   fetch('https://api.ipify.org?format=json')
-    .then(res => res.json())
-    .then(data => {
-      const newIP = data.ip;
-      if (userIP) {
-        previousIP = userIP;
-        document.getElementById("oldIP").textContent = previousIP;
-      }
-      userIP = newIP;
-      document.getElementById("ip").textContent = userIP;
-      scamalyticsWindow.location.href = `https://scamalytics.com/ip/${userIP}`;
-      scamalyticsWindow.focus();
-      btn.style.backgroundColor = previousIP && previousIP !== userIP ? "#2e7d32" : "#d32f2f";
-      btn.innerHTML = previousIP && previousIP !== userIP ? "Changed!" : "No Change";
+    .then(r=>r.json())
+    .then(d=>{
+      if(userIP){ previousIP=userIP; document.getElementById("oldIP").textContent=previousIP; }
+      userIP=d.ip; document.getElementById("ip").textContent=userIP; updateIPHeader();
+      scamalyticsWindow.location.href=`https://scamalytics.com/ip/${userIP}`;
+      btn.style.backgroundColor = (previousIP && previousIP!==userIP) ? "#2e7d32" : "#d32f2f";
+      btn.innerHTML = (previousIP && previousIP!==userIP) ? "Changed!" : "No Change";
     })
-    .catch(() => {
-      btn.style.backgroundColor = "#b71c1c";
-      btn.innerHTML = "Failed";
-    })
-    .finally(() => btn.disabled = false);
+    .catch(()=>{ btn.style.backgroundColor="#b71c1c"; btn.innerHTML="Failed"; })
+    .finally(()=>{ btn.disabled=false; });
 }
 
-function toggleSection(id) {
-  const el = document.getElementById(id);
-  el.classList.toggle('open');
+function showToast(m) {
+  const t = document.getElementById('toast'); t.textContent=m; t.classList.add('show');
+  clearTimeout(t.timeout); t.timeout=setTimeout(()=>t.classList.remove('show'),1800);
 }
 
-function showToast(message) {
-  let toast = document.getElementById('toast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'toast';
-    document.body.appendChild(toast);
-  }
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(toast.timeout);
-  toast.timeout = setTimeout(() => toast.classList.remove('show'), 1500);
-}
-
-// + ADD BUTTONS — SUBREDDITS
-document.getElementById('addSubBtn').onclick = (e) => {
-  e.stopPropagation(); // prevents dropdown from closing
-  const newSub = prompt("Enter subreddit name (without r/):");
-  if (newSub && newSub.trim() && !subs.includes(newSub.trim())) {
-    subs.push(newSub.trim());
-    save();
-    render('subList', subs, subChecked);
-    updateStats();
-    showToast("Added!");
-  } else if (newSub && subs.includes(newSub.trim())) {
-    showToast("Already exists");
-  }
-};
-
-// + ADD BUTTONS — CAPTIONS
-document.getElementById('addCapBtn').onclick = (e) => {
-  e.stopPropagation();
-  const newCap = prompt("Enter new caption:");
-  if (newCap && newCap.trim() && !captions.includes(newCap.trim())) {
-    captions.push(newCap.trim());
-    save();
-    render('captionList', captions, capUsed);
-    updateStats();
-    showToast("Caption added!");
-  } else if (newCap && captions.includes(newCap.trim())) {
-    showToast("Already exists");
-  }
-};
-
-  window.addEventListener('load', () => {
-  document.getElementById('subContent').classList.remove('open');
-  document.getElementById('capContent').classList.remove('open');
-  document.getElementById('subArrow').classList.remove('open');
-  document.getElementById('capArrow').classList.remove('open');
+window.addEventListener('load', () => {
+  ['subContent','capContent','ipContent'].forEach(id => document.getElementById(id).classList.remove('open'));
+  ['subArrow','capArrow','ipArrow'].forEach(id => document.getElementById(id).classList.remove('open'));
+  updateIPHeader();
 });
 </script>
 </body>
