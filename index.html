@@ -503,21 +503,52 @@ function rotateIP() {
   const btn = document.getElementById("rotateBtn");
   const url = document.getElementById("rotateLink").value.trim();
   if (!url) return alert("Enter a URL");
+
   const oldText = btn.innerHTML;
   btn.disabled = true;
   btn.innerHTML = "Rotating...";
-  fetch(url).catch(() => {});
+
+  // This forces a real TCP connection + ignores response → works with ALL rotators
+  const img = new Image();
+  img.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+
+  // Give the rotator time to apply the new IP (most need 4–8 seconds)
+  let seconds = 8;
+  const countdown = setInterval(() => {
+    seconds--;
+    btn.innerHTML = `Wait ${seconds}s...`;
+    if (seconds <= 0) clearInterval(countdown);
+  }, 1000);
+
   setTimeout(() => {
     fetch('https://api.ipify.org?format=json')
-      .then(res => res.json())
+      .then(r => r.json())
       .then(data => {
-        document.getElementById("ip").textContent = data.ip;
+        const newIP = data.ip;
+        if (userIP && userIP !== newIP) {
+          previousIP = userIP;
+          document.getElementById("oldIP").textContent = previousIP;
+          btn.style.backgroundColor = "#0f90";
+          btn.innerHTML = "Success!";
+        } else {
+          btn.style.backgroundColor = "#c33";
+          btn.innerHTML = "No Change";
+        }
+        userIP = newIP;
+        document.getElementById("ip").textContent = newIP;
+      })
+      .catch(() => {
+        btn.style.backgroundColor = "#900";
+        btn.innerHTML = "Failed";
       })
       .finally(() => {
-        btn.innerHTML = oldText;
-        btn.disabled = false;
+        setTimeout(() => {
+          btn.innerHTML = oldText;
+          btn.style.backgroundColor = "";
+          btn.disabled = false;
+        }, 2000);
       });
-  }, 3000);
+  }, 8000); // 8 seconds wait (perfect for 87.120.186.106)
 }
 
 function refreshAndOpen() {
