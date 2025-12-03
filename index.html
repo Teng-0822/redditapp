@@ -506,15 +506,17 @@ function rotateIP() {
   
   if (!url) return alert("Enter a rotation URL");
 
-  const oldText = btn.innerHTML;
+  // Save original color so we can restore it exactly
+  const originalColor = btn.style.backgroundColor || "#ff0066";
+
   btn.disabled = true;
   btn.innerHTML = "Starting...";
 
-  // Force real request using Image trick (works when fetch is blocked on iOS)
+  // Trigger rotation using Image trick (bypasses iOS fetch block)
   const img = new Image();
-  img.src = url + (url.includes('?') ? '&' : '?') + 'rot=' + Date.now();
+  img.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
 
-  // 8-second countdown (perfect timing for 87.120.186.106:8080)
+  // 8-second countdown
   let secondsLeft = 8;
   btn.innerHTML = `Wait ${secondsLeft}s...`;
   const timer = setInterval(() => {
@@ -527,11 +529,11 @@ function rotateIP() {
     }
   }, 1000);
 
-  // After 8 seconds → button goes back to normal so you can press "Refresh + Scam"
+  // After countdown → restore original text + color + enable button
   setTimeout(() => {
-    btn.innerHTML = oldText;
+    btn.innerHTML = "Go";
+    btn.style.backgroundColor = originalColor;  // ← Forces original pink back
     btn.disabled = false;
-    btn.style.backgroundColor = ""; // reset color
   }, 8500);
 }
 
