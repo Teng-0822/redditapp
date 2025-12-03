@@ -243,15 +243,14 @@
 </style>
 </head>
 <body>
-
 <h1>BEAST MODE</h1>
 <input type="text" id="ipInput" placeholder="IP last" value="1" maxlength="3">
 
 <!-- SUBREDDIT DROPDOWN -->
 <div class="dropdown">
-  <div class="dropdown-header" onclick="toggleDropdown('sub')">
-    <div class="center-btn"><button id="subrBtn">SUBR</button></div>
-    <span class="arrow" id="subArrow">👇🏼</span>
+  <div class="dropdown-header">
+    <div class="center-btn"><button id="subrBtn" onclick="event.stopPropagation()">SUBR</button></div>
+    <span class="arrow" id="subArrow" onclick="toggleDropdown('sub')">👇🏼</span>
   </div>
   <div class="dropdown-content" id="subContent">
     <div class="content-row">
@@ -268,9 +267,9 @@
 
 <!-- CAPTION DROPDOWN -->
 <div class="dropdown">
-  <div class="dropdown-header" onclick="toggleDropdown('cap')">
-    <div class="center-btn"><button id="captionBtn">CAPTION</button></div>
-    <span class="arrow" id="capArrow">👇🏼</span>
+  <div class="dropdown-header">
+    <div class="center-btn"><button id="captionBtn" onclick="event.stopPropagation()">CAPTION</button></div>
+    <span class="arrow" id="capArrow" onclick="toggleDropdown('cap')">👇🏼</span>
   </div>
   <div class="dropdown-content" id="capContent">
     <div class="content-row">
@@ -287,9 +286,9 @@
 
 <!-- IP & ROTATION DROPDOWN -->
 <div class="dropdown">
-  <div class="dropdown-header" onclick="toggleDropdown('ip')">
+  <div class="dropdown-header">
     <div class="ip-header"><span id="ipHeader">Loading IP...</span></div>
-    <span class="arrow" id="ipArrow">👇🏼</span>
+    <span class="arrow" id="ipArrow" onclick="toggleDropdown('ip')">👇🏼</span>
   </div>
   <div class="dropdown-content" id="ipContent">
     <div style="padding:10px 0;">
