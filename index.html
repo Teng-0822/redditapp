@@ -501,54 +501,38 @@ fetch('https://api.ipify.org?format=json')
 
 function rotateIP() {
   const btn = document.getElementById("rotateBtn");
-  const url = document.getElementById("rotateLink").value.trim();
-  if (!url) return alert("Enter a URL");
+  const urlInput = document.getElementById("rotateLink");
+  const url = urlInput.value.trim();
+  
+  if (!url) return alert("Enter a rotation URL");
 
   const oldText = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = "Rotating...";
+  btn.innerHTML = "Starting...";
 
-  // This forces a real TCP connection + ignores response → works with ALL rotators
+  // Force real request using Image trick (works when fetch is blocked on iOS)
   const img = new Image();
-  img.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+  img.src = url + (url.includes('?') ? '&' : '?') + 'rot=' + Date.now();
 
-  // Give the rotator time to apply the new IP (most need 4–8 seconds)
-  let seconds = 8;
-  const countdown = setInterval(() => {
-    seconds--;
-    btn.innerHTML = `Wait ${seconds}s...`;
-    if (seconds <= 0) clearInterval(countdown);
+  // 8-second countdown (perfect timing for 87.120.186.106:8080)
+  let secondsLeft = 8;
+  btn.innerHTML = `Wait ${secondsLeft}s...`;
+  const timer = setInterval(() => {
+    secondsLeft--;
+    if (secondsLeft > 0) {
+      btn.innerHTML = `Wait ${secondsLeft}s...`;
+    } else {
+      btn.innerHTML = "Done!";
+      clearInterval(timer);
+    }
   }, 1000);
 
+  // After 8 seconds → button goes back to normal so you can press "Refresh + Scam"
   setTimeout(() => {
-    fetch('https://api.ipify.org?format=json')
-      .then(r => r.json())
-      .then(data => {
-        const newIP = data.ip;
-        if (userIP && userIP !== newIP) {
-          previousIP = userIP;
-          document.getElementById("oldIP").textContent = previousIP;
-          btn.style.backgroundColor = "#0f90";
-          btn.innerHTML = "Success!";
-        } else {
-          btn.style.backgroundColor = "#c33";
-          btn.innerHTML = "No Change";
-        }
-        userIP = newIP;
-        document.getElementById("ip").textContent = newIP;
-      })
-      .catch(() => {
-        btn.style.backgroundColor = "#900";
-        btn.innerHTML = "Failed";
-      })
-      .finally(() => {
-        setTimeout(() => {
-          btn.innerHTML = oldText;
-          btn.style.backgroundColor = "";
-          btn.disabled = false;
-        }, 2000);
-      });
-  }, 8000); // 8 seconds wait (perfect for 87.120.186.106)
+    btn.innerHTML = oldText;
+    btn.disabled = false;
+    btn.style.backgroundColor = ""; // reset color
+  }, 8500);
 }
 
 function refreshAndOpen() {
