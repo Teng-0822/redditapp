@@ -343,6 +343,7 @@
   <button id="fabN"    class="fab" style="background:linear-gradient(45deg,#00ff99,#00cc77)">N</button>
   <button id="fabOF"   class="fab" style="background:linear-gradient(45deg,#2196f3,#00bcd4)">OF</button>
   <button id="fabLink" class="fab" style="background:linear-gradient(45deg,#9c27b0,#e040fb)">Link</button>
+  <button id="fabCreate" class="fab" style="background:linear-gradient(45deg,#ff0066,#ff3366)">+</button>
 </div>
 
 <div id="toast"></div>
@@ -747,6 +748,24 @@ function copyText(id) {
 
 // Auto-load on start (and remember last profile)
 window.addEventListener('load', loadProfiles);
+
+  // + BUTTON → Copy current ID + Run iOS Shortcut "CreateRed"
+document.getElementById('fabCreate').onclick = () => {
+  const currentID = document.getElementById('profileID').value.trim();
+  if (!currentID) {
+    showToast("No ID loaded");
+    return;
+  }
+  
+  // Copy ID to clipboard
+  navigator.clipboard.writeText(currentID);
+  
+  // Run your iOS Shortcut
+  window.location.href = "shortcuts://run-shortcut?name=CreateRed";
+  
+  showToast("ID copied → CreateRed launched");
+};
+  
 </script>
 </body>
 </html>
