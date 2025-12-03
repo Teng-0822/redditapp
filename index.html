@@ -567,10 +567,27 @@ function rotateIP() {
   const btn = document.getElementById("rotateBtn");
   const url = document.getElementById("rotateLink").value.trim();
   if (!url) return alert("Enter URL");
-  btn.disabled = true; btn.innerHTML = "Starting...";
-  new Image().src = url + (url.includes('?')?'&':'?') + 't=' + Date.now();
-  let s = 8; const i = setInterval(()=>{ s--; btn.innerHTML = s>0 ? `Wait ${s}s...` : "Done!"; if(s<=0) clearInterval(i); },1000);
-  setTimeout(()=>{ btn.innerHTML="Go"; btn.disabled=false; refreshAndOpen(); },9000);
+
+  btn.disabled = true;
+  btn.innerHTML = "Starting...";
+
+  // Trigger rotation
+  new Image().src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+
+  // 8-second countdown only
+  let s = 8;
+  const timer = setInterval(() => {
+    s--;
+    btn.innerHTML = s > 0 ? `Wait ${s}s...` : "Done!";
+    if (s <= 0) clearInterval(timer);
+  }, 1000);
+
+  // After countdown → just reset button, NO auto refresh
+  setTimeout(() => {
+    btn.innerHTML = "Go";
+    btn.disabled = false;
+    showToast("Rotation triggered!");
+  }, 8500);
 }
 
 function refreshAndOpen() {
