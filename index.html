@@ -246,6 +246,39 @@
 <h1>BEAST MODE</h1>
 <input type="text" id="ipInput" placeholder="IP last" value="1" maxlength="3">
 
+<!-- PROFILE DROPDOWN - CONNECTED TO GOOGLE SHEET -->
+<div class="dropdown">
+  <div class="dropdown-header">
+    <div class="center-btn"><button style="background:linear-gradient(45deg,#8e2de2,#4a00e0);cursor:default;">PROFILE</button></div>
+    <span class="arrow" id="profileArrow" onclick="toggleDropdown('profile')">👇🏼</span>
+  </div>
+  <div class="dropdown-content" id="profileContent">
+    <div style="padding:16px 20px; display:flex; flex-direction:column; gap:12px;">
+      
+      <input type="text" id="profileName" placeholder="Name" readonly style="padding:10px; border-radius:10px; background:#222; border:1px solid #444; color:#0f9; text-align:center; font-weight:bold;">
+      <input type="text" id="profilePass" placeholder="Password" style="padding:10px; border-radius:10px; background:#222; border:1px solid #444; color:white; text-align:center;">
+      <input type="text" id="profileUser" placeholder="Username" style="padding:10px; border-radius:10px; background:#222; border:1px solid #444; color:white; text-align:center;">
+      <input type="text" id="profileID" placeholder="ID" readonly style="padding:10px; border-radius:10px; background:#222; border:1px solid #444; color:#0f9; text-align:center;">
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
+        <button onclick="copyText('profileName')" style="background:#4a00e0; color:white; padding:10px; border-radius:10px; font-weight:bold;">Copy Name</button>
+        <button onclick="copyText('profilePass')" style="background:#8e2de2; color:white; padding:10px; border-radius:10px; font-weight:bold;">Copy Pass</button>
+        <button onclick="copyText('profileUser')" style="background:#4a00e0; color:white; padding:10px; border-radius:10px; font-weight:bold;">Copy User</button>
+        <button onclick="copyText('profileID')" style="background:#8e2de2; color:white; padding:10px; border-radius:10px; font-weight:bold;">Copy ID</button>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+        <button onclick="prevProfile()" style="flex:1; background:#333; color:#ff0066; padding:12px; border-radius:12px; font-weight:bold;">Prev</button>
+        <button onclick="generatePassword()" style="flex:1; background:#00ff99; color:#000; padding:12px; border-radius:12px; font-weight:bold;">Generate</button>
+        <button onclick="pasteUsername()" style="flex:1; background:#2196f3; color:white; padding:12px; border-radius:12px; font-weight:bold;">Username</button>
+         <button onclick="nextProfile()" style="flex:1; background:#333; color:#00ff99; padding:12px; border-radius:12px; font-weight:bold;">Next</button>
+        <button onclick="saveProfile()" style="flex:1; background:#ff0066; color:white; padding:12px; border-radius:12px; font-weight:bold;">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!-- SUBREDDIT DROPDOWN -->
 <div class="dropdown">
   <div class="dropdown-header">
@@ -459,8 +492,8 @@ const save = () => {
 };
 
 function toggleDropdown(type) {
-  const map = { sub: 'subContent', cap: 'capContent', ip: 'ipContent' };
-  const arrowMap = { sub: 'subArrow', cap: 'capArrow', ip: 'ipArrow' };
+  const map = { sub: 'subContent', cap: 'capContent', ip: 'ipContent', profile: 'profileContent' };
+  const arrowMap = { sub: 'subArrow', cap: 'capArrow', ip: 'ipArrow', profile: 'profileArrow' };
   const content = document.getElementById(map[type]);
   const arrow = document.getElementById(arrowMap[type]);
   content.classList.toggle('open');
@@ -615,6 +648,105 @@ window.addEventListener('load', () => {
   ['subArrow','capArrow','ipArrow'].forEach(id => document.getElementById(id).classList.remove('open'));
   updateIPHeader();
 });
+
+
+// === PROFILE SYSTEM - FULLY PRIVATE + REMEMBERS LAST PROFILE ===
+const PROFILE_URL = "https://script.google.com/macros/s/AKfycby8h_cdtEIHYjpewRUu48hq2u9eC5pYYwlxYBm5BP6yXPu4CZ8ngWwEXhvwwSqN0h3V/exec"; // ← YOUR WEB APP URL HERE
+
+let profileData = [];
+let currentRow = 2;
+let currentIndex = parseInt(localStorage.getItem('lastProfileIndex') || '0'); // remembers your place
+
+function loadProfiles() {
+  fetch(PROFILE_URL + "?action=read&t=" + Date.now())
+    .then(r => r.json())
+    .then(d => {
+      profileData = d.values || [];
+      if (profileData.length === 0) {
+        showToast("Sheet is empty");
+        clearProfileFields();
+      } else {
+        // Clamp index in case sheet changed
+        if (currentIndex >= profileData.length) currentIndex = profileData.length - 1;
+        loadProfile(currentIndex);
+        showToast(`Profile ${currentIndex + 1}/${profileData.length} loaded`);
+      }
+    })
+    .catch(() => showToast("Sheet offline"));
+}
+
+function clearProfileFields() {
+  document.getElementById('profileName').value = '';
+  document.getElementById('profilePass').value = '';
+  document.getElementById('profileUser').value = '';
+  document.getElementById('profileID').value = '';
+}
+
+function loadProfile(index) {
+  if (profileData.length === 0) return;
+  if (index < 0) index = 0;
+  if (index >= profileData.length) index = profileData.length - 1;
+
+  const row = profileData[index];
+  document.getElementById('profileName').value = row[0] || '';
+  document.getElementById('profilePass').value = row[1] || '';
+  document.getElementById('profileUser').value = row[2] || '';
+  document.getElementById('profileID').value   = row[3] || '';
+
+  currentRow = index + 2;
+  currentIndex = index;
+  localStorage.setItem('lastProfileIndex', index); // remembers even after refresh/close
+}
+
+function prevProfile() { loadProfile(currentIndex - 1); }
+function nextProfile() { loadProfile(currentIndex + 1); }
+
+function generatePassword() {
+  if (document.getElementById('profilePass').value !== '') return showToast("Password not empty");
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let pass = "";
+  const len = Math.floor(Math.random() * 3) + 8; // 8–10 chars
+  for (let i = 0; i < len; i++) pass += chars.charAt(Math.random() * chars.length);
+  document.getElementById('profilePass').value = pass;
+  copyText('profilePass');
+  showToast("Password generated & copied");
+}
+
+async function pasteUsername() {
+  try {
+    const text = await navigator.clipboard.readText();
+    document.getElementById('profileUser').value = text.trim();
+    showToast("Username pasted");
+  } catch {
+    showToast("Paste failed (allow clipboard)");
+  }
+}
+
+function saveProfile() {
+  const pass = document.getElementById('profilePass').value.trim();
+  const user = document.getElementById('profileUser').value.trim();
+  if (!pass || !user) return showToast("Fill Password & Username");
+
+  fetch(`${PROFILE_URL}?action=write&row=${currentRow}&pass=${encodeURIComponent(pass)}&user=${encodeURIComponent(user)}&t=${Date.now()}`)
+    .then(r => r.json())
+    .then(() => {
+      showToast("Saved to sheet");
+      profileData[currentIndex][1] = pass;
+      profileData[currentIndex][2] = user;
+    })
+    .catch(() => showToast("Save failed"));
+}
+
+function copyText(id) {
+  const el = document.getElementById(id);
+  el.focus();
+  el.select();
+  navigator.clipboard.writeText(el.value);
+  showToast((el.placeholder || el.id) + " copied");
+}
+
+// Auto-load on start (and remember last profile)
+window.addEventListener('load', loadProfiles);
 </script>
 </body>
 </html>
