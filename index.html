@@ -17,7 +17,7 @@
     color: white;
     font-family: 'Segoe UI', Arial, sans-serif;
     min-height: 100vh;
-    padding: 15px 15px 100px 15px;
+    padding: 15px 15px 110px 15px;
     background: linear-gradient(135deg, #0d0d0d 0%, #1a0033 100%);
   }
   h1 {
@@ -41,7 +41,7 @@
     border-radius: 10px;
   }
 
-  /* Collapsible Dropdown Sections */
+  /* Dropdowns */
   .dropdown {
     background: var(--card);
     border-radius: 18px;
@@ -54,22 +54,22 @@
   .dropdown-header {
     display: flex;
     align-items: center;
-    justify-content: center;   /* ← centers the long button */
+    justify-content: center;
     gap: 20px;
     padding: 18px 20px;
     cursor: pointer;
     background: rgba(255,255,255,0.03);
   }
   .dropdown-header button {
-    padding: 11px 40px;        /* ← was 14px 32px → shorter height, longer width */
-    font-size: 1.25rem;        /* ← slightly smaller text */
+    padding: 11px 40px;
+    font-size: 1.25rem;
     font-weight: bold;
     border: none;
     border-radius: 16px;
-    min-width: 180px;          /* ← forces longer button */
-    height: 52px;              /* ← fixed shorter height */
+    min-width: 180px;
+    height: 52px;
   }
-  #subrBtn { background: linear-gradient(45deg, #ff0066, #ff3366); }
+  #subrBtn    { background: linear-gradient(45deg, #ff0066, #ff3366); }
   #captionBtn { background: linear-gradient(45deg, #9b59b6, #e91e63); }
   .arrow {
     font-size: 28px;
@@ -86,7 +86,7 @@
     background: rgba(0,0,0,0.3);
   }
   .dropdown-content.open {
-    max-height: 300px;
+    max-height: 500px;
     padding: 16px 20px;
   }
   .content-row {
@@ -111,7 +111,60 @@
     border: 1px solid #444;
   }
 
-  /* IP Section - longer & centered */
+  /* LIST — SCROLLABLE + FADE + PERFECT X ALIGNMENT */
+  ul {
+    list-style: none;
+    max-height: 260px;
+    overflow-y: auto;
+    padding: 8px;
+    background: #111;
+    border-radius: 10px;
+    border: 1px solid #333;
+    margin-top: 12px;
+    -webkit-overflow-scrolling: touch; /* Smooth scroll on iPhone */
+  }
+  li {
+    padding: 12px;
+    background: #222;
+    margin: 8px 0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  li.checked { opacity: 0.4; text-decoration: line-through; }
+  li .text {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.95rem;
+    color: #ddd;
+    padding-right: 10px;
+  }
+  li .text::after {
+    content: '';
+    position: absolute;
+    right: 60px; top: 0; bottom: 0;
+    width: 30px;
+    background: linear-gradient(to right, transparent, #222);
+    pointer-events: none;
+  }
+  .delete {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 28px;
+    font-weight: bold;
+    min-width: 44px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* IP SECTION — BUTTONS NOW HAVE COLOR */
   .glass-card {
     background: rgba(20,20,40,0.6);
     backdrop-filter: blur(12px);
@@ -121,8 +174,24 @@
     max-width: 420px;
     overflow: hidden;
   }
+  #rotateBtn {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+    background: #ff0066;
+    color: white;
+    border: none;
+  }
+  #refreshBtn {
+    padding: 10px 16px;
+    background: #111;
+    color: #0f9;
+    border: 1px solid #0f9;
+    border-radius: 10px;
+    font-size: 11px;
+  }
 
-  /* FABs - Horizontal at bottom like iPhone dock */
+  /* FAB DOCK */
   .fab-container {
     position: fixed;
     bottom: 18px;
@@ -132,7 +201,7 @@
     gap: 18px;
     z-index: 9999;
     background: rgba(20,20,20,0.8);
-    padding: 12px 20px;
+    padding: 12px 24px;
     border-radius: 50px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.1);
@@ -166,12 +235,13 @@
     transition: all 0.4s;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(0,255,153,0.3);
+    pointer-events: none;
   }
   #toast.show { opacity: 1; bottom: 130px; }
-  
 </style>
 </head>
 <body>
+
 <h1>BEAST MODE</h1>
 <input type="text" id="ipInput" placeholder="IP last" value="1" maxlength="3">
 
@@ -184,13 +254,16 @@
   <div class="dropdown-content" id="subContent">
     <div class="content-row">
       <span>Done <span id="subDone">0</span> / <span id="subCount">0</span></span>
-      <button id="subrReset">Reset</button>
+      <div style="display:flex; gap:8px;">
+        <button id="subrReset">Reset</button>
+        <button id="addSubBtn" style="background:#00ff99; color:#000; border:none; padding:8px 16px; border-radius:12px; font-weight:bold;">+ Add</button>
+      </div>
     </div>
     <div class="content-row">
       <span></span>
       <button class="toggle" id="toggleSub">List</button>
     </div>
-    <ul id="subList" style="display:none; margin-top:12px;"></ul>
+    <ul id="subList" style="display:none;"></ul>
   </div>
 </div>
 
@@ -203,13 +276,16 @@
   <div class="dropdown-content" id="capContent">
     <div class="content-row">
       <span>Used <span id="capUsed">0</span> / <span id="capCount">0</span></span>
-      <button id="captionReset">Reset</button>
+      <div style="display:flex; gap:8px;">
+        <button id="captionReset">Reset</button>
+        <button id="addCapBtn" style="background:#00ff99; color:#000; border:none; padding:8px 16px; border-radius:12px; font-weight:bold;">+ Add</button>
+      </div>
     </div>
     <div class="content-row">
       <span></span>
       <button class="toggle" id="toggleCap">List</button>
     </div>
-    <ul id="captionList" style="display:none; margin-top:12px;"></ul>
+    <ul id="captionList" style="display:none;"></ul>
   </div>
 </div>
 
@@ -231,11 +307,10 @@
   </div>
 </div>
 
-<!-- FAB DOCK -->
 <div class="fab-container">
-  <button id="fabD" class="fab" style="background:linear-gradient(45deg,#e91e63,#ff0066)">D</button>
-  <button id="fabN" class="fab" style="background:linear-gradient(45deg,#00ff99,#00cc77)">N</button>
-  <button id="fabOF" class="fab" style="background:linear-gradient(45deg,#2196f3,#00bcd4)">OF</button>
+  <button id="fabD"    class="fab" style="background:linear-gradient(45deg,#e91e63,#ff0066)">D</button>
+  <button id="fabN"    class="fab" style="background:linear-gradient(45deg,#00ff99,#00cc77)">N</button>
+  <button id="fabOF"   class="fab" style="background:linear-gradient(45deg,#2196f3,#00bcd4)">OF</button>
   <button id="fabLink" class="fab" style="background:linear-gradient(45deg,#9c27b0,#e040fb)">Link</button>
 </div>
 
@@ -385,26 +460,46 @@ const save = () => {
   localStorage.setItem('ofUsed', JSON.stringify(ofUsed));
 };
 
- function toggleDropdown(type) {
+function toggleDropdown(type) {
   const content = document.getElementById(type + 'Content');
   const arrow = document.getElementById(type + 'Arrow');
   content.classList.toggle('open');
   arrow.classList.toggle('open');
-} 
+}
 
 const render = (id, data, used) => {
   const ul = document.getElementById(id);
   ul.innerHTML = '';
-  data.forEach((item,i) => {
+  data.forEach((item, i) => {
     const li = document.createElement('li');
     li.className = used[item] ? 'checked' : '';
-    li.innerHTML = `<input type="checkbox" ${used[item]?'checked':''}>
-                    <span>${item.substring(0,50)}${item.length>50?'...':''}</span>
-                    <button class="delete">X</button>`;
-    li.querySelector('input').onchange = () => { used[item] = !used[item]; save(); render(id,data,used); updateStats(); };
-    li.querySelector('.delete').onclick = () => { if(confirm('Delete?')){ data.splice(i,1); delete used[item]; save(); render(id,data,used); updateStats(); }};
+    li.innerHTML = `
+      <input type="checkbox" ${used[item] ? 'checked' : ''}>
+      <div class="text">${item}</div>
+      <button class="delete">X</button>
+    `;
+    li.querySelector('input').onchange = () => {
+      used[item] = !used[item];
+      save(); render(id, data, used); updateStats();
+    };
+    li.querySelector('.delete').onclick = () => {
+      if (confirm('Delete?')) {
+        data.splice(i, 1);
+        delete used[item];
+        save(); render(id, data, used); updateStats();
+      }
+    };
     ul.appendChild(li);
   });
+};
+
+document.getElementById('toggleSub').onclick = () => {
+  const list = document.getElementById('subList');
+  list.style.display = list.style.display === 'block' ? 'none' : 'block';
+};
+document.getElementById('toggleCap').onclick = () => {
+  const list = document.getElementById('captionList');
+  list.style.display = list.style.display === 'block' ? 'none' : 'block';
 };
 
 const updateStats = () => {
@@ -608,6 +703,37 @@ function showToast(message) {
   clearTimeout(toast.timeout);
   toast.timeout = setTimeout(() => toast.classList.remove('show'), 1500);
 }
+
+// + ADD BUTTONS — SUBREDDITS
+document.getElementById('addSubBtn').onclick = (e) => {
+  e.stopPropagation(); // prevents dropdown from closing
+  const newSub = prompt("Enter subreddit name (without r/):");
+  if (newSub && newSub.trim() && !subs.includes(newSub.trim())) {
+    subs.push(newSub.trim());
+    save();
+    render('subList', subs, subChecked);
+    updateStats();
+    showToast("Added!");
+  } else if (newSub && subs.includes(newSub.trim())) {
+    showToast("Already exists");
+  }
+};
+
+// + ADD BUTTONS — CAPTIONS
+document.getElementById('addCapBtn').onclick = (e) => {
+  e.stopPropagation();
+  const newCap = prompt("Enter new caption:");
+  if (newCap && newCap.trim() && !captions.includes(newCap.trim())) {
+    captions.push(newCap.trim());
+    save();
+    render('captionList', captions, capUsed);
+    updateStats();
+    showToast("Caption added!");
+  } else if (newCap && captions.includes(newCap.trim())) {
+    showToast("Already exists");
+  }
+};
+
   window.addEventListener('load', () => {
   document.getElementById('subContent').classList.remove('open');
   document.getElementById('capContent').classList.remove('open');
