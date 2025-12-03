@@ -141,6 +141,31 @@
   .section { transition:all 0.4s ease; overflow:hidden; }
   .section.open { max-height:500px; padding:14px; }
   .section { max-height:0; padding:0 14px; }
+
+  /* TOAST NOTIFICATION */
+#toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.9);
+  color: #0f9;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 1rem;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.4s, bottom 0.4s;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0,255,153,0.3);
+}
+#toast.show {
+  opacity: 1;
+  bottom: 120px;
+}
+  
 </style>
 </head>
 <body>
@@ -198,7 +223,7 @@
   <button id="fabOF"   class="fab">OF</button>
   <button id="fabLink" class="fab">Link</button>
 </div>
-
+<div id="toast"></div>
 <script>
 // ← All the powerful code from the previous version is still here (unchanged)
 // Only the UI labels above the buttons have been removed as requested.
@@ -427,24 +452,28 @@ function triggerLua() {
   setTimeout(() => { img.src = ''; }, 5000);
 }
 
-// ——— FABs: copy + trigger Lua script ———
-let hasTriggered = false; // optional: trigger only once or every time — I made it every time (fastest)
-
+// ——— FABs: copy + trigger Lua + TOAST instead of alert ———
 const randomNoRepeat = (arr, used) => {
   const unused = arr.filter(x => !used[x]);
-  if(unused.length===0){ used = {}; save(); alert("Reset!"); }
-  const pick = unused.length ? unused[Math.floor(Math.random()*unused.length)] : arr[Math.floor(Math.random()*arr.length)];
+  if(unused.length===0){ 
+    Object.keys(used).forEach(k => delete used[k]); 
+    save(); 
+    showToast("Reset!");  // ← Toast instead of alert
+    return randomNoRepeat(arr, used);
+  }
+  const pick = unused[Math.floor(Math.random()*unused.length)];
   navigator.clipboard.writeText(pick);
-  used[pick] = true; save();
-  triggerLua(); // ← SENDS THE REQUEST EVERY CLICK
+  used[pick] = true; 
+  save();
+  triggerLua();
 };
 
-document.getElementById('fabD').onclick    = () => randomNoRepeat(dmTexts, dmUsed);
-document.getElementById('fabN').onclick    = () => randomNoRepeat(names, nameUsed);
-document.getElementById('fabOF').onclick   = () => randomNoRepeat(ofLines, ofUsed);
-document.getElementById('fabLink').onclick = () => { 
+document.getElementById('fabD').onclick     = () => randomNoRepeat(dmTexts, dmUsed);
+document.getElementById('fabN').onclick     = () => randomNoRepeat(names, nameUsed);
+document.getElementById('fabOF').onclick    = () => randomNoRepeat(ofLines, ofUsed);
+document.getElementById('fabLink').onclick  = () => { 
   navigator.clipboard.writeText(linkUrl); 
-  alert("Link copied");
+  showToast("Link copied");  // ← Toast instead of alert
   triggerLua();
 };
 
@@ -525,7 +554,20 @@ function toggleSection(id) {
   const el = document.getElementById(id);
   el.classList.toggle('open');
 }
- 
+
+function showToast(message) {
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toast.timeout);
+  toast.timeout = setTimeout(() => toast.classList.remove('show'), 1500);
+}
+  
 </script>
 </body>
 </html>
