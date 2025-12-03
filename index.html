@@ -559,7 +559,8 @@ document.getElementById('captionBtn').onclick = () => {
 function triggerLua() {
   const ipPart = document.getElementById("ipInput").value.trim();
   if (!ipPart || isNaN(ipPart)) return;
-  const url = `http://192.168.1.${ipPart}:8080/control/start_playing?path=/test.lua&t=${Date.now()}`;
+  //const url = `http://192.168.1.${ipPart}:8080/control/start_playing?path=/test.lua&t=${Date.now()}`;
+  const url = `http://10.161.37.${ipPart}:8080/control/start_playing?path=/test.lua&t=${Date.now()}`; //infinix
   new Image().src = url;
 }
 
