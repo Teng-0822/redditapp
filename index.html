@@ -577,7 +577,7 @@ document.getElementById('subrBtn').onclick = () => {
     const sub = subs[subIndex];
     if(!subChecked[sub]){
       navigator.clipboard.writeText(sub);
-      window.open(`https://www.reddit.com/r/${sub}`, '_blank');
+      window.open(`https://www.reddit.com/r/${sub}/submit`, '_blank');
       subChecked[sub] = true; save(); render('subList',subs,subChecked); updateStats();
       subIndex = (subIndex + 1) % subs.length; save();
       return;
