@@ -788,6 +788,21 @@ function copyText(id) {
   showToast((el.placeholder || el.id) + " copied");
 }
 
+document.getElementById('fabCreate').onclick = () => {
+  const currentID = document.getElementById('profileID').value.trim();
+  if (!currentID) {
+    showToast("No ID loaded");
+    return;
+  }
+  
+  // Copy ID to clipboard
+  navigator.clipboard.writeText(currentID);
+  
+  // Run your iOS Shortcut
+  window.location.href = "shortcuts://run-shortcut?name=CreateRed";
+  
+  showToast("ID copied → CreateRed launched");
+};
 // Auto-load on start (and remember last profile)
 window.addEventListener('load', loadProfiles);
 </script>
