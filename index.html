@@ -243,13 +243,19 @@
 </style>
 </head>
 <body>
-<h1>BEAST MODE</h1>
-
-<div style="display:flex; align-items:center; justify-content:center; gap:12px; margin:0 auto 15px; max-width:420px;">
+<div style="display:flex; align-items:center; justify-content:center; gap:14px; margin:20px auto 15px; max-width:420px; padding:0 10px;">
+  
+  <!-- IP Input -->
   <input type="text" id="ipInput" placeholder="IP last" value="1" maxlength="3"
-         style="width:100px;padding:8px;font-size:1rem;text-align:center;background:#222;color:#0f9;border:1px solid #444;border-radius:10px;">
+         style="width:96px; height:48px; padding:8px; font-size:1.1rem; text-align:center; 
+                background:#222; color:#0f9; border:2px solid #0f9; border-radius:14px; 
+                font-weight:bold; outline:none;">
 
-  <button id="ipToggle" style="padding:8px 16px; background:#333; color:#0f9; border:2px solid #0f9; border-radius:12px; font-weight:bold; min-width:120px;">
+  <!-- Toggle Button -->
+  <button id="ipToggle" 
+          style="height:48px; padding:0 20px; background:#333; color:#0f9; 
+                 border:2px solid #0f9; border-radius:14px; font-weight:bold; 
+                 font-size:1.05rem; min-width:148px; cursor:pointer; transition:all 0.2s;">
     192.168.1.x
   </button>
 </div>
