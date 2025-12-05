@@ -320,8 +320,18 @@
         <button id="addCapBtn" style="background:#00ff99;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">+ Add</button>
       </div>
     </div>
-      <div class="content-row"><span></span><button onclick="updateCaptionsNow()">🔃</button>
-        <button class="toggle" id="toggleCap">List</button></div>
+    
+    <div class="content-row" style="justify-content: flex-end; gap: 10px;">
+      <button onclick="updateCaptionsNow()" 
+              style="background:#333; color:#00ff99; border:2px solid #00ff99; padding:8px 14px; border-radius:12px; font-weight:bold; font-size:1rem;">
+        Refresh
+      </button>
+      <button class="toggle" id="toggleCap" 
+              style="padding:8px 16px; border-radius:12px;">
+        List
+      </button>
+    </div>
+
     <ul id="captionList" style="display:none;"></ul>
   </div>
 </div>
