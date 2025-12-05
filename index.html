@@ -267,27 +267,46 @@
     <span class="arrow" id="profileArrow" onclick="toggleDropdown('profile')">👇🏼</span>
   </div>
   <div class="dropdown-content" id="profileContent">
-    <div style="padding:16px 20px; display:flex; flex-direction:column; gap:12px;">
+    <div style="padding:16px 20px; max-width:100%; box-sizing:border-box;">
       
-      <input type="text" id="profileName" placeholder="Name" readonly style="padding:10px; border-radius:10px; background:#222; border:1px solid #444; color:#0f9; text-align:center; font-weight:bold;">
-      <input type="text" id="profilePass" placeholder="Password" style="padding:10px; border-radius:10px; background:#222; border:1px solid #444; color:white; text-align:center;">
-      <input type="text" id="profileUser" placeholder="Username" style="padding:10px; border-radius:10px; background:#222; border:1px solid #444; color:white; text-align:center;">
-      <input type="text" id="profileID" placeholder="ID" readonly style="padding:10px; border-radius:10px; background:#222; border:1px solid #444; color:#0f9; text-align:center;">
-
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
-        <button onclick="copyText('profileName')" style="background:#4a00e0; color:white; padding:10px; border-radius:10px; font-weight:bold;">Copy Name</button>
-        <button onclick="copyText('profilePass')" style="background:#8e2de2; color:white; padding:10px; border-radius:10px; font-weight:bold;">Copy Pass</button>
-        <button onclick="copyText('profileUser')" style="background:#4a00e0; color:white; padding:10px; border-radius:10px; font-weight:bold;">Copy User</button>
-        <button onclick="copyText('profileID')" style="background:#8e2de2; color:white; padding:10px; border-radius:10px; font-weight:bold;">Copy ID</button>
+      <!-- 2×2 GRID - Responsive & Safe -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; margin-bottom:12px;">
+        <input type="text" id="profileName" placeholder="Name" readonly
+               style="padding:13px 10px; border-radius:12px; background:#222; border:2px solid #8e2de2; color:#0f9; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
+        <input type="text" id="profileUser" placeholder="Username"
+               style="padding:13px 10px; border-radius:12px; background:#222; border:2px solid #2196f3; color:white; text-align:center; font-size:0.95rem; width:100%;">
+        <input type="text" id="profilePass" placeholder="Password"
+               style="padding:13px 10px; border-radius:12px; background:#222; border:2px solid #ff0066; color:white; text-align:center; font-size:0.95rem; width:100%;">
+        <input type="text" id="profileID" placeholder="ID" readonly
+               style="padding:13px 10px; border-radius:12px; background:#222; border:2px solid #00ff99; color:#0f9; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
       </div>
 
-      <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
-        <button onclick="prevProfile()" style="flex:1; background:#333; color:#ff0066; padding:12px; border-radius:12px; font-weight:bold;">Prev</button>
-        <button onclick="generatePassword()" style="flex:1; background:#00ff99; color:#000; padding:12px; border-radius:12px; font-weight:bold;">Generate</button>
-        <button onclick="pasteUsername()" style="flex:1; background:#2196f3; color:white; padding:12px; border-radius:12px; font-weight:bold;">Username</button>
-        <button onclick="nextProfile()" style="flex:1; background:#333; color:#00ff99; padding:12px; border-radius:12px; font-weight:bold;">Next</button>
-        <button onclick="saveProfile()" style="flex:1; background:#ff0066; color:white; padding:12px; border-radius:12px; font-weight:bold;">Save</button>
+      <!-- COPY BUTTONS - 2×2 Responsive -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+        <button onclick="copyText('profileName')" style="background:#4a00e0; color:white; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy Name</button>
+        <button onclick="copyText('profileUser')" style="background:#2196f3; color:white; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy User</button>
+        <button onclick="copyText('profilePass')" style="background:#ff0066; color:white; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy Pass</button>
+        <button onclick="copyText('profileID')" style="background:#00ff99; color:#000; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy ID</button>
       </div>
+
+      <!-- FINAL BUTTON LAYOUT: 4 on top, Save centered below -->
+      <div style="display:flex; flex-direction:column; gap:11px; align-items:center;">
+        <!-- Top row: Prev | Generate | Username | Next -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:9px; width:100%; max-width:380px;">
+          <button onclick="prevProfile()" style="background:#333; color:#ff0066; padding:13px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Prev</button>
+          <button onclick="generatePassword()" style="background:#00ff99; color:#000; padding:13px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Generate</button>
+          <button onclick="pasteUsername()" style="background:#2196f3; color:white; padding:13px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Username</button>
+          <button onclick="nextProfile()" style="background:#333; color:#00ff99; padding:13px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Next</button>
+        </div>
+
+        <!-- Bottom row: Save button centered and wider -->
+        <button onclick="saveProfile()" 
+                style="background:#ff0066; color:white; padding:14px 20px; border-radius:14px; font-weight:bold; font-size:1rem; 
+                       min-width:180px; width:auto; max-width:340px;">
+          Save
+        </button>
+      </div>
+
     </div>
   </div>
 </div>
