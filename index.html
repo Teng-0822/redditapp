@@ -877,14 +877,23 @@ function prevProfile() { loadProfile(currentIndex - 1); }
 function nextProfile() { loadProfile(currentIndex + 1); }
 
 function generatePassword() {
-  if (document.getElementById('profilePass').value !== '') return showToast("Password not empty");
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let pass = "";
-  const len = Math.floor(Math.random() * 3) + 8; // 8–10 chars
-  for (let i = 0; i < len; i++) pass += chars.charAt(Math.random() * chars.length);
-  document.getElementById('profilePass').value = pass;
-  copyText('profilePass');
-  showToast("Password generated & copied");
+    if (document.getElementById('profilePass').value !== '') {
+        return showToast("Password not empty");
+    }
+
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*_-";
+    let randomPart = "";
+    const len = Math.floor(Math.random() * 5) + 10; // 10–14 chars for better security
+
+    for (let i = 0; i < len; i++) {
+        randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    const finalPassword = "reddit" + randomPart;
+
+    document.getElementById('profilePass').value = finalPassword;
+    copyText('profilePass');
+    showToast(`Generated: ${finalPassword}`);
 }
 
 async function pasteUsername() {
