@@ -862,43 +862,56 @@ async function pasteUsername() {
 }
 
 function superPost() {
-  // 1. SUBREDDIT PART (exact copy of your SUBR button logic)
-  if(subs.length===0) return showToast("No subs!");
-  let attempts=0;
-  while(attempts++ < subs.length){
+  // === 1. Pick next unused subreddit (same logic as SUBR button) ===
+  if (subs.length === 0) return showToast("No subs!");
+
+  let attempts = 0;
+  let chosenSub = "";
+  while (attempts++ < subs.length) {
     const sub = subs[subIndex];
-    if(!subChecked[sub]){
-      navigator.clipboard.writeText(sub);
-      subChecked[sub] = true; 
-      save(); 
-      render('subList',subs,subChecked); 
-      updateStats();
-      subIndex = (subIndex + 1) % subs.length; 
+    if (!subChecked[sub]) {
+      chosenSub = sub;
+      subChecked[sub] = true;
       save();
-
-      // 2. CAPTION PART (exact copy of your CAPTION button logic)
-      const unused = captions.filter(c => !capUsed[c]);
-      if(unused.length===0){ capUsed={}; save(); render('captionList',captions,capUsed); updateStats(); }
-      const pick = unused.length ? unused[Math.floor(Math.random()*unused.length)] : captions[Math.floor(Math.random()*captions.length)];
-      navigator.clipboard.writeText(pick); // caption copied second (overwrites subreddit, which is fine)
-      capUsed[pick] = true; 
-      save(); 
-      render('captionList',captions,capUsed); 
+      render('subList', subs, subChecked);
       updateStats();
-
-      // 3. OPEN REDDIT SUBMIT PAGE
-      window.open(`https://www.reddit.com/r/${sub}/submit`, '_blank');
-
-     
-      showToast(`Posted to r/${sub} + Caption copied`);
-      return;
+      subIndex = (subIndex + 1) % subs.length;
+      save();
+      break;
     }
     subIndex = (subIndex + 1) % subs.length;
   }
-  // If all subs used → auto-reset
-  subChecked = subs[0];
-  subChecked = {}; subIndex = 0; save(); render('subList',subs,subChecked); updateStats();
-  showToast("All subs used → reset!");
+
+  // If everything was used → auto-reset
+  if (!chosenSub) {
+    subChecked = {}; subIndex = 0; save();
+    render('subList', subs, subChecked); updateStats();
+    showToast("All subs used → reset!");
+    return;
+  }
+
+  // === 2. Pick random unused caption (same logic as CAPTION button) ===
+  const unusedCaps = captions.filter(c => !capUsed[c]);
+  if (unusedCaps.length === 0) { capUsed = {}; save(); render('captionList', captions, capUsed); updateStats(); }
+
+  const finalUnused = captions.filter(c => !capUsed[c]);
+  const caption = finalUnused.length 
+    ? finalUnused[Math.floor(Math.random() * finalUnused.length)]
+    : captions[Math.floor(Math.random() * captions.length)];
+
+  capUsed[caption] = true;
+  save();
+  render('captionList', captions, capUsed);
+  updateStats();
+
+  // === 3. Copy caption to clipboard ===
+  navigator.clipboard.writeText(caption);
+
+  // === 4. Open Reddit submit page WITH CAPTION ALREADY PRE-FILLED ===
+  const redditUrl = `https://www.reddit.com/r/${chosenSub}/submit?title=&text=${encodeURIComponent(caption)}`;
+  window.open(redditUrl, '_blank');
+
+  showToast(`r/${chosenSub} opened + caption ready`);
 }
   
 
