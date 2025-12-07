@@ -755,9 +755,92 @@ document.getElementById('captionReset').onclick = () => { if(confirm("Reset capt
 document.getElementById('toggleSub').onclick = () => { const l = document.getElementById('subList'); l.style.display = l.style.display==='block'?'none':'block'; };
 document.getElementById('toggleCap').onclick = () => { const l = document.getElementById('captionList'); l.style.display = l.style.display==='block'?'none':'block'; };
 
-document.getElementById('addSubBtn').onclick = (e) => { e.stopPropagation(); const s=prompt("Subreddit (no r/):"); if(s && s.trim() && !subs.includes(s.trim())){ subs.push(s.trim()); save(); render('subList',subs,subChecked); updateStats(); showToast("Added!"); } else if(s) showToast("Already exists"); };
-document.getElementById('addCapBtn').onclick = (e) => { e.stopPropagation(); const c=prompt("New caption:"); if(c && c.trim() && !captions.includes(c.trim())){ captions.push(c.trim()); save(); render('captionList',captions,capUsed); updateStats(); showToast("Added!"); } else if(c) showToast("Already exists"); };
+//document.getElementById('addSubBtn').onclick = (e) => { e.stopPropagation(); const s=prompt("Subreddit (no r/):"); if(s && s.trim() && !subs.includes(s.trim())){ subs.push(s.trim()); save(); render('subList',subs,subChecked); updateStats(); showToast("Added!"); } else if(s) showToast("Already exists"); };
+//document.getElementById('addCapBtn').onclick = (e) => { e.stopPropagation(); const c=prompt("New caption:"); if(c && c.trim() && !captions.includes(c.trim())){ captions.push(c.trim()); save(); render('captionList',captions,capUsed); updateStats(); showToast("Added!"); } else if(c) showToast("Already exists"); };
+// ==================== SUBREDDITS ====================
+  document.getElementById('addSubBtn').onclick = (e) => {
+  e.stopPropagation();
+  const input = prompt("Add one or more subreddits (one per line, no r/):");
+  if (!input) return;
 
+  const lines = input.split('\n').map(l => l.trim()).filter(l => l);
+  let added = 0;
+  lines.forEach(sub => {
+    if (sub && !subs.includes(sub)) {
+      subs.push(sub);
+      added++;
+    }
+  });
+
+  if (added > 0) {
+    save();
+    render('subList', subs, subChecked);
+    updateStats();
+    showToast(`Added ${added} subreddit${added > 1 ? 's' : ''}`);
+  } else {
+    showToast("Nothing new added");
+  }
+};
+
+// NEW: DELETE ALL SUBREDDITS BUTTON
+const subDeleteAllBtn = document.createElement('button');
+subDeleteAllBtn.textContent = "Delete All";
+subDeleteAllBtn.style.cssText = "background:#c#d32f2f;color:white;padding:8px 14px;border-radius:12px;font-weight:bold;margin-left:8px;";
+subDeleteAllBtn.onclick = () => {
+  if (confirm("Delete ALL subreddits? This cannot be undone!")) {
+    subs = [];
+    subChecked = {};
+    subIndex = 0;
+    save();
+    render('subList', subs, subChecked);
+    updateStats();
+    showToast("All subreddits deleted");
+  }
+};
+document.querySelector('#subContent .content-row:nth-of-type(1) > div').appendChild(subDeleteAllBtn);
+  
+  // ==================== CAPTIONS ====================
+document.getElementById('addCapBtn').onclick = (e) => {
+  e.stopPropagation();
+  const input = prompt("Add one or more captions (one per line):");
+  if (!input) return;
+
+  const lines = input.split('\n').map(l => l.trim()).filter(l => l);
+  let added = 0;
+  lines.forEach(cap => {
+    if (cap && !captions.includes(cap)) {
+      captions.push(cap);
+      added++;
+    }
+  });
+
+  if (added > 0) {
+    save();
+    render('captionList', captions, capUsed);
+    updateStats();
+    showToast(`Added ${added} caption${added > 1 ? 's' : ''}`);
+  } else {
+    showToast("Nothing new added");
+  }
+};
+
+// NEW: DELETE ALL CAPTIONS BUTTON
+const capDeleteAllBtn = document.createElement('button');
+capDeleteAllBtn.textContent = "Delete All";
+capDeleteAllBtn.style.cssText = "background:#d32f2f;color:white;padding:8px 14px;border-radius:12px;font-weight:bold;margin-left:8px;";
+capDeleteAllBtn.onclick = () => {
+  if (confirm("Delete ALL captions? This cannot be undone!")) {
+    captions = [];
+    capUsed = {};
+    save();
+    render('captionList', captions, capUsed);
+    updateStats();
+    showToast("All captions deleted");
+  }
+};
+document.querySelector('#capContent .content-row:nth-of-type(1) > div').appendChild(capDeleteAllBtn);
+
+  
 let userIP = '', previousIP = '', scamalyticsWindow = null;
 
 function updateIPHeader() {
