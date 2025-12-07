@@ -240,6 +240,50 @@
     pointer-events: none;
   }
   #toast.show { opacity: 1; bottom: 130px; }
+
+  /* BEAUTIFUL FLOATING COMBO BUTTON – TOP RIGHT */
+#comboFab {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  width: 68px;
+  height: 68px;
+  background: linear-gradient(135deg, #ff0066, #ff3366, #00ff99);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  box-shadow: 
+    0 8px 25px rgba(255,0,102,0.6),
+    0 0 30px rgba(0,255,153,0.4),
+    inset 0 0 20px rgba(255,255,255,0.2);
+  z-index: 99999;
+  cursor: pointer;
+  animation: pulseGlow 3s infinite alternate;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 10px #000;
+}
+
+#comboFab:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6);
+}
+
+#comboFab:active {
+  transform: scale(0.95);
+}
+
+@keyframes pulseGlow {
+  from { box-shadow: 0 8px 25px rgba(255,0,102,0.6), 0 0 30px rgba(0,255,153,0.4); }
+  to   { box-shadow: 0 12px 40px rgba(255,0,102,0.9), 0 0 50px rgba(0,255,153,0.7); }
+}
 </style>
 </head>
 <body>
@@ -383,15 +427,7 @@
 </div>
 
 <!-- NEW SUPER BUTTON – TOP FLOATING -->
-<div style="position:fixed; top:18px; left:50%; transform:translateX(-50%); z-index:9999;">
-  <button onclick="superPost()"
-          style="padding:14px 32px; font-size:1.4rem; font-weight:bold; border:none; border-radius:50px;
-                 background:linear-gradient(45deg,#ff0066,#9c27b0,#00ff99); color:white;
-                 box-shadow:0 8px 25px rgba(0,0,0,0.7); backdrop-filter:blur(12px);
-                 min-width:240px;">
-    POST (Subr + Caption)
-  </button>
-</div>
+<button id="comboFab">SUB + CAP</button>
 
   
 <div class="fab-container">
@@ -861,58 +897,53 @@ async function pasteUsername() {
   }
 }
 
-function superPost() {
-  // === 1. Pick next unused subreddit (same logic as SUBR button) ===
-  if (subs.length === 0) return showToast("No subs!");
+document.getElementById('comboFab').onclick = () => {
+  // === 1. GET NEXT UNUSED SUBREDDIT ===
+  if (subs.length === 0) return showToast("No subs left!");
 
-  let attempts = 0;
-  let chosenSub = "";
-  while (attempts++ < subs.length) {
-    const sub = subs[subIndex];
-    if (!subChecked[sub]) {
-      chosenSub = sub;
-      subChecked[sub] = true;
-      save();
-      render('subList', subs, subChecked);
-      updateStats();
-      subIndex = (subIndex + 1) % subs.length;
-      save();
-      break;
-    }
+  let sub = '';
+  let startIndex = subIndex;
+  do {
+    sub = subs[subIndex];
+    if (!subChecked[sub]) break;
     subIndex = (subIndex + 1) % subs.length;
+  } while (subIndex !== startIndex);
+
+  if (subChecked[sub]) {
+    subChecked = {}; subIndex = 0; save();
+    showToast("All subs used → Auto-reset!");
   }
 
-  // If everything was used → auto-reset
-  if (!chosenSub) {
-    subChecked = {}; subIndex = 0; save();
-    render('subList', subs, subChecked); updateStats();
-    showToast("All subs used → reset!");
+  subChecked[sub] = true;
+  subIndex = (subIndex + 1) % subs.length;
+  save();
+
+  // === 2. GET NEXT UNUSED CAPTION ===
+  const unusedCaps = captions.filter(c => !capUsed[c]);
+  if (unusedCaps.length === 0) {
+    capUsed = {}; save();
+    showToast("Captions reset!");
     return;
   }
-
-  // === 2. Pick random unused caption (same logic as CAPTION button) ===
-  const unusedCaps = captions.filter(c => !capUsed[c]);
-  if (unusedCaps.length === 0) { capUsed = {}; save(); render('captionList', captions, capUsed); updateStats(); }
-
-  const finalUnused = captions.filter(c => !capUsed[c]);
-  const caption = finalUnused.length 
-    ? finalUnused[Math.floor(Math.random() * finalUnused.length)]
-    : captions[Math.floor(Math.random() * captions.length)];
-
+  const caption = unusedCaps[Math.floor(Math.random() * unusedCaps.length)];
   capUsed[caption] = true;
   save();
+
+  // === 3. OPEN REDDIT WITH CAPTION IN TITLE ===
+  const encodedTitle = encodeURIComponent(caption.trim());
+  const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}&text=Check%20my%20profile%20%F0%9F%91%87`;
+  
+  window.open(redditUrl, '_blank');
+
+  // === 4. UPDATE LISTS ===
+  render('subList', subs, subChecked);
   render('captionList', captions, capUsed);
   updateStats();
 
-  // === 3. Copy caption to clipboard ===
-  navigator.clipboard.writeText(caption);
-
-  // === 4. Open Reddit submit page WITH CAPTION ALREADY PRE-FILLED ===
-  const redditUrl = `https://www.reddit.com/r/${chosenSub}/submit?title=&text=${encodeURIComponent(caption)}`;
-  window.open(redditUrl, '_blank');
-
-  showToast(`r/${chosenSub} opened + caption ready`);
-}
+  // === 5. COPY SUBREDDIT TO CLIPBOARD (optional, for manual use) ===
+  navigator.clipboard.writeText(sub);
+  showToast(`Posted → r/${sub}`);
+};
   
 
 function saveProfile() {
