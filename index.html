@@ -940,7 +940,7 @@ document.getElementById('comboFab').onclick = () => {
 
   // === 3. OPEN REDDIT WITH CAPTION IN TITLE ===
   const encodedTitle = encodeURIComponent(caption.trim());
-  const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}&text=Check%20my%20profile%20%F0%9F%91%87`;
+  const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
   
   window.open(redditUrl, '_blank');
 
