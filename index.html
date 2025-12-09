@@ -364,7 +364,9 @@
         <button id="addSubBtn"style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">+ Add</button>
       </div>
     </div>
-    <div class="content-row"><span></span><button class="toggle" id="toggleSub">List</button></div>
+    <div class="content-row">
+      <button id="subRefresh" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">Refresh</button>
+      <span></span><button class="toggle" id="toggleSub">List</button></div>
     <ul id="subList" style="display:none;"></ul>
   </div>
 </div>
@@ -845,6 +847,20 @@ subDeleteAllBtn.onclick = () => {
   }
 };
 document.querySelector('#subContent .content-row:nth-of-type(1) > div').appendChild(subDeleteAllBtn);
+
+//Refresh SUB
+  document.getElementById('subRefresh').onclick = () => {
+  if (confirm("Reload default subreddits? This will replace your current list with the original defaults.")) {
+    subs = defaultSubs.slice();
+    subChecked = {};
+    subIndex = 0;
+    save();
+    render('subList', subs, subChecked);
+    updateStats();
+    showToast("Subreddits refreshed to default!");
+  }
+};
+
   
   // ==================== CAPTIONS ====================
 document.getElementById('addCapBtn').onclick = (e) => {
