@@ -65,7 +65,7 @@ li .text::after { content: ''; position: absolute; right: 60px; top: 0; bottom: 
         <input type="text" id="profileID" placeholder="ID" readonly style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
-        <button onclick="copyText('profileName')" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy Name</button>
+        <button onclick="copyText('profileName'); triggerLua()" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy Email</button>
         <button onclick="copyText('profileUser')" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy User</button>
         <button onclick="copyText('profilePass')" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy Pass</button>
         <button onclick="copyText('profileID')" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy ID</button>
