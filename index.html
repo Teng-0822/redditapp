@@ -5,300 +5,52 @@
 <title>BEAST MODE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <style>
-  :root {
-    --bg: #0d0d0d;
-    --card: #1a1a1a;
-    --accent: #ff0066;
-    --accent2: #00ff99;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    background: var(--bg);
-    color: white;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    min-height: 100vh;
-    padding: 15px 15px 110px 15px;
-    background: gray;
-  }
-  h1 {
-    text-align:center;
-    font-size: 2.8rem;
-    background: linear-gradient(90deg, #ff0066, #00ff99);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin: 15px 0 20px;
-  }
-  #ipInput {
-    display: block;
-    width: 110px;
-    margin: 0 auto 15px;
-    padding: 8px;
-    font-size: 1rem;
-    text-align: center;
-    background: #222;
-    color: #0f9;
-    border: 1px solid #444;
-    border-radius: 10px;
-  }
-
-  /* DROPDOWNS */
-  .dropdown {
-    background: var(--card);
-    border-radius: 18px;
-    margin: 16px auto;
-    max-width: 420px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.8);
-    border: 1px solid #333;
-    overflow: hidden;
-  }
-  .dropdown-header {
-    display: flex;
-    height: 70px;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 24px;
-    cursor: pointer;
-    background: rgba(255,255,255,0.03);
-  }
-  .center-btn {
-    flex: 1;
-    display: flex;
-    justify-content: left;
-  }
-  .dropdown-header button {
-    padding: 11px 40px;
-    font-size: 1.25rem;
-    font-weight: bold;
-    border: none;
-    border-radius: 16px;
-    min-width: 180px;
-    height: 52px;
-    color: black;
-  }
-
-  .ip-header {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: White;
-    flex: 1;
-    text-align: left;
-    padding-left: 8px;
-  }
-
-  .arrow {
-    font-size: 28px;
-    transition: transform 0.3s ease;
-    color: #aaa;
-    min-width: 50px;
-    text-align: right;
-  }
-  .arrow.open { transform: rotate(180deg); }
-
-  .dropdown-content {
-    padding: 0 20px;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease, padding 0.4s ease;
-    background: gray;
-  }
-  .dropdown-content.open {
-    max-height: 600px;
-    padding: 16px 20px;
-  }
-  .content-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 12px 0;
-    font-size: 0.95rem;
-    color: #ccc;
-  }
-  .content-row button {
-    background: #333;
-    color: #ff0066;
-    border: 2px solid orange;
-    padding: 8px 16px;
-    border-radius: 12px;
-    font-size: 0.9rem;
-  }
-  .content-row .toggle {
-    background: #222;
-    color: #999;
-    border: 1px solid #444;
-  }
-
-  ul {
-    list-style: none;
-    max-height: 260px;
-    overflow-y: auto;
-    padding: 8px;
-    background: #111;
-    border-radius: 10px;
-    border: 1px solid #333;
-    margin-top: 12px;
-    -webkit-overflow-scrolling: touch;
-  }
-  li {
-    padding: 12px;
-    background: #222;
-    margin: 8px 0;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-    overflow: hidden;
-  }
-  li.checked { opacity: 0.4; text-decoration: line-through; }
-  li .text {
-    flex: 1;
-    min-width: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 0.95rem;
-    color: #ddd;
-    padding-right: 10px;
-  }
-  li .text::after {
-    content: '';
-    position: absolute;
-    right: 60px; top: 0; bottom: 0;
-    width: 30px;
-    background: linear-gradient(to right, transparent, #222);
-    pointer-events: none;
-  }
-  .delete {
-    background: none;
-    border: none;
-    color: var(--accent);
-    font-size: 28px;
-    font-weight: bold;
-    min-width: 44px;
-    text-align: center;
-    cursor: pointer;
-  }
-
-  #rotateBtn {
-    padding: 8px 12px;
-    border-radius: 10px;
-    background: orange;
-    color: black;
-    border: 2px solid black;
-  }
-  #refreshBtn {
-    padding: 6px 12px;
-    background: orange;
-    color: black;
-    border: 1px solid whitesmoke;
-    border-radius: 10px;
-    font-size: 11px;
-  }
-
-  .fab-container {
-    position: fixed;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 18px;
-    z-index: 9999;
-    background: gray;
-    padding: 12px 24px;
-    border-radius: 50px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-  }
-  .fab {
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    border: none;
-    color: black;
-    font-size: 26px;
-    font-weight: bold;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.8);
-  }
-  .fab:hover {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6);
-}
-  .fab:active { transform: scale(0.9); }
-
-  #toast {
-    position: fixed;
-    bottom: 110px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: orange;
-    color: black;
-    padding: 12px 28px;
-    border-radius: 30px;
-    font-weight: bold;
-    font-size: 1rem;
-    z-index: 10000;
-    opacity: 0;
-    transition: all 0.4s;
-    backdrop-filter: blur(10px);
-    border: 5px solid black;
-    pointer-events: none;
-  }
-  #toast.show { opacity: 1; bottom: 130px; }
-
-  /* BEAUTIFUL FLOATING COMBO BUTTON – TOP RIGHT */
-#comboFab {
-  position: fixed;
-  bottom: 100px;
-  right: 155px;
-  width: 68px;
-  height: 68px;
-  background: orange;
-  color: black;
-  border: 5px solid black;
-  border-radius: 50%;
-  font-size: 18px;
-  font-weight: 900;
-  letter-spacing: 1px;
-  z-index: 99999;
-  cursor: pointer;
-  backdrop-filter: blur(1px);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-}
-
-#comboFab:hover {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6);
-}
-
-#comboFab:active {
-  transform: scale(0.95);
-}
-
+:root { --bg: #0d0d0d; --card: #1a1a1a; --accent: #ff0066; --accent2: #00ff99; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg); color: white; font-family: 'Segoe UI', Arial, sans-serif; min-height: 100vh; padding: 15px 15px 110px 15px; background: gray; }
+h1 { text-align:center; font-size: 2.8rem; background: linear-gradient(90deg, #ff0066, #00ff99); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 15px 0 20px; }
+#ipInput { display: block; width: 110px; margin: 0 auto 15px; padding: 8px; font-size: 1rem; text-align: center; background: #222; color: #0f9; border: 1px solid #444; border-radius: 10px; }
+/* DROPDOWNS */
+.dropdown { background: var(--card); border-radius: 18px; margin: 16px auto; max-width: 420px; box-shadow: 0 8px 25px rgba(0,0,0,0.8); border: 1px solid #333; overflow: hidden; }
+.dropdown-header { display: flex; height: 70px; align-items: center; justify-content: space-between; padding: 18px 24px; cursor: pointer; background: rgba(255,255,255,0.03); }
+.center-btn { flex: 1; display: flex; justify-content: left; }
+.dropdown-header button { padding: 11px 40px; font-size: 1.25rem; font-weight: bold; border: none; border-radius: 16px; min-width: 180px; height: 52px; color: black; }
+.ip-header { font-size: 1.4rem; font-weight: bold; color: White; flex: 1; text-align: left; padding-left: 8px; }
+.arrow { font-size: 28px; transition: transform 0.3s ease; color: #aaa; min-width: 50px; text-align: right; }
+.arrow.open { transform: rotate(180deg); }
+.dropdown-content { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; background: gray; }
+.dropdown-content.open { max-height: 600px; padding: 16px 20px; }
+.content-row { display: flex; justify-content: space-between; align-items: center; margin: 12px 0; font-size: 0.95rem; color: #ccc; }
+.content-row button { background: #333; color: #ff0066; border: 2px solid orange; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem; }
+.content-row .toggle { background: #222; color: #999; border: 1px solid #444; }
+ul { list-style: none; max-height: 260px; overflow-y: auto; padding: 8px; background: #111; border-radius: 10px; border: 1px solid #333; margin-top: 12px; -webkit-overflow-scrolling: touch; }
+li { padding: 12px; background: #222; margin: 8px 0; border-radius: 10px; display: flex; align-items: center; gap: 12px; position: relative; overflow: hidden; }
+li.checked { opacity: 0.4; text-decoration: line-through; }
+li .text { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.95rem; color: #ddd; padding-right: 10px; }
+li .text::after { content: ''; position: absolute; right: 60px; top: 0; bottom: 0; width: 30px; background: linear-gradient(to right, transparent, #222); pointer-events: none; }
+.delete { background: none; border: none; color: var(--accent); font-size: 28px; font-weight: bold; min-width: 44px; text-align: center; cursor: pointer; }
+#rotateBtn { padding: 8px 12px; border-radius: 10px; background: orange; color: black; border: 2px solid black; }
+#refreshBtn { padding: 6px 12px; background: orange; color: black; border: 1px solid whitesmoke; border-radius: 10px; font-size: 11px; }
+.fab-container { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 18px; z-index: 9999; background: gray; padding: 12px 24px; border-radius: 50px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 30px rgba(0,0,0,0.6); }
+.fab { width: 64px; height: 64px; border-radius: 50%; border: none; color: black; font-size: 26px; font-weight: bold; box-shadow: 0 6px 20px rgba(0,0,0,0.8); }
+.fab:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6); }
+.fab:active { transform: scale(0.9); }
+#toast { position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%); background: orange; color: black; padding: 12px 28px; border-radius: 30px; font-weight: bold; font-size: 1rem; z-index: 10000; opacity: 0; transition: all 0.4s; backdrop-filter: blur(10px); border: 5px solid black; pointer-events: none; }
+#toast.show { opacity: 1; bottom: 130px; }
+#comboFab { position: fixed; bottom: 100px; right: 155px; width: 68px; height: 68px; background: orange; color: black; border: 5px solid black; border-radius: 50%; font-size: 18px; font-weight: 900; letter-spacing: 1px; z-index: 99999; cursor: pointer; backdrop-filter: blur(1px); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+#comboFab:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6); }
+#comboFab:active { transform: scale(0.95); }
+#randomSubBtn { position: fixed; bottom: 100px; right: 75px; width: 68px; height: 68px; background: orange; color: black; border: 5px solid black; border-radius: 50%; font-size: 28px; font-weight: 900; z-index: 99999; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+#randomSubBtn:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6); }
 </style>
 </head>
 <body>
 <div style="display:flex; align-items:justify-content; justify-content:jus; gap:14px; margin:20px auto 15px; max-width:420px; padding:0 10px;">
-  
-  <!-- IP Input -->
-  <input type="text" id="ipInput" placeholder="IP last" value="1" maxlength="3"
-         style="width:96px; height:48px; padding:8px; font-size:1.1rem; text-align:center; 
-                background:orange; color:black; border:2px solid black; border-radius:14px; 
-                font-weight:bold; outline:none; margin-left: 0px;">
-
-  <!-- Toggle Button -->
-  <button id="ipToggle" 
-          style="height:48px; padding:8px; background: orange; color:black; 
-                 border:2px solid black; border-radius:14px; font-weight:bold; 
-                 font-size:1.05rem; min-width:148px; cursor:pointer; transition:all 0.2s;">
-    192.168.1.x
-  </button>
+  <input type="text" id="ipInput" placeholder="IP last" value="1" maxlength="3" style="width:96px; height:48px; padding:8px; font-size:1.1rem; text-align:center; background:orange; color:black; border:2px solid black; border-radius:14px; font-weight:bold; outline:none; margin-left: 0px;">
+  <button id="ipToggle" style="height:48px; padding:8px; background: orange; color:black; border:2px solid black; border-radius:14px; font-weight:bold; font-size:1.05rem; min-width:148px; cursor:pointer; transition:all 0.2s;"> 192.168.1.x </button>
 </div>
 
-<!-- PROFILE DROPDOWN - CONNECTED TO GOOGLE SHEET -->
+<!-- PROFILE DROPDOWN -->
 <div class="dropdown">
   <div class="dropdown-header">
     <div class="center-btn"><button style="background:orange; border:5px solid black; cursor:default;">PROFILE</button></div>
@@ -306,49 +58,30 @@
   </div>
   <div class="dropdown-content" id="profileContent">
     <div style="padding:16px 20px; max-width:100%; box-sizing:border-box;">
-      
-      <!-- 2×2 GRID - Responsive & Safe -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; margin-bottom:12px;">
-        <input type="text" id="profileName" placeholder="Name" readonly
-               style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
-        <input type="text" id="profileUser" placeholder="Username"
-               style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
-        <input type="text" id="profilePass" placeholder="Password"
-               style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
-        <input type="text" id="profileID" placeholder="ID" readonly
-               style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
+        <input type="text" id="profileName" placeholder="Name" readonly style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
+        <input type="text" id="profileUser" placeholder="Username" style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
+        <input type="text" id="profilePass" placeholder="Password" style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
+        <input type="text" id="profileID" placeholder="ID" readonly style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
       </div>
-
-      <!-- COPY BUTTONS - 2×2 Responsive -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
         <button onclick="copyText('profileName')" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy Name</button>
         <button onclick="copyText('profileUser')" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy User</button>
         <button onclick="copyText('profilePass')" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy Pass</button>
         <button onclick="copyText('profileID')" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy ID</button>
       </div>
-
-      <!-- FINAL BUTTON LAYOUT: 4 on top, Save centered below -->
       <div style="display:flex; flex-direction:column; gap:11px; align-items:center;">
-        <!-- Top row: Prev | Generate | Username | Next -->
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:9px; width:100%; max-width:380px;">
           <button onclick="prevProfile()" style="background:black; color:orange; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Prev</button>
           <button onclick="generatePassword()" style="background:black; color:orange; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Generate</button>
           <button onclick="pasteUsername()" style="background:black; color:orange; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Username</button>
           <button onclick="nextProfile()" style="background:black; color:orange; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Next</button>
         </div>
-
-        <!-- Bottom row: Save button centered and wider -->
-        <button onclick="saveProfile()" 
-                style="background:black; color:orange; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem; 
-                       min-width:180px; width:auto; max-width:340px;">
-          Save
-        </button>
+        <button onclick="saveProfile()" style="background:black; color:orange; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem; min-width:180px; width:auto; max-width:340px;"> Save </button>
       </div>
-
     </div>
   </div>
 </div>
-
 
 <!-- SUBREDDIT DROPDOWN -->
 <div class="dropdown">
@@ -360,13 +93,14 @@
     <div class="content-row">
       <span>Done <span id="subDone">0</span> / <span id="subCount">0</span></span>
       <div style="display:flex; gap:8px;">
-        <button id="subrReset"style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">Reset</button>
-        <button id="addSubBtn"style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">+ Add</button>
+        <button id="subrReset" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">Reset</button>
+        <button id="addSubBtn" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">+ Add</button>
       </div>
     </div>
-    <div class="content-row">
+    <div class="content-row" style="justify-content: flex-end; gap: 10px;">
       <button id="subRefresh" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">Refresh</button>
-      <span></span><button class="toggle" id="toggleSub">List</button></div>
+      <button class="toggle" id="toggleSub">List</button>
+    </div>
     <ul id="subList" style="display:none;"></ul>
   </div>
 </div>
@@ -385,18 +119,10 @@
         <button id="addCapBtn" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">+ Add</button>
       </div>
     </div>
-    
     <div class="content-row" style="justify-content: flex-end; gap: 10px;">
-      <button onclick="updateCaptionsNow()" 
-              style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">
-        Refresh
-      </button>
-      <button class="toggle" id="toggleCap" 
-              style="padding:8px 16px; border-radius:12px;">
-        List
-      </button>
+      <button onclick="updateCaptionsNow()" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;"> Refresh </button>
+      <button class="toggle" id="toggleCap" style="padding:8px 16px; border-radius:12px;"> List </button>
     </div>
-
     <ul id="captionList" style="display:none;"></ul>
   </div>
 </div>
@@ -414,257 +140,70 @@
         <input id="rotateLink" placeholder="http://87.120..." style="flex:1;padding:8px;border-radius:10px;background:orange;border:1px solid black;color:black;" />
       </div>
       <div style="background: black;border-radius:12px;padding:14px;text-align:center;font-family:monospace;border:2px solid orange;">
-        <div style="color:White;font-size:14px; font-weight: bold;">Old to <span id="oldIP">—</span>
-          <span id="ip" style="color:White;font-size:14px; font-weight: bold;">Loading...</span>
-        </div>
-        
+        <div style="color:White;font-size:14px; font-weight: bold;">Old to <span id="oldIP">—</span> <span id="ip" style="color:White;font-size:14px; font-weight: bold;">Loading...</span> </div>
         <button id="refreshBtn" onclick="refreshAndOpen()">Refresh + Scam</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- NEW SUPER BUTTON – TOP FLOATING -->
+<!-- FLOATING BUTTONS -->
 <div class="fab-container">
-    <button id="comboFab">SAP</button>
+  <button id="comboFab">SAP</button>
+  <button id="randomSubBtn">R</button>
 </div>
-  
+
+
 <div class="fab-container">
-  <button id="fabD"    class="fab" style="background:orange; border:5px solid black;">D</button>
-  <button id="fabN"    class="fab" style="background:orange; border:5px solid black;">N</button>
-  <button id="fabOF"   class="fab" style="background:orange; border:5px solid black;">OF</button>
+  <button id="fabD" class="fab" style="background:orange; border:5px solid black;">D</button>
+  <button id="fabN" class="fab" style="background:orange; border:5px solid black;">N</button>
+  <button id="fabOF" class="fab" style="background:orange; border:5px solid black;">OF</button>
   <button id="fabLink" class="fab" style="background:orange; border:5px solid black;">Link</button>
   <button id="fabCreate" class="fab" style="background:orange; border:5px solid black;">+</button>
 </div>
-
 <div id="toast"></div>
 
 <script>
-// ← All the powerful code from the previous version is still here (unchanged)
-// Only the UI labels above the buttons have been removed as requested.
-// Everything works exactly the same: auto-reset, no repeats, copy + open, etc.
-const defaultSubs = [
-"ASMRgirls",
-"Ass_and_Feet",
-"ass_cheeks",
-"Ass_Feet_Thighs_Pussy",
-"ass_in_panties",
-"Ass_Pussy_Feet",
-"Ass_vs_Ass",
-"AssAndBoobsCollection",
-"AssAndJerseys",
-"AssAndTitty",
-"assbigforyou",
-"Assclapersinc",
-"AssClappersINC",
-"AssCutiesNSFW",
-"AssDumps",
-"ASSEATINGONLY",
-"assgirls",
-"AssholeFeet",
-"assholeloversparadise",
-"AssholeWinking",
-"AssInShorts",
-"AssInTheWoods",
-"AssIsTheWay",
-"AssKing",
-"Asslift",
-"assloverss",
-"asspicrequest",
-"assrulez",
-"asstasticbbw",
-"AssUpBJ",
-"AssWorlddd",
-"AttractiveLadies",
-"attractivemother",
-"AtWork_NSFW",
-"AusNZNSFW",
-"Aussie_Bros",
-"austriaonlyfans",
-"Babes_No_Face",
-"BabesOnOnlyfans",
-"BaddieWithAFatty",
-"balkan_onlyfans",
-"BBCFEMBOYS",
-"BdsmNoRestriction",
-"BDSMOnlyFans_Pages",
-"BDSMOnlyFansPromos",
-"beggingtobeused",
-"BellyButtonWorld",
-"Best_LingerieOnlyFans",
-"BestChest",
-"BestOfRapeFantasies",
-"bigboobs_love",
-"BigTitOnlyfans",
-"BigTitsBigAreolas",
-"BigtitsOfTiktok",
-"boobtease",
-"BornToBeBreed",
-"Breedinghotwives",
-"bum_bum",
-"BUSTYQUEENS",
-"buttsgonewild",
-"CanadaOnlyfansGirls",
-"Casalonlyfans",
-"cellulite_gw",
-"cheatingamateur",
-"CheatingPOV",
-"Chicasenlenceria",
-"ChurchMILF",
-"contenidorealchicas",
-"ContentClubhouse",
-"csnfashionteens",
-"cuckoldcheating",
-"CuteFuckToys",
-"cutiesandbooties",
-"daddysfucktoyz",
-"DailySluts",
-"degradedslutr4r",
-"Desperatewhoress",
-"Detroit_dictitsandass",
-"Diary",
-"DildoXXX",
-"DL_Hood_Ninja",
-"DoYouLookLikeMe",
-"dressedhot",
-"dressedmom",
-"EbonyOnlyfansPromo",
-"EuropeanOnlyFans",
-"Fansly_Nature",
-"Fansly_Pee",
-"Fansly_Texas",
-"fanslybabe_",
-"fanslybuyers",
-"FanslyChunky",
-"fanslyforwomen",
-"FanslyGingers",
-"FanslyMostWanted",
-"FanslyOnlyFans",
-"FanslyPawgs",
-"Fanslypromocentral",
-"FanslyRealNewbies",
-"FanslyRedheads",
-"FanslyShoutout",
-"FanslyYummyFeet",
-"feedees4feeders",
-"FeetAdmirers",
-"feetfindercom",
-"feetpicsbuyerandsell",
-"FemaleFeet",
-"findominatrix",
-"footaddictz",
-"FootSlaveMarket",
-"FreakyNewYorkR4R",
-"FreeFanslyPromoting",
-"freegirlsOnlyfans",
-"fuckingtweakersthe2nd"
-];
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbyXhbEHzbbk1vmmrAFBEE1vBSNb-FGdJgZ1nYLnRTxJ2yW8YxSfb2BeRJ0N6gZ1Rayi/exec";
+const PROFILE_URL = SHEET_URL;
 
-  const defaultCaptions = [
- "I was told this outfit was ‘too distracting’… thoughts?",
-"Accidentally caught a glimpse in the mirror and… yeah, I had to share.",
-"Guess who’s feeling just a little too confident today?",
-"Tried something new—might delete later, might not.",
-"Soft lighting + good mood = this.",
-"I swear I wasn’t trying to look this tempting… it just happened.",
-"This is what happens when I get bored.",
-"Should I wear this out, or is it a stay-home kind of look?",
-"Caught myself smiling… then realized why.",
-"Tell me this wasn’t a bad idea.",
-"Low effort. High effect.",
-"You can look… but be polite about it.",
-"I blame the lighting for making me feel bold.",
-"Trying to behave, failing miserably.",
-"I’m not saying I look good today, but I’m also not not saying it.",
-"Trying to decide if this is too much… or just enough.",
-"I was going for cute, ended up with… whatever this is.",
-"Is it warm in here, or is it just the energy?",
-"I promise I don’t always look like this. Sometimes I look better.",
-"Confidence level: questionable but committed.",
-"I’m not teasing… okay maybe a little.",
-"This is what happens when I trust my mirror too much.",
-"Felt photogenic. Might regret it later.",
-"Trying to distract myself. Apparently distracting others too.",
-"Caught in a flirty mood. Oops.",
-"I swear I dress like an adult sometimes. Just not today.",
-"If this is wrong, I’m not trying to be right.",
-"Being mysterious is fun… right?",
-"It’s the almost-innocent look for me.",
-"Didn’t expect this to look good… pleasantly surprised.",
-"You weren’t expecting this today, were you?",
-"Soft tease. Calm down.",
-"Decided subtlety is overrated.",
-"Testing the limits of ‘family-friendly.’",
-"I wanted cozy. Got cute by accident.",
-"Smile first, chaos second.",
-"I look sweet, but the attitude says otherwise.",
-"A little playful, nothing wild.",
-"Let’s pretend this is totally normal.",
-"Just enough tease to keep things interesting."
-
-];
-  
-const dmTexts = [
-"I’m new here, come take a peek at my page below and enjoy a little surprise I left for you",
-"Still figuring things out here, check out my page and grab your free surprise",
-"Just getting started here, have a look at my page and claim your cute freebie",
-"I’m the new girl here, check my page and treat yourself to a sweet surprise",
-"Super new here, come visit my page and enjoy a little gift from me",
-"Just joined, have a look at my page and don’t miss the free surprise waiting for you",
-"Newbie alert, come check my page and grab the adorable surprise I made for you",
-"I’m fresh here, take a moment to visit my page and get your special little treat",
-"Still new around here, check out my page and enjoy your free surprise",
-"Just starting out here, come see my page and pick up the cute surprise I prepared for you"
-];
-
-const names = [
-"Sophyy 🌸",
-"Sophiaa 🌷",
-"Sophi 💋",
-"Sophiya 🌺",
-"Sofayuh 😍",
-"Soffie 🌼",
-"Sofey 💖",
-"Soffyy 😝",
-"Sofy 💘",
-"Sofiy 🦋",
-"Sofiahh 🍬",
-"Sofiaaaa 💕",
-"Sophie 😝",
-"Sophia 😊",
-"Sofie 🙈",
-"Sofiaa 😍",
-"Sofia 🍑",
-"Sofiyah ✨",
-"Sofiya 💞",
-"Sofii 💕",
-"Sofiee 😘",
-"Sofiah 💗",
-"Sophiyaaa 😍",
-"Sophiie 🙈",
-"Sofiyaaa ✨"
-];
-
-const ofLines = [
-"OF (nudes&dms)😜",
-"OF (nudez&seks)😜",
-"OF (nudes&dms)🙈"
-];
-
-const linkUrl = "https://tapformysocials.me/girlygirl";
-let subs = JSON.parse(localStorage.getItem('subs3')||'null') || defaultSubs.slice();
+let subs = [];
+let captions = [];
+let randomSubList = [];
 let subChecked = JSON.parse(localStorage.getItem('subCh3')||'null') || {};
 let subIndex = parseInt(localStorage.getItem('subIdx3')||'0');
-let captions = JSON.parse(localStorage.getItem('caps3')||'null') || defaultCaptions.slice();
 let capUsed = JSON.parse(localStorage.getItem('capUs3')||'null') || {};
 let dmUsed = JSON.parse(localStorage.getItem('dmUsed')||'null') || {};
 let nameUsed = JSON.parse(localStorage.getItem('nameUsed')||'null') || {};
 let ofUsed = JSON.parse(localStorage.getItem('ofUsed')||'null') || {};
 
-function updateCaptionsNow() {
-  localStorage.removeItem('caps3');
-  localStorage.removeItem('capUs3');
-  location.reload();
+const dmTexts = [ "I’m new here, come take a peek at my page below and enjoy a little surprise I left for you", "Still figuring things out here, check out my page and grab your free surprise", "Just getting started here, have a look at my page and claim your cute freebie", "I’m the new girl here, check my page and treat yourself to a sweet surprise", "Super new here, come visit my page and enjoy a little gift from me", "Just joined, have a look at my page and don’t miss the free surprise waiting for you", "Newbie alert, come check my page and grab the adorable surprise I made for you", "I’m fresh here, take a moment to visit my page and get your special little treat", "Still new around here, check out my page and enjoy your free surprise", "Just starting out here, come see my page and pick up the cute surprise I prepared for you" ];
+const names = [ "Sophyy 🌸", "Sophiaa 🌷", "Sophi 💋", "Sophiya 🌺", "Sofayuh 😍", "Soffie 🌼", "Sofey 💖", "Soffyy 😝", "Sofy 💘", "Sofiy 🦋", "Sofiahh 🍬", "Sofiaaaa 💕", "Sophie 😝", "Sophia 😊", "Sofie 🙈", "Sofiaa 😍", "Sofia 🍑", "Sofiyah ✨", "Sofiya 💞", "Sofii 💕", "Sofiee 😘", "Sofiah 💗", "Sophiyaaa 😍", "Sophiie 🙈", "Sofiyaaa ✨" ];
+const ofLines = [ "OF (nudes&dms)😜", "OF (nudez&seks)😜", "OF (nudes&dms)🙈" ];
+const linkUrl = "https://tapformysocials.me/girlygirl";
+
+async function loadFromSheet() {
+  try {
+    const resp = await fetch(SHEET_URL + "?action=readAll&t=" + Date.now());
+    const data = await resp.json();
+    const rows = data.values || [];
+    subs = rows.map(r => r[4]).filter(Boolean); // Column E
+    captions = rows.map(r => r[5]).filter(Boolean); // Column F
+    randomSubList = rows.map(r => r[6]).filter(Boolean); // Column G
+    if (subs.length === 0) subs = JSON.parse(localStorage.getItem('subs3') || '[]');
+    if (captions.length === 0) captions = JSON.parse(localStorage.getItem('caps3') || '[]');
+    render('subList', subs, subChecked);
+    render('captionList', captions, capUsed);
+    updateStats();
+    showToast(`Sheet loaded – Subs: ${subs.length} | Caps: ${captions.length}`);
+  } catch (e) {
+    subs = JSON.parse(localStorage.getItem('subs3') || '[]');
+    captions = JSON.parse(localStorage.getItem('caps3') || '[]');
+    render('subList', subs, subChecked);
+    render('captionList', captions, capUsed);
+    updateStats();
+    showToast("Sheet offline – using local data");
+  }
 }
 
 const save = () => {
@@ -678,21 +217,11 @@ const save = () => {
   localStorage.setItem('ofUsed', JSON.stringify(ofUsed));
 };
 
-// Add this anywhere in your <script> (preferably near the top with other globals)
 let baseIP = localStorage.getItem('selectedBaseIP') || '192.168.1';
-
 function updateToggleButton() {
   const btn = document.getElementById('ipToggle');
-  if (baseIP === '192.168.1') {
-    btn.textContent = '192.168.1.x';
-    btn.style.background = 'orange';
-    btn.style.border = '2px solid black';
-  } else {
-    btn.textContent = '10.161.37.x';
-    btn.style.background = 'black';
-    btn.style.border = '2px solid orange';
-    btn.style.color = 'white';
-  }
+  if (baseIP === '192.168.1') { btn.textContent = '192.168.1.x'; btn.style.background = 'orange'; btn.style.border = '2px solid black'; }
+  else { btn.textContent = '10.161.37.x'; btn.style.background = 'black'; btn.style.border = '2px solid orange'; btn.style.color = 'white'; }
 }
 document.getElementById('ipToggle').onclick = () => {
   baseIP = baseIP === '192.168.1' ? '10.161.37' : '192.168.1';
@@ -701,19 +230,12 @@ document.getElementById('ipToggle').onclick = () => {
   showToast(`Switched to ${baseIP}.x`);
 };
 
-// Update triggerLua to use the selected base
 function triggerLua() {
   const ipPart = document.getElementById("ipInput").value.trim();
   if (!ipPart || isNaN(ipPart)) return;
   const url = `http://${baseIP}.${ipPart}:8080/control/start_playing?path=/test.lua&t=${Date.now()}`;
   new Image().src = url;
 }
-
-// On page load
-window.addEventListener('load', () => {
-  updateToggleButton();
-  // ... rest of your existing load code ...
-});
 
 function toggleDropdown(type) {
   const map = { sub: 'subContent', cap: 'capContent', ip: 'ipContent', profile: 'profileContent' };
@@ -730,9 +252,7 @@ const render = (id, data, used) => {
   data.forEach((item, i) => {
     const li = document.createElement('li');
     li.className = used[item] ? 'checked' : '';
-    li.innerHTML = `<input type="checkbox" ${used[item]?'checked':''}>
-                    <div class="text">${item}</div>
-                    <button class="delete">X</button>`;
+    li.innerHTML = `<input type="checkbox" ${used[item]?'checked':''}> <div class="text">${item}</div> <button class="delete">X</button>`;
     li.querySelector('input').onchange = () => { used[item] = !used[item]; save(); render(id,data,used); updateStats(); };
     li.querySelector('.delete').onclick = () => { if(confirm('Delete?')){ data.splice(i,1); delete used[item]; save(); render(id,data,used); updateStats(); }};
     ul.appendChild(li);
@@ -747,10 +267,6 @@ const updateStats = () => {
   updateIPHeader();
 };
 
-render('subList', subs, subChecked);
-render('captionList', captions, capUsed);
-updateStats();
-
 document.getElementById('subrBtn').onclick = () => {
   if(subs.length===0) return alert("Empty!");
   let attempts=0;
@@ -760,31 +276,21 @@ document.getElementById('subrBtn').onclick = () => {
       navigator.clipboard.writeText(sub);
       window.open(`https://www.reddit.com/r/${sub}/submit`, '_blank');
       subChecked[sub] = true; save(); render('subList',subs,subChecked); updateStats();
-      subIndex = (subIndex + 1) % subs.length; save();
-      return;
+      subIndex = (subIndex + 1) % subs.length; save(); return;
     }
     subIndex = (subIndex + 1) % subs.length;
   }
   subChecked = {}; subIndex = 0; save(); render('subList',subs,subChecked); updateStats();
-  alert("All done to auto-reset!");
+  alert("All done → auto-reset!");
 };
 
 document.getElementById('captionBtn').onclick = () => {
   if(captions.length===0) return alert("Empty!");
   const unused = captions.filter(c => !capUsed[c]);
-  if(unused.length===0){ capUsed={}; save(); render('captionList',captions,capUsed); updateStats(); alert("All used to reset!"); }
+  if(unused.length===0){ capUsed={}; save(); render('captionList',captions,capUsed); updateStats(); alert("All used → reset!"); }
   const pick = unused.length ? unused[Math.floor(Math.random()*unused.length)] : captions[Math.floor(Math.random()*captions.length)];
-  navigator.clipboard.writeText(pick);
-  capUsed[pick] = true; save(); render('captionList',captions,capUsed); updateStats();
-  triggerLua();
+  navigator.clipboard.writeText(pick); capUsed[pick] = true; save(); render('captionList',captions,capUsed); updateStats(); triggerLua();
 };
-
-function triggerLua() {
-  const ipPart = document.getElementById("ipInput").value.trim();
-  if (!ipPart || isNaN(ipPart)) return;
-  const url = `http://192.168.1.${ipPart}:8080/control/start_playing?path=/test.lua&t=${Date.now()}`;
-  new Image().src = url;
-}
 
 const randomNoRepeat = (arr, used) => {
   const unused = arr.filter(x => !used[x]);
@@ -800,347 +306,71 @@ document.getElementById('fabLink').onclick = () => { navigator.clipboard.writeTe
 
 document.getElementById('subrReset').onclick = () => { if(confirm("Reset subs?")){ subChecked={}; subIndex=0; save(); render('subList',subs,subChecked); updateStats(); }};
 document.getElementById('captionReset').onclick = () => { if(confirm("Reset captions?")){ capUsed={}; save(); render('captionList',captions,capUsed); updateStats(); }};
-
 document.getElementById('toggleSub').onclick = () => { const l = document.getElementById('subList'); l.style.display = l.style.display==='block'?'none':'block'; };
 document.getElementById('toggleCap').onclick = () => { const l = document.getElementById('captionList'); l.style.display = l.style.display==='block'?'none':'block'; };
 
-//document.getElementById('addSubBtn').onclick = (e) => { e.stopPropagation(); const s=prompt("Subreddit (no r/):"); if(s && s.trim() && !subs.includes(s.trim())){ subs.push(s.trim()); save(); render('subList',subs,subChecked); updateStats(); showToast("Added!"); } else if(s) showToast("Already exists"); };
-//document.getElementById('addCapBtn').onclick = (e) => { e.stopPropagation(); const c=prompt("New caption:"); if(c && c.trim() && !captions.includes(c.trim())){ captions.push(c.trim()); save(); render('captionList',captions,capUsed); updateStats(); showToast("Added!"); } else if(c) showToast("Already exists"); };
-// ==================== SUBREDDITS ====================
-  document.getElementById('addSubBtn').onclick = (e) => {
-  e.stopPropagation();
-  const input = prompt("Add one or more subreddits (one per line, no r/):");
-  if (!input) return;
+document.getElementById('addSubBtn').onclick = (e) => { e.stopPropagation(); const input = prompt("Add one or more subreddits (one per line, no r/):"); if (!input) return; const lines = input.split('\n').map(l => l.trim()).filter(l => l); let added = 0; lines.forEach(sub => { if (sub && !subs.includes(sub)) { subs.push(sub); added++; } }); if (added > 0) { save(); render('subList', subs, subChecked); updateStats(); showToast(`Added ${added} subreddit${added > 1 ? 's' : ''}`); } else { showToast("Nothing new added"); } };
+const subDeleteAllBtn = document.createElement('button'); subDeleteAllBtn.textContent = "Delete All"; subDeleteAllBtn.style.cssText = "background:gray;color:#000;padding:8px 14px;border-radius:12px;font-weight:bold;margin-left:8px;"; subDeleteAllBtn.onclick = () => { if (confirm("Delete ALL subreddits?")) { subs = []; subChecked = {}; subIndex = 0; save(); render('subList', subs, subChecked); updateStats(); showToast("All subreddits deleted"); } }; document.querySelector('#subContent .content-row:nth-of-type(1) > div').appendChild(subDeleteAllBtn);
+document.getElementById('subRefresh').onclick = () => loadFromSheet();
 
-  const lines = input.split('\n').map(l => l.trim()).filter(l => l);
-  let added = 0;
-  lines.forEach(sub => {
-    if (sub && !subs.includes(sub)) {
-      subs.push(sub);
-      added++;
-    }
-  });
+document.getElementById('addCapBtn').onclick = (e) => { e.stopPropagation(); const input = prompt("Add one or more captions (one per line):"); if (!input) return; const lines = input.split('\n').map(l => l.trim()).filter(l => l); let added = 0; lines.forEach(cap => { if (cap && !captions.includes(cap)) { captions.push(cap); added++; } }); if (added > 0) { save(); render('captionList', captions, capUsed); updateStats(); showToast(`Added ${added} caption${added > 1 ? 's' : ''}`); } else { showToast("Nothing new added"); } };
+const capDeleteAllBtn = document.createElement('button'); capDeleteAllBtn.textContent = "Delete All"; capDeleteAllBtn.style.cssText = "background:gray;color:#000;padding:8px 14px;border-radius:12px;font-weight:bold;margin-left:8px;"; capDeleteAllBtn.onclick = () => { if (confirm("Delete ALL captions?")) { captions = []; capUsed = {}; save(); render('captionList', captions, capUsed); updateStats(); showToast("All captions deleted"); } }; document.querySelector('#capContent .content-row:nth-of-type(1) > div').appendChild(capDeleteAllBtn);
 
-  if (added > 0) {
-    save();
-    render('subList', subs, subChecked);
-    updateStats();
-    showToast(`Added ${added} subreddit${added > 1 ? 's' : ''}`);
-  } else {
-    showToast("Nothing new added");
-  }
-};
+function updateCaptionsNow() { localStorage.removeItem('caps3'); localStorage.removeItem('capUs3'); location.reload(); }
 
-// NEW: DELETE ALL SUBREDDITS BUTTON
-const subDeleteAllBtn = document.createElement('button');
-subDeleteAllBtn.textContent = "Delete All";
-subDeleteAllBtn.style.cssText = "background:gray;color:#000;padding:8px 14px;border-radius:12px;font-weight:bold;margin-left:8px;";
-subDeleteAllBtn.onclick = () => {
-  if (confirm("Delete ALL subreddits? This cannot be undone!")) {
-    subs = [];
-    subChecked = {};
-    subIndex = 0;
-    save();
-    render('subList', subs, subChecked);
-    updateStats();
-    showToast("All subreddits deleted");
-  }
-};
-document.querySelector('#subContent .content-row:nth-of-type(1) > div').appendChild(subDeleteAllBtn);
-
-//Refresh SUB
-  document.getElementById('subRefresh').onclick = () => {
-  if (confirm("Reload default subreddits? This will replace your current list with the original defaults.")) {
-    subs = defaultSubs.slice();
-    subChecked = {};
-    subIndex = 0;
-    save();
-    render('subList', subs, subChecked);
-    updateStats();
-    showToast("Subreddits refreshed to default!");
-  }
-};
-
-  
-  // ==================== CAPTIONS ====================
-document.getElementById('addCapBtn').onclick = (e) => {
-  e.stopPropagation();
-  const input = prompt("Add one or more captions (one per line):");
-  if (!input) return;
-
-  const lines = input.split('\n').map(l => l.trim()).filter(l => l);
-  let added = 0;
-  lines.forEach(cap => {
-    if (cap && !captions.includes(cap)) {
-      captions.push(cap);
-      added++;
-    }
-  });
-
-  if (added > 0) {
-    save();
-    render('captionList', captions, capUsed);
-    updateStats();
-    showToast(`Added ${added} caption${added > 1 ? 's' : ''}`);
-  } else {
-    showToast("Nothing new added");
-  }
-};
-
-// NEW: DELETE ALL CAPTIONS BUTTON
-const capDeleteAllBtn = document.createElement('button');
-capDeleteAllBtn.textContent = "Delete All";
-capDeleteAllBtn.style.cssText = "background:gray;color:#000;padding:8px 14px;border-radius:12px;font-weight:bold;margin-left:8px;";
-capDeleteAllBtn.onclick = () => {
-  if (confirm("Delete ALL captions? This cannot be undone!")) {
-    captions = [];
-    capUsed = {};
-    save();
-    render('captionList', captions, capUsed);
-    updateStats();
-    showToast("All captions deleted");
-  }
-};
-document.querySelector('#capContent .content-row:nth-of-type(1) > div').appendChild(capDeleteAllBtn);
-
-  
 let userIP = '', previousIP = '', scamalyticsWindow = null;
+function updateIPHeader() { const ip = document.getElementById('ip').textContent; document.getElementById('ipHeader').textContent = (ip && ip !== 'Loading...' && !ip.includes('Failed') && !ip.includes('Offline')) ? ip : 'No IP'; }
+fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => { userIP = d.ip; document.getElementById("ip").textContent = userIP; updateIPHeader(); }).catch(() => { document.getElementById("ip").textContent = "Offline"; updateIPHeader(); });
 
-function updateIPHeader() {
-  const ip = document.getElementById('ip').textContent;
-  document.getElementById('ipHeader').textContent = (ip && ip !== 'Loading...' && !ip.includes('Failed') && !ip.includes('Offline')) ? ip : 'No IP';
-}
+function rotateIP() { const btn = document.getElementById("rotateBtn"); const url = document.getElementById("rotateLink").value.trim(); if (!url) return alert("Enter URL"); btn.disabled = true; btn.innerHTML = "Starting..."; new Image().src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(); let s = 8; const timer = setInterval(() => { s--; btn.innerHTML = s > 0 ? `Wait ${s}s...` : "Done!"; if (s <= 0) clearInterval(timer); }, 1000); setTimeout(() => { btn.innerHTML = "Go"; btn.disabled = false; showToast("Rotation triggered!"); }, 8500); }
 
-fetch('https://api.ipify.org?format=json')
-  .then(r => r.json())
-  .then(d => { userIP = d.ip; document.getElementById("ip").textContent = userIP; updateIPHeader(); })
-  .catch(() => { document.getElementById("ip").textContent = "Offline"; updateIPHeader(); });
+function refreshAndOpen() { const btn = document.getElementById("refreshBtn"); btn.disabled=true; btn.innerHTML="Loading..."; if (!scamalyticsWindow || scamalyticsWindow.closed) scamalyticsWindow = window.open('about:blank','_blank'); fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ if(userIP){ previousIP=userIP; document.getElementById("oldIP").textContent=previousIP; } userIP=d.ip; document.getElementById("ip").textContent=userIP; updateIPHeader(); scamalyticsWindow.location.href=`https://scamalytics.com/ip/${userIP}`; btn.style.backgroundColor = (previousIP && previousIP!==userIP) ? "#2e7d32" : "#d32f2f"; btn.innerHTML = (previousIP && previousIP!==userIP) ? "Changed!" : "No Change"; }).catch(()=>{ btn.style.backgroundColor="#b71c1c"; btn.innerHTML="Failed"; }).finally(()=>{ btn.disabled=false; }); }
 
-function rotateIP() {
-  const btn = document.getElementById("rotateBtn");
-  const url = document.getElementById("rotateLink").value.trim();
-  if (!url) return alert("Enter URL");
+function showToast(m) { const t = document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t.timeout); t.timeout=setTimeout(()=>t.classList.remove('show'),1800); }
 
-  btn.disabled = true;
-  btn.innerHTML = "Starting...";
+document.getElementById('randomSubBtn').onclick = () => {
+  if (randomSubList.length === 0) return showToast("No subs in column G");
+  const random = randomSubList[Math.floor(Math.random() * randomSubList.length)];
+  window.open("https://www.reddit.com/r/" + random, "_blank");
+  showToast("Opened r/" + random);
+};
 
-  // Trigger rotation
-  new Image().src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
-
-  // 8-second countdown only
-  let s = 8;
-  const timer = setInterval(() => {
-    s--;
-    btn.innerHTML = s > 0 ? `Wait ${s}s...` : "Done!";
-    if (s <= 0) clearInterval(timer);
-  }, 1000);
-
-  // After countdown → just reset button, NO auto refresh
-  setTimeout(() => {
-    btn.innerHTML = "Go";
-    btn.disabled = false;
-    showToast("Rotation triggered!");
-  }, 8500);
-}
-
-function refreshAndOpen() {
-  const btn = document.getElementById("refreshBtn"); btn.disabled=true; btn.innerHTML="Loading...";
-  if (!scamalyticsWindow || scamalyticsWindow.closed) scamalyticsWindow = window.open('about:blank','_blank');
-  fetch('https://api.ipify.org?format=json')
-    .then(r=>r.json())
-    .then(d=>{
-      if(userIP){ previousIP=userIP; document.getElementById("oldIP").textContent=previousIP; }
-      userIP=d.ip; document.getElementById("ip").textContent=userIP; updateIPHeader();
-      scamalyticsWindow.location.href=`https://scamalytics.com/ip/${userIP}`;
-      btn.style.backgroundColor = (previousIP && previousIP!==userIP) ? "#2e7d32" : "#d32f2f";
-      btn.innerHTML = (previousIP && previousIP!==userIP) ? "Changed!" : "No Change";
-    })
-    .catch(()=>{ btn.style.backgroundColor="#b71c1c"; btn.innerHTML="Failed"; })
-    .finally(()=>{ btn.disabled=false; });
-}
-
-function showToast(m) {
-  const t = document.getElementById('toast'); t.textContent=m; t.classList.add('show');
-  clearTimeout(t.timeout); t.timeout=setTimeout(()=>t.classList.remove('show'),1800);
-}
-
-window.addEventListener('load', () => {
-  ['subContent','capContent','ipContent'].forEach(id => document.getElementById(id).classList.remove('open'));
-  ['subArrow','capArrow','ipArrow'].forEach(id => document.getElementById(id).classList.remove('open'));
-  updateIPHeader();
-});
-
-
-// === PROFILE SYSTEM - FULLY PRIVATE + REMEMBERS LAST PROFILE ===
-const PROFILE_URL = "https://script.google.com/macros/s/AKfycby8h_cdtEIHYjpewRUu48hq2u9eC5pYYwlxYBm5BP6yXPu4CZ8ngWwEXhvwwSqN0h3V/exec"; // ← YOUR WEB APP URL HERE
-
-let profileData = [];
-let currentRow = 2;
-let currentIndex = parseInt(localStorage.getItem('lastProfileIndex') || '0'); // remembers your place
-
-function loadProfiles() {
-  fetch(PROFILE_URL + "?action=read&t=" + Date.now())
-    .then(r => r.json())
-    .then(d => {
-      profileData = d.values || [];
-      if (profileData.length === 0) {
-        showToast("Sheet is empty");
-        clearProfileFields();
-      } else {
-        // Clamp index in case sheet changed
-        if (currentIndex >= profileData.length) currentIndex = profileData.length - 1;
-        loadProfile(currentIndex);
-        showToast(`Profile ${currentIndex + 1}/${profileData.length} loaded`);
-      }
-    })
-    .catch(() => showToast("Sheet offline"));
-}
-
-function clearProfileFields() {
-  document.getElementById('profileName').value = '';
-  document.getElementById('profilePass').value = '';
-  document.getElementById('profileUser').value = '';
-  document.getElementById('profileID').value = '';
-}
-
-function loadProfile(index) {
-  if (profileData.length === 0) return;
-  if (index < 0) index = 0;
-  if (index >= profileData.length) index = profileData.length - 1;
-
-  const row = profileData[index];
-  document.getElementById('profileName').value = row[0] || '';
-  document.getElementById('profilePass').value = row[1] || '';
-  document.getElementById('profileUser').value = row[2] || '';
-  document.getElementById('profileID').value   = row[3] || '';
-
-  currentRow = index + 2;
-  currentIndex = index;
-  localStorage.setItem('lastProfileIndex', index); // remembers even after refresh/close
-}
-
+let profileData = []; let currentRow = 2; let currentIndex = parseInt(localStorage.getItem('lastProfileIndex') || '0');
+function loadProfiles() { fetch(PROFILE_URL + "?action=read&t=" + Date.now()).then(r => r.json()).then(d => { profileData = d.values || []; if (profileData.length === 0) { showToast("Sheet is empty"); clearProfileFields(); } else { if (currentIndex >= profileData.length) currentIndex = profileData.length - 1; loadProfile(currentIndex); showToast(`Profile ${currentIndex + 1}/${profileData.length} loaded`); } }).catch(() => showToast("Sheet offline")); }
+function clearProfileFields() { document.getElementById('profileName').value = ''; document.getElementById('profilePass').value = ''; document.getElementById('profileUser').value = ''; document.getElementById('profileID').value = ''; }
+function loadProfile(index) { if (profileData.length === 0) return; if (index < 0) index = 0; if (index >= profileData.length) index = profileData.length - 1; const row = profileData[index]; document.getElementById('profileName').value = row[0] || ''; document.getElementById('profilePass').value = row[1] || ''; document.getElementById('profileUser').value = row[2] || ''; document.getElementById('profileID').value = row[3] || ''; currentRow = index + 2; currentIndex = index; localStorage.setItem('lastProfileIndex', index); }
 function prevProfile() { loadProfile(currentIndex - 1); }
 function nextProfile() { loadProfile(currentIndex + 1); }
-
-function generatePassword() {
-    if (document.getElementById('profilePass').value !== '') {
-        return showToast("Password not empty");
-    }
-
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*_-";
-    let randomPart = "";
-    const len = Math.floor(Math.random() * 5) + 10; // 10–14 chars for better security
-
-    for (let i = 0; i < len; i++) {
-        randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-
-    const finalPassword = "reddit" + randomPart;
-
-    document.getElementById('profilePass').value = finalPassword;
-    copyText('profilePass');
-    showToast(`Generated: ${finalPassword}`);
-}
-
-async function pasteUsername() {
-  try {
-    const text = await navigator.clipboard.readText();
-    document.getElementById('profileUser').value = text.trim();
-    showToast("Username pasted");
-  } catch {
-    showToast("Paste failed (allow clipboard)");
-  }
-}
+function generatePassword() { if (document.getElementById('profilePass').value !== '') { return showToast("Password not empty"); } const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*_-"; let randomPart = ""; const len = Math.floor(Math.random() * 5) + 10; for (let i = 0; i < len; i++) { randomPart += chars.charAt(Math.floor(Math.random() * chars.length)); } const finalPassword = "reddit" + randomPart; document.getElementById('profilePass').value = finalPassword; copyText('profilePass'); showToast(`Generated: ${finalPassword}`); }
+async function pasteUsername() { try { const text = await navigator.clipboard.readText(); document.getElementById('profileUser').value = text.trim(); showToast("Username pasted"); } catch { showToast("Paste failed (allow clipboard)"); } }
+function saveProfile() { const pass = document.getElementById('profilePass').value.trim(); const user = document.getElementById('profileUser').value.trim(); if (!pass || !user) return showToast("Fill Password & Username"); fetch(`${PROFILE_URL}?action=write&row=${currentRow}&pass=${encodeURIComponent(pass)}&user=${encodeURIComponent(user)}&t=${Date.now()}`).then(r => r.json()).then(() => { showToast("Saved to sheet"); profileData[currentIndex][1] = pass; profileData[currentIndex][2] = user; }).catch(() => showToast("Save failed")); }
+function copyText(id) { const el = document.getElementById(id); el.focus(); el.select(); navigator.clipboard.writeText(el.value); showToast((el.placeholder || el.id) + " copied"); }
+document.getElementById('fabCreate').onclick = () => { const currentID = document.getElementById('profileID').value.trim(); if (!currentID) { showToast("No ID loaded"); return; } navigator.clipboard.writeText(currentID); window.location.href = "shortcuts://run-shortcut?name=CreateRed"; showToast("ID copied → CreateRed launched"); };
 
 document.getElementById('comboFab').onclick = () => {
-  // === 1. GET NEXT UNUSED SUBREDDIT ===
   if (subs.length === 0) return showToast("No subs left!");
-
-  let sub = '';
-  let startIndex = subIndex;
-  do {
-    sub = subs[subIndex];
-    if (!subChecked[sub]) break;
-    subIndex = (subIndex + 1) % subs.length;
-  } while (subIndex !== startIndex);
-
-  if (subChecked[sub]) {
-    subChecked = {}; subIndex = 0; save();
-    showToast("All subs used → Auto-reset!");
-  }
-
-  subChecked[sub] = true;
-  subIndex = (subIndex + 1) % subs.length;
-  save();
-
-  // === 2. GET NEXT UNUSED CAPTION ===
+  let sub = ''; let startIndex = subIndex;
+  do { sub = subs[subIndex]; if (!subChecked[sub]) break; subIndex = (subIndex + 1) % subs.length; } while (subIndex !== startIndex);
+  if (subChecked[sub]) { subChecked = {}; subIndex = 0; save(); showToast("All subs used → Auto-reset!"); }
+  subChecked[sub] = true; subIndex = (subIndex + 1) % subs.length; save();
   const unusedCaps = captions.filter(c => !capUsed[c]);
-  if (unusedCaps.length === 0) {
-    capUsed = {}; save();
-    showToast("Captions reset!");
-    return;
-  }
-  const caption = unusedCaps[Math.floor(Math.random() * unusedCaps.length)];
-  capUsed[caption] = true;
-  save();
-
-  // === 3. OPEN REDDIT WITH CAPTION IN TITLE ===
+  if (unusedCaps.length === 0) { capUsed = {}; save(); showToast("Captions reset!"); return; }
+  const caption = unusedCaps[Math.floor(Math.random() * unusedCaps.length)]; capUsed[caption] = true; save();
   const encodedTitle = encodeURIComponent(caption.trim());
   const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
-  
   window.open(redditUrl, '_blank');
-
-  // === 4. UPDATE LISTS ===
-  render('subList', subs, subChecked);
-  render('captionList', captions, capUsed);
-  updateStats();
-
-  // === 5. COPY SUBREDDIT TO CLIPBOARD (optional, for manual use) ===
-  navigator.clipboard.writeText(sub);
-  showToast(`Posted → r/${sub}`);
+  render('subList', subs, subChecked); render('captionList', captions, capUsed); updateStats();
+  navigator.clipboard.writeText(sub); showToast(`Posted → r/${sub}`);
 };
-  
 
-function saveProfile() {
-  const pass = document.getElementById('profilePass').value.trim();
-  const user = document.getElementById('profileUser').value.trim();
-  if (!pass || !user) return showToast("Fill Password & Username");
-
-  fetch(`${PROFILE_URL}?action=write&row=${currentRow}&pass=${encodeURIComponent(pass)}&user=${encodeURIComponent(user)}&t=${Date.now()}`)
-    .then(r => r.json())
-    .then(() => {
-      showToast("Saved to sheet");
-      profileData[currentIndex][1] = pass;
-      profileData[currentIndex][2] = user;
-    })
-    .catch(() => showToast("Save failed"));
-}
-
-function copyText(id) {
-  const el = document.getElementById(id);
-  el.focus();
-  el.select();
-  navigator.clipboard.writeText(el.value);
-  showToast((el.placeholder || el.id) + " copied");
-}
-
-document.getElementById('fabCreate').onclick = () => {
-  const currentID = document.getElementById('profileID').value.trim();
-  if (!currentID) {
-    showToast("No ID loaded");
-    return;
-  }
-  
-  // Copy ID to clipboard
-  navigator.clipboard.writeText(currentID);
-  
-  // Run your iOS Shortcut
-  window.location.href = "shortcuts://run-shortcut?name=CreateRed";
-  
-  showToast("ID copied → CreateRed launched");
-};
-// Auto-load on start (and remember last profile)
-window.addEventListener('load', loadProfiles);
+window.addEventListener('load', () => {
+  updateToggleButton();
+  ['subContent','capContent','ipContent','profileContent'].forEach(id => document.getElementById(id).classList.remove('open'));
+  ['subArrow','capArrow','ipArrow','profileArrow'].forEach(id => document.getElementById(id).classList.remove('open'));
+  updateIPHeader();
+  loadFromSheet();
+  loadProfiles();
+});
 </script>
 </body>
 </html>
