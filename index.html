@@ -218,24 +218,53 @@ const save = () => {
 };
 
 let baseIP = localStorage.getItem('selectedBaseIP') || '192.168.1';
+
 function updateToggleButton() {
   const btn = document.getElementById('ipToggle');
-  if (baseIP === '192.168.1') { btn.textContent = '192.168.1.x'; btn.style.background = 'orange'; btn.style.border = '2px solid black'; }
-  else { btn.textContent = 'x'; btn.style.background = 'black'; btn.style.border = '2px solid orange'; btn.style.color = 'white'; }
+  if (baseIP === '192.168.1') {
+    btn.textContent = '192.168.1.x';
+    btn.style.background = 'orange';
+    btn.style.border = '2px solid black';
+    btn.style.color = 'black';
+  } else {
+    btn.textContent = 'FULL IP';
+    btn.style.background = 'black';
+    btn.style.border = '2px solid orange';
+    btn.style.color = 'white';
+  }
 }
+
 document.getElementById('ipToggle').onclick = () => {
-  baseIP = baseIP === '192.168.1.' ? '' : '192.168.1.';
+  baseIP = baseIP === '192.168.1' ? 'FULL' : '192.168.1';
   localStorage.setItem('selectedBaseIP', baseIP);
   updateToggleButton();
-  showToast(`Switched to ${baseIP}x`);
+  showToast(baseIP === 'FULL' ? 'Full IP mode' : '192.168.1.x mode');
 };
 
 function triggerLua() {
-  const ipPart = document.getElementById("ipInput").value.trim();
-  if (!ipPart || isNaN(ipPart)) return;
-  const url = `http://${baseIP}${ipPart}:8080/control/start_playing?path=/test.lua&t=${Date.now()}`;
+  const input = document.getElementById("ipInput").value.trim();
+  if (!input) return;
+
+  let finalIP;
+
+  if (baseIP === '192.168.1') {
+    // only last digits typed (example: "55")
+    if (isNaN(input)) return;
+    finalIP = `192.168.1.${input}`;
+  } else {
+    // FULL MODE: user enters full IP (example: "10.161.37.55")
+    finalIP = input;
+  }
+
+  const url = `http://${finalIP}:8080/control/start_playing?path=/test.lua&t=${Date.now()}`;
   new Image().src = url;
+
+  showToast(`Triggered: ${finalIP}`);
 }
+
+// initialize UI state on page load
+updateToggleButton();
+
 
 function toggleDropdown(type) {
   const map = { sub: 'subContent', cap: 'capContent', ip: 'ipContent', profile: 'profileContent' };
