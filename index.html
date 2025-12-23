@@ -40,7 +40,9 @@ li .text::after { content: ''; position: absolute; right: 60px; top: 0; bottom: 
 #comboFab { position: fixed; bottom: 100px; right: 155px; width: 68px; height: 68px; background: orange; color: black; border: 5px solid black; border-radius: 50%; font-size: 18px; font-weight: 900; letter-spacing: 1px; z-index: 99999; cursor: pointer; backdrop-filter: blur(1px); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
 #comboFab:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6); }
 #comboFab:active { transform: scale(0.95); }
-#randomSubBtn { position: fixed; bottom: 100px; right: 75px; width: 68px; height: 68px; background: orange; color: black; border: 5px solid black; border-radius: 50%; font-size: 28px; font-weight: 900; z-index: 99999; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+#testComboFab { position: fixed; bottom: 100px; right: 75px; width: 68px; height: 68px; background: orange; color: black; border: 5px solid black; border-radius: 50%; font-size: 28px; font-weight: 900; z-index: 99999; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+#testComboFab:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6); }
+#randomSubBtn { position: fixed; bottom: 100px; right: -15px; width: 68px; height: 68px; background: orange; color: black; border: 5px solid black; border-radius: 50%; font-size: 28px; font-weight: 900; z-index: 99999; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 #randomSubBtn:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6); }
 </style>
 </head>
@@ -49,7 +51,6 @@ li .text::after { content: ''; position: absolute; right: 60px; top: 0; bottom: 
   <input type="text" id="ipInput" placeholder="IP last" value="1" maxlength="16" style="width:96px; height:48px; padding:8px; font-size:1.1rem; text-align:center; background:orange; color:black; border:2px solid black; border-radius:14px; font-weight:bold; outline:none; margin-left: 0px;">
   <button id="ipToggle" style="height:48px; padding:8px; background: orange; color:black; border:2px solid black; border-radius:14px; font-weight:bold; font-size:1.05rem; min-width:148px; cursor:pointer; transition:all 0.2s;"> 192.168.1.x </button>
 </div>
-
 <!-- PROFILE DROPDOWN -->
 <div class="dropdown">
   <div class="dropdown-header">
@@ -82,7 +83,6 @@ li .text::after { content: ''; position: absolute; right: 60px; top: 0; bottom: 
     </div>
   </div>
 </div>
-
 <!-- SUBREDDIT DROPDOWN -->
 <div class="dropdown">
   <div class="dropdown-header">
@@ -104,7 +104,27 @@ li .text::after { content: ''; position: absolute; right: 60px; top: 0; bottom: 
     <ul id="subList" style="display:none;"></ul>
   </div>
 </div>
-
+<!-- TEST SUBS DROPDOWN (NEW) -->
+<div class="dropdown">
+  <div class="dropdown-header">
+    <div class="center-btn"><button style="background:orange; border:5px solid black; cursor:default;">Test subs</button></div>
+    <span class="arrow" id="testArrow" onclick="toggleDropdown('test')"><img src="penis.png" alt="My Button" width="40px" height="40px"></span>
+  </div>
+  <div class="dropdown-content" id="testContent">
+    <div class="content-row">
+      <span>Done <span id="testDone">0</span> / <span id="testCount">0</span></span>
+      <div style="display:flex; gap:8px;">
+        <button id="testReset" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">Reset</button>
+        <button id="addTestBtn" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">+ Add</button>
+      </div>
+    </div>
+    <div class="content-row" style="justify-content: flex-end; gap: 10px;">
+      <button onclick="loadFromSheet()" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;"> Refresh </button>
+      <button class="toggle" id="toggleTest"> List </button>
+    </div>
+    <ul id="testList" style="display:none;"></ul>
+  </div>
+</div>
 <!-- CAPTION DROPDOWN -->
 <div class="dropdown">
   <div class="dropdown-header">
@@ -126,7 +146,6 @@ li .text::after { content: ''; position: absolute; right: 60px; top: 0; bottom: 
     <ul id="captionList" style="display:none;"></ul>
   </div>
 </div>
-
 <!-- IP & ROTATION DROPDOWN -->
 <div class="dropdown">
   <div class="dropdown-header">
@@ -146,14 +165,12 @@ li .text::after { content: ''; position: absolute; right: 60px; top: 0; bottom: 
     </div>
   </div>
 </div>
-
 <!-- FLOATING BUTTONS -->
 <div class="fab-container">
   <button id="comboFab">SAP</button>
+  <button id="testComboFab">Tes</button>
   <button id="randomSubBtn">R</button>
 </div>
-
-
 <div class="fab-container">
   <button id="fabD" class="fab" style="background:orange; border:5px solid black;">D</button>
   <button id="fabN" class="fab" style="background:orange; border:5px solid black;">N</button>
@@ -162,26 +179,25 @@ li .text::after { content: ''; position: absolute; right: 60px; top: 0; bottom: 
   <button id="fabCreate" class="fab" style="background:orange; border:5px solid black;">+</button>
 </div>
 <div id="toast"></div>
-
 <script>
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbyXhbEHzbbk1vmmrAFBEE1vBSNb-FGdJgZ1nYLnRTxJ2yW8YxSfb2BeRJ0N6gZ1Rayi/exec";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbykTQdtO-FT5f0l7picVk3GQA5LcLL72-8XACd5MmFtyu1XjcL1WzP-7al4a9C2gCSv/exec";
 const PROFILE_URL = SHEET_URL;
-
 let subs = [];
+let testSubs = [];          // NEW: Test subs from column H
 let captions = [];
 let randomSubList = [];
 let subChecked = JSON.parse(localStorage.getItem('subCh3')||'null') || {};
+let testChecked = JSON.parse(localStorage.getItem('testCh3')||'null') || {};  // NEW
 let subIndex = parseInt(localStorage.getItem('subIdx3')||'0');
+let testIndex = parseInt(localStorage.getItem('testIdx3')||'0');              // NEW
 let capUsed = JSON.parse(localStorage.getItem('capUs3')||'null') || {};
 let dmUsed = JSON.parse(localStorage.getItem('dmUsed')||'null') || {};
 let nameUsed = JSON.parse(localStorage.getItem('nameUsed')||'null') || {};
 let ofUsed = JSON.parse(localStorage.getItem('ofUsed')||'null') || {};
-
 const dmTexts = [ "I’m new here, come take a peek at my page below and enjoy a little surprise I left for you", "Still figuring things out here, check out my page and grab your free surprise", "Just getting started here, have a look at my page and claim your cute freebie", "I’m the new girl here, check my page and treat yourself to a sweet surprise", "Super new here, come visit my page and enjoy a little gift from me", "Just joined, have a look at my page and don’t miss the free surprise waiting for you", "Newbie alert, come check my page and grab the adorable surprise I made for you", "I’m fresh here, take a moment to visit my page and get your special little treat", "Still new around here, check out my page and enjoy your free surprise", "Just starting out here, come see my page and pick up the cute surprise I prepared for you" ];
 const names = [ "Sophyy 🌸", "Sophiaa 🌷", "Sophi 💋", "Sophiya 🌺", "Sofayuh 😍", "Soffie 🌼", "Sofey 💖", "Soffyy 😝", "Sofy 💘", "Sofiy 🦋", "Sofiahh 🍬", "Sofiaaaa 💕", "Sophie 😝", "Sophia 😊", "Sofie 🙈", "Sofiaa 😍", "Sofia 🍑", "Sofiyah ✨", "Sofiya 💞", "Sofii 💕", "Sofiee 😘", "Sofiah 💗", "Sophiyaaa 😍", "Sophiie 🙈", "Sofiyaaa ✨" ];
 const ofLines = [ "OF (nudes&dms)😜", "OF (nudez&seks)😜", "OF (nudes&dms)🙈" ];
 const linkUrl = "https://tapformysocials.me/girlygirl";
-
 async function loadFromSheet() {
   try {
     const resp = await fetch(SHEET_URL + "?action=readAll&t=" + Date.now());
@@ -190,35 +206,40 @@ async function loadFromSheet() {
     subs = rows.map(r => r[4]).filter(Boolean); // Column E
     captions = rows.map(r => r[5]).filter(Boolean); // Column F
     randomSubList = rows.map(r => r[6]).filter(Boolean); // Column G
+    testSubs = rows.map(r => r[7]).filter(Boolean);      // Column H ← NEW
     if (subs.length === 0) subs = JSON.parse(localStorage.getItem('subs3') || '[]');
     if (captions.length === 0) captions = JSON.parse(localStorage.getItem('caps3') || '[]');
+    if (testSubs.length === 0) testSubs = JSON.parse(localStorage.getItem('testSubs3') || '[]');
     render('subList', subs, subChecked);
+    render('testList', testSubs, testChecked);           // NEW
     render('captionList', captions, capUsed);
     updateStats();
-    showToast(`Sheet loaded – Subs: ${subs.length} | Caps: ${captions.length}`);
+    showToast(`Sheet loaded – Subs: ${subs.length} | Test: ${testSubs.length} | Caps: ${captions.length}`);
   } catch (e) {
     subs = JSON.parse(localStorage.getItem('subs3') || '[]');
     captions = JSON.parse(localStorage.getItem('caps3') || '[]');
+    testSubs = JSON.parse(localStorage.getItem('testSubs3') || '[]');
     render('subList', subs, subChecked);
+    render('testList', testSubs, testChecked);
     render('captionList', captions, capUsed);
     updateStats();
     showToast("Sheet offline – using local data");
   }
 }
-
 const save = () => {
   localStorage.setItem('subs3', JSON.stringify(subs));
   localStorage.setItem('subCh3', JSON.stringify(subChecked));
   localStorage.setItem('subIdx3', subIndex);
+  localStorage.setItem('testSubs3', JSON.stringify(testSubs));        // NEW
+  localStorage.setItem('testCh3', JSON.stringify(testChecked));       // NEW
+  localStorage.setItem('testIdx3', testIndex);                        // NEW
   localStorage.setItem('caps3', JSON.stringify(captions));
   localStorage.setItem('capUs3', JSON.stringify(capUsed));
   localStorage.setItem('dmUsed', JSON.stringify(dmUsed));
   localStorage.setItem('nameUsed', JSON.stringify(nameUsed));
   localStorage.setItem('ofUsed', JSON.stringify(ofUsed));
 };
-
 let baseIP = localStorage.getItem('selectedBaseIP') || '192.168.1';
-
 function updateToggleButton() {
   const btn = document.getElementById('ipToggle');
   if (baseIP === '192.168.1') {
@@ -233,48 +254,35 @@ function updateToggleButton() {
     btn.style.color = 'white';
   }
 }
-
 document.getElementById('ipToggle').onclick = () => {
   baseIP = baseIP === '192.168.1' ? 'FULL' : '192.168.1';
   localStorage.setItem('selectedBaseIP', baseIP);
   updateToggleButton();
   showToast(baseIP === 'FULL' ? 'Full IP mode' : '192.168.1.x mode');
 };
-
 function triggerLua() {
   const input = document.getElementById("ipInput").value.trim();
   if (!input) return;
-
   let finalIP;
-
   if (baseIP === '192.168.1') {
-    // only last digits typed (example: "55")
     if (isNaN(input)) return;
     finalIP = `192.168.1.${input}`;
   } else {
-    // FULL MODE: user enters full IP (example: "10.161.37.55")
     finalIP = input;
   }
-
   const url = `http://${finalIP}:8080/control/start_playing?path=/test.lua&t=${Date.now()}`;
   new Image().src = url;
-
   showToast(`Triggered: ${finalIP}`);
 }
-
-// initialize UI state on page load
 updateToggleButton();
-
-
 function toggleDropdown(type) {
-  const map = { sub: 'subContent', cap: 'capContent', ip: 'ipContent', profile: 'profileContent' };
-  const arrowMap = { sub: 'subArrow', cap: 'capArrow', ip: 'ipArrow', profile: 'profileArrow' };
+  const map = { sub: 'subContent', cap: 'capContent', ip: 'ipContent', profile: 'profileContent', test: 'testContent' };
+  const arrowMap = { sub: 'subArrow', cap: 'capArrow', ip: 'ipArrow', profile: 'profileArrow', test: 'testArrow' };
   const content = document.getElementById(map[type]);
   const arrow = document.getElementById(arrowMap[type]);
   content.classList.toggle('open');
   arrow.classList.toggle('open');
 }
-
 const render = (id, data, used) => {
   const ul = document.getElementById(id);
   ul.innerHTML = '';
@@ -287,15 +295,15 @@ const render = (id, data, used) => {
     ul.appendChild(li);
   });
 };
-
 const updateStats = () => {
   document.getElementById('subCount').textContent = subs.length;
   document.getElementById('subDone').textContent = Object.values(subChecked).filter(v=>v).length;
+  document.getElementById('testCount').textContent = testSubs.length;           // NEW
+  document.getElementById('testDone').textContent = Object.values(testChecked).filter(v=>v).length; // NEW
   document.getElementById('capCount').textContent = captions.length;
   document.getElementById('capUsed').textContent = Object.values(capUsed).filter(v=>v).length;
   updateIPHeader();
 };
-
 document.getElementById('subrBtn').onclick = () => {
   if(subs.length===0) return alert("Empty!");
   let attempts=0;
@@ -312,7 +320,6 @@ document.getElementById('subrBtn').onclick = () => {
   subChecked = {}; subIndex = 0; save(); render('subList',subs,subChecked); updateStats();
   alert("All done → auto-reset!");
 };
-
 document.getElementById('captionBtn').onclick = () => {
   if(captions.length===0) return alert("Empty!");
   const unused = captions.filter(c => !capUsed[c]);
@@ -320,62 +327,44 @@ document.getElementById('captionBtn').onclick = () => {
   const pick = unused.length ? unused[Math.floor(Math.random()*unused.length)] : captions[Math.floor(Math.random()*captions.length)];
   navigator.clipboard.writeText(pick); capUsed[pick] = true; save(); render('captionList',captions,capUsed); updateStats(); triggerLua();
 };
-
 const randomNoRepeat = (arr, used) => {
   const unused = arr.filter(x => !used[x]);
   if(unused.length===0){ Object.keys(used).forEach(k=>delete used[k]); save(); showToast("Reset!"); return randomNoRepeat(arr, used); }
   const pick = unused[Math.floor(Math.random()*unused.length)];
   navigator.clipboard.writeText(pick); used[pick] = true; save(); triggerLua();
 };
-
 document.getElementById('fabD').onclick = () => randomNoRepeat(dmTexts, dmUsed);
 document.getElementById('fabN').onclick = () => randomNoRepeat(names, nameUsed);
 document.getElementById('fabOF').onclick = () => randomNoRepeat(ofLines, ofUsed);
 document.getElementById('fabLink').onclick = () => { navigator.clipboard.writeText(linkUrl); showToast("Link copied"); triggerLua(); };
-
 document.getElementById('subrReset').onclick = () => { if(confirm("Reset subs?")){ subChecked={}; subIndex=0; save(); render('subList',subs,subChecked); updateStats(); }};
 document.getElementById('captionReset').onclick = () => { if(confirm("Reset captions?")){ capUsed={}; save(); render('captionList',captions,capUsed); updateStats(); }};
 document.getElementById('toggleSub').onclick = () => { const l = document.getElementById('subList'); l.style.display = l.style.display==='block'?'none':'block'; };
 document.getElementById('toggleCap').onclick = () => { const l = document.getElementById('captionList'); l.style.display = l.style.display==='block'?'none':'block'; };
-
+document.getElementById('toggleTest').onclick = () => { const l = document.getElementById('testList'); l.style.display = l.style.display==='block'?'none':'block'; }; // NEW
 document.getElementById('addSubBtn').onclick = (e) => { e.stopPropagation(); const input = prompt("Add one or more subreddits (one per line, no r/):"); if (!input) return; const lines = input.split('\n').map(l => l.trim()).filter(l => l); let added = 0; lines.forEach(sub => { if (sub && !subs.includes(sub)) { subs.push(sub); added++; } }); if (added > 0) { save(); render('subList', subs, subChecked); updateStats(); showToast(`Added ${added} subreddit${added > 1 ? 's' : ''}`); } else { showToast("Nothing new added"); } };
 const subDeleteAllBtn = document.createElement('button'); subDeleteAllBtn.textContent = "Delete All"; subDeleteAllBtn.style.cssText = "background:gray;color:#000;padding:8px 14px;border-radius:12px;font-weight:bold;margin-left:8px;"; subDeleteAllBtn.onclick = () => { if (confirm("Delete ALL subreddits?")) { subs = []; subChecked = {}; subIndex = 0; save(); render('subList', subs, subChecked); updateStats(); showToast("All subreddits deleted"); } }; document.querySelector('#subContent .content-row:nth-of-type(1) > div').appendChild(subDeleteAllBtn);
 document.getElementById('subRefresh').onclick = () => loadFromSheet();
-
 document.getElementById('addCapBtn').onclick = (e) => { e.stopPropagation(); const input = prompt("Add one or more captions (one per line):"); if (!input) return; const lines = input.split('\n').map(l => l.trim()).filter(l => l); let added = 0; lines.forEach(cap => { if (cap && !captions.includes(cap)) { captions.push(cap); added++; } }); if (added > 0) { save(); render('captionList', captions, capUsed); updateStats(); showToast(`Added ${added} caption${added > 1 ? 's' : ''}`); } else { showToast("Nothing new added"); } };
 const capDeleteAllBtn = document.createElement('button'); capDeleteAllBtn.textContent = "Delete All"; capDeleteAllBtn.style.cssText = "background:gray;color:#000;padding:8px 14px;border-radius:12px;font-weight:bold;margin-left:8px;"; capDeleteAllBtn.onclick = () => { if (confirm("Delete ALL captions?")) { captions = []; capUsed = {}; save(); render('captionList', captions, capUsed); updateStats(); showToast("All captions deleted"); } }; document.querySelector('#capContent .content-row:nth-of-type(1) > div').appendChild(capDeleteAllBtn);
-
+// NEW: Test subs add & delete all
+document.getElementById('addTestBtn').onclick = (e) => { e.stopPropagation(); const input = prompt("Add one or more test subreddits (one per line, no r/):"); if (!input) return; const lines = input.split('\n').map(l => l.trim()).filter(l => l); let added = 0; lines.forEach(sub => { if (sub && !testSubs.includes(sub)) { testSubs.push(sub); added++; } }); if (added > 0) { save(); render('testList', testSubs, testChecked); updateStats(); showToast(`Added ${added} test subreddit${added > 1 ? 's' : ''}`); } else { showToast("Nothing new added"); } };
+const testDeleteAllBtn = document.createElement('button'); testDeleteAllBtn.textContent = "Delete All"; testDeleteAllBtn.style.cssText = "background:gray;color:#000;padding:8px 14px;border-radius:12px;font-weight:bold;margin-left:8px;"; testDeleteAllBtn.onclick = () => { if (confirm("Delete ALL test subreddits?")) { testSubs = []; testChecked = {}; testIndex = 0; save(); render('testList', testSubs, testChecked); updateStats(); showToast("All test subreddits deleted"); } }; document.querySelector('#testContent .content-row:nth-of-type(1) > div').appendChild(testDeleteAllBtn);
+document.getElementById('testReset').onclick = () => { if(confirm("Reset test subs progress?")){ testChecked={}; testIndex=0; save(); render('testList',testSubs,testChecked); updateStats(); }};
 function updateCaptionsNow() { localStorage.removeItem('caps3'); localStorage.removeItem('capUs3'); location.reload(); }
-
 let userIP = '', previousIP = '', scamalyticsWindow = null;
 function updateIPHeader() { const ip = document.getElementById('ip').textContent; document.getElementById('ipHeader').textContent = (ip && ip !== 'Loading...' && !ip.includes('Failed') && !ip.includes('Offline')) ? ip : 'No IP'; }
 fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => { userIP = d.ip; document.getElementById("ip").textContent = userIP; updateIPHeader(); }).catch(() => { document.getElementById("ip").textContent = "Offline"; updateIPHeader(); });
-
 function rotateIP() { const btn = document.getElementById("rotateBtn"); const url = document.getElementById("rotateLink").value.trim(); if (!url) return alert("Enter URL"); btn.disabled = true; btn.innerHTML = "Starting..."; new Image().src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(); let s = 8; const timer = setInterval(() => { s--; btn.innerHTML = s > 0 ? `Wait ${s}s...` : "Done!"; if (s <= 0) clearInterval(timer); }, 1000); setTimeout(() => { btn.innerHTML = "Go"; btn.disabled = false; showToast("Rotation triggered!"); }, 8500); }
-
 function refreshAndOpen() { const btn = document.getElementById("refreshBtn"); btn.disabled=true; btn.innerHTML="Loading..."; if (!scamalyticsWindow || scamalyticsWindow.closed) scamalyticsWindow = window.open('about:blank','_blank'); fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ if(userIP){ previousIP=userIP; document.getElementById("oldIP").textContent=previousIP; } userIP=d.ip; document.getElementById("ip").textContent=userIP; updateIPHeader(); scamalyticsWindow.location.href=`https://scamalytics.com/ip/${userIP}`; btn.style.backgroundColor = (previousIP && previousIP!==userIP) ? "#2e7d32" : "#d32f2f"; btn.innerHTML = (previousIP && previousIP!==userIP) ? "Changed!" : "No Change"; }).catch(()=>{ btn.style.backgroundColor="#b71c1c"; btn.innerHTML="Failed"; }).finally(()=>{ btn.disabled=false; }); }
-
 function showToast(m) { const t = document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t.timeout); t.timeout=setTimeout(()=>t.classList.remove('show'),1800); }
-
 document.getElementById('randomSubBtn').onclick = () => {
   if (randomSubList.length === 0) return showToast("No subs in column G");
   const random = randomSubList[Math.floor(Math.random() * randomSubList.length)];
   window.open("https://www.reddit.com/r/" + random, "_blank");
   showToast("Opened r/" + random);
 };
-
-let profileData = []; let currentRow = 2; let currentIndex = parseInt(localStorage.getItem('lastProfileIndex') || '0');
-function loadProfiles() { fetch(PROFILE_URL + "?action=read&t=" + Date.now()).then(r => r.json()).then(d => { profileData = d.values || []; if (profileData.length === 0) { showToast("Sheet is empty"); clearProfileFields(); } else { if (currentIndex >= profileData.length) currentIndex = profileData.length - 1; loadProfile(currentIndex); showToast(`Profile ${currentIndex + 1}/${profileData.length} loaded`); } }).catch(() => showToast("Sheet offline")); }
-function clearProfileFields() { document.getElementById('profileName').value = ''; document.getElementById('profilePass').value = ''; document.getElementById('profileUser').value = ''; document.getElementById('profileID').value = ''; }
-function loadProfile(index) { if (profileData.length === 0) return; if (index < 0) index = 0; if (index >= profileData.length) index = profileData.length - 1; const row = profileData[index]; document.getElementById('profileName').value = row[0] || ''; document.getElementById('profilePass').value = row[1] || ''; document.getElementById('profileUser').value = row[2] || ''; document.getElementById('profileID').value = row[3] || ''; currentRow = index + 2; currentIndex = index; localStorage.setItem('lastProfileIndex', index); }
-function prevProfile() { loadProfile(currentIndex - 1); }
-function nextProfile() { loadProfile(currentIndex + 1); }
-function generatePassword() { if (document.getElementById('profilePass').value !== '') { return showToast("Password not empty"); } const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*_-"; let randomPart = ""; const len = Math.floor(Math.random() * 5) + 10; for (let i = 0; i < len; i++) { randomPart += chars.charAt(Math.floor(Math.random() * chars.length)); } const finalPassword = "reddit" + randomPart; document.getElementById('profilePass').value = finalPassword; copyText('profilePass'); showToast(`Generated: ${finalPassword}`); }
-async function pasteUsername() { try { const text = await navigator.clipboard.readText(); document.getElementById('profileUser').value = text.trim(); showToast("Username pasted"); } catch { showToast("Paste failed (allow clipboard)"); } }
-function saveProfile() { const pass = document.getElementById('profilePass').value.trim(); const user = document.getElementById('profileUser').value.trim(); if (!pass || !user) return showToast("Fill Password & Username"); fetch(`${PROFILE_URL}?action=write&row=${currentRow}&pass=${encodeURIComponent(pass)}&user=${encodeURIComponent(user)}&t=${Date.now()}`).then(r => r.json()).then(() => { showToast("Saved to sheet"); profileData[currentIndex][1] = pass; profileData[currentIndex][2] = user; }).catch(() => showToast("Save failed")); }
-function copyText(id) { const el = document.getElementById(id); el.focus(); el.select(); navigator.clipboard.writeText(el.value); showToast((el.placeholder || el.id) + " copied"); }
-document.getElementById('fabCreate').onclick = () => { const currentID = document.getElementById('profileID').value.trim(); if (!currentID) { showToast("No ID loaded"); return; } navigator.clipboard.writeText(currentID); window.location.href = "shortcuts://run-shortcut?name=CreateRed"; showToast("ID copied → CreateRed launched"); };
-
+// ORIGINAL SAP COMBO (uses main subs - column E)
 document.getElementById('comboFab').onclick = () => {
   if (subs.length === 0) return showToast("No subs left!");
   let sub = ''; let startIndex = subIndex;
@@ -391,11 +380,37 @@ document.getElementById('comboFab').onclick = () => {
   render('subList', subs, subChecked); render('captionList', captions, capUsed); updateStats();
   navigator.clipboard.writeText(sub); showToast(`Posted → r/${sub}`);
 };
-
+// NEW TEST COMBO (uses testSubs - column H)
+document.getElementById('testComboFab').onclick = () => {
+  if (testSubs.length === 0) return showToast("No test subs left!");
+  let sub = ''; let startIndex = testIndex;
+  do { sub = testSubs[testIndex]; if (!testChecked[sub]) break; testIndex = (testIndex + 1) % testSubs.length; } while (testIndex !== startIndex);
+  if (testChecked[sub]) { testChecked = {}; testIndex = 0; save(); showToast("All test subs used → Auto-reset!"); }
+  testChecked[sub] = true; testIndex = (testIndex + 1) % testSubs.length; save();
+  const unusedCaps = captions.filter(c => !capUsed[c]);
+  if (unusedCaps.length === 0) { capUsed = {}; save(); showToast("Captions reset!"); return; }
+  const caption = unusedCaps[Math.floor(Math.random() * unusedCaps.length)]; capUsed[caption] = true; save();
+  const encodedTitle = encodeURIComponent(caption.trim());
+  const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
+  window.open(redditUrl, '_blank');
+  render('testList', testSubs, testChecked); render('captionList', captions, capUsed); updateStats();
+  navigator.clipboard.writeText(sub); showToast(`Test posted → r/${sub}`);
+};
+let profileData = []; let currentRow = 2; let currentIndex = parseInt(localStorage.getItem('lastProfileIndex') || '0');
+function loadProfiles() { fetch(PROFILE_URL + "?action=read&t=" + Date.now()).then(r => r.json()).then(d => { profileData = d.values || []; if (profileData.length === 0) { showToast("Sheet is empty"); clearProfileFields(); } else { if (currentIndex >= profileData.length) currentIndex = profileData.length - 1; loadProfile(currentIndex); showToast(`Profile ${currentIndex + 1}/${profileData.length} loaded`); } }).catch(() => showToast("Sheet offline")); }
+function clearProfileFields() { document.getElementById('profileName').value = ''; document.getElementById('profilePass').value = ''; document.getElementById('profileUser').value = ''; document.getElementById('profileID').value = ''; }
+function loadProfile(index) { if (profileData.length === 0) return; if (index < 0) index = 0; if (index >= profileData.length) index = profileData.length - 1; const row = profileData[index]; document.getElementById('profileName').value = row[0] || ''; document.getElementById('profilePass').value = row[1] || ''; document.getElementById('profileUser').value = row[2] || ''; document.getElementById('profileID').value = row[3] || ''; currentRow = index + 2; currentIndex = index; localStorage.setItem('lastProfileIndex', index); }
+function prevProfile() { loadProfile(currentIndex - 1); }
+function nextProfile() { loadProfile(currentIndex + 1); }
+function generatePassword() { if (document.getElementById('profilePass').value !== '') { return showToast("Password not empty"); } const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*_-"; let randomPart = ""; const len = Math.floor(Math.random() * 5) + 10; for (let i = 0; i < len; i++) { randomPart += chars.charAt(Math.floor(Math.random() * chars.length)); } const finalPassword = "reddit" + randomPart; document.getElementById('profilePass').value = finalPassword; copyText('profilePass'); showToast(`Generated: ${finalPassword}`); }
+async function pasteUsername() { try { const text = await navigator.clipboard.readText(); document.getElementById('profileUser').value = text.trim(); showToast("Username pasted"); } catch { showToast("Paste failed (allow clipboard)"); } }
+function saveProfile() { const pass = document.getElementById('profilePass').value.trim(); const user = document.getElementById('profileUser').value.trim(); if (!pass || !user) return showToast("Fill Password & Username"); fetch(`${PROFILE_URL}?action=write&row=${currentRow}&pass=${encodeURIComponent(pass)}&user=${encodeURIComponent(user)}&t=${Date.now()}`).then(r => r.json()).then(() => { showToast("Saved to sheet"); profileData[currentIndex][1] = pass; profileData[currentIndex][2] = user; }).catch(() => showToast("Save failed")); }
+function copyText(id) { const el = document.getElementById(id); el.focus(); el.select(); navigator.clipboard.writeText(el.value); showToast((el.placeholder || el.id) + " copied"); }
+document.getElementById('fabCreate').onclick = () => { const currentID = document.getElementById('profileID').value.trim(); if (!currentID) { showToast("No ID loaded"); return; } navigator.clipboard.writeText(currentID); window.location.href = "shortcuts://run-shortcut?name=CreateRed"; showToast("ID copied → CreateRed launched"); };
 window.addEventListener('load', () => {
   updateToggleButton();
-  ['subContent','capContent','ipContent','profileContent'].forEach(id => document.getElementById(id).classList.remove('open'));
-  ['subArrow','capArrow','ipArrow','profileArrow'].forEach(id => document.getElementById(id).classList.remove('open'));
+  ['subContent','capContent','ipContent','profileContent','testContent'].forEach(id => document.getElementById(id).classList.remove('open'));
+  ['subArrow','capArrow','ipArrow','profileArrow','testArrow'].forEach(id => document.getElementById(id).classList.remove('open'));
   updateIPHeader();
   loadFromSheet();
   loadProfiles();
