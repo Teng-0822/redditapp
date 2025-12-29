@@ -3,189 +3,553 @@
 <head>
 <meta charset="UTF-8">
 <title>BEAST MODE</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <style>
-:root { --bg: #0d0d0d; --card: #1a1a1a; --accent: #ff0066; --accent2: #00ff99; }
+:root { 
+  --bg: #0a0a0a; 
+  --card: #1a1a1a; 
+  --accent: #ff3366; 
+  --accent2: #00ffaa; 
+  --orange: #ff9500;
+  --border: #333;
+}
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background: var(--bg); color: white; font-family: 'Segoe UI', Arial, sans-serif; min-height: 100vh; padding: 15px 15px 110px 15px; background: gray; }
-h1 { text-align:center; font-size: 2.8rem; background: linear-gradient(90deg, #ff0066, #00ff99); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 15px 0 20px; }
-#ipInput { display: block; width: 110px; margin: 0 auto 15px; padding: 8px; font-size: 1rem; text-align: center; background: #222; color: #0f9; border: 1px solid #444; border-radius: 10px; }
-/* DROPDOWNS */
-.dropdown { background: var(--card); border-radius: 18px; margin: 16px auto; max-width: 420px; box-shadow: 0 8px 25px rgba(0,0,0,0.8); border: 1px solid #333; overflow: hidden; }
-.dropdown-header { display: flex; height: 70px; align-items: center; justify-content: space-between; padding: 18px 24px; cursor: pointer; background: rgba(255,255,255,0.03); }
-.center-btn { flex: 1; display: flex; justify-content: left; }
-.dropdown-header button { padding: 11px 40px; font-size: 1.25rem; font-weight: bold; border: none; border-radius: 16px; min-width: 180px; height: 52px; color: black; }
-.ip-header { font-size: 1.4rem; font-weight: bold; color: White; flex: 1; text-align: left; padding-left: 8px; }
-.arrow { font-size: 28px; transition: transform 0.3s ease; color: #aaa; min-width: 50px; text-align: right; }
-.arrow.open { transform: rotate(180deg); }
-.dropdown-content { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; background: gray; }
-.dropdown-content.open { max-height: 600px; padding: 16px 20px; }
-.content-row { display: flex; justify-content: space-between; align-items: center; margin: 12px 0; font-size: 0.95rem; color: #ccc; }
-.content-row button { background: #333; color: #ff0066; border: 2px solid orange; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem; }
-.content-row .toggle { background: #222; color: #999; border: 1px solid #444; }
-ul { list-style: none; max-height: 260px; overflow-y: auto; padding: 8px; background: #111; border-radius: 10px; border: 1px solid #333; margin-top: 12px; -webkit-overflow-scrolling: touch; }
-li { padding: 12px; background: #222; margin: 8px 0; border-radius: 10px; display: flex; align-items: center; gap: 12px; position: relative; overflow: hidden; }
-li.checked { opacity: 0.4; text-decoration: line-through; }
-li .text { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.95rem; color: #ddd; padding-right: 10px; }
-li .text::after { content: ''; position: absolute; right: 60px; top: 0; bottom: 0; width: 30px; background: linear-gradient(to right, transparent, #222); pointer-events: none; }
-.delete { background: none; border: none; color: var(--accent); font-size: 28px; font-weight: bold; min-width: 44px; text-align: center; cursor: pointer; }
-#rotateBtn { padding: 8px 12px; border-radius: 10px; background: orange; color: black; border: 2px solid black; }
-#refreshBtn { padding: 6px 12px; background: orange; color: black; border: 1px solid whitesmoke; border-radius: 10px; font-size: 11px; }
-.fab-container { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 18px; z-index: 9999; background: gray; padding: 12px 24px; border-radius: 50px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 30px rgba(0,0,0,0.6); }
-.fab { width: 64px; height: 64px; border-radius: 50%; border: none; color: black; font-size: 26px; font-weight: bold; box-shadow: 0 6px 20px rgba(0,0,0,0.8); }
-.fab:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6); }
-.fab:active { transform: scale(0.9); }
-#toast { position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%); background: orange; color: black; padding: 12px 28px; border-radius: 30px; font-weight: bold; font-size: 1rem; z-index: 10000; opacity: 0; transition: all 0.4s; backdrop-filter: blur(10px); border: 5px solid black; pointer-events: none; }
-#toast.show { opacity: 1; bottom: 130px; }
-#comboFab { position: fixed; bottom: 100px; right: 155px; width: 68px; height: 68px; background: orange; color: black; border: 5px solid black; border-radius: 50%; font-size: 18px; font-weight: 900; letter-spacing: 1px; z-index: 99999; cursor: pointer; backdrop-filter: blur(1px); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
-#comboFab:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6); }
-#comboFab:active { transform: scale(0.95); }
-#testComboFab { position: fixed; bottom: 100px; right: 75px; width: 68px; height: 68px; background: orange; color: black; border: 5px solid black; border-radius: 50%; font-size: 28px; font-weight: 900; z-index: 99999; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-#testComboFab:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6); }
-#randomSubBtn { position: fixed; bottom: 100px; right: -95px; width: 68px; height: 68px; background: orange; color: black; border: 5px solid black; border-radius: 50%; font-size: 28px; font-weight: 900; z-index: 99999; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-#randomSubBtn:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 40px rgba(255,0,102,0.8), 0 0 60px rgba(0,255,153,0.6); }
-#locationSelect { width: 100%; padding: 10px; background: black; color: white; border: 2px solid orange; border-radius: 12px; font-size: 1rem; margin-bottom: 12px; }
+body { 
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); 
+  color: white; 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+  min-height: 100vh; 
+  padding: 12px 12px 140px 12px;
+  overflow-x: hidden;
+}
+
+/* HEADER */
+h1 { 
+  text-align:center; 
+  font-size: 2.2rem; 
+  background: linear-gradient(90deg, var(--accent), var(--accent2)); 
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent; 
+  margin: 12px 0 20px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+/* IP TOGGLE SECTION */
+.ip-toggle-section {
+  display: flex;
+  gap: 10px;
+  margin: 0 auto 20px;
+  max-width: 500px;
+  align-items: stretch;
+}
+#ipInput { 
+  flex: 0 0 90px;
+  padding: 12px 8px;
+  font-size: 1.1rem;
+  text-align: center;
+  background: var(--orange);
+  color: black;
+  border: 3px solid black;
+  border-radius: 12px;
+  font-weight: bold;
+  outline: none;
+}
+#ipToggle {
+  flex: 1;
+  padding: 12px;
+  background: var(--orange);
+  color: black;
+  border: 3px solid black;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+/* CARDS */
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  margin: 12px auto;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background: rgba(255,255,255,0.02);
+  cursor: pointer;
+  min-height: 64px;
+}
+
+.card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+  flex: 1;
+  text-align: left;
+}
+
+.card-badge {
+  display: inline-block;
+  background: var(--orange);
+  color: black;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+.expand-icon {
+  font-size: 24px;
+  color: #888;
+  transition: transform 0.3s ease;
+  margin-left: 12px;
+}
+.expand-icon.open { transform: rotate(180deg); }
+
+.card-content {
+  padding: 0 16px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+}
+.card-content.open {
+  max-height: 800px;
+  padding: 16px;
+}
+
+/* BUTTONS */
+.btn {
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  outline: none;
+}
+.btn:active { transform: scale(0.96); }
+
+.btn-primary {
+  background: var(--orange);
+  color: black;
+  border: 2px solid black;
+}
+
+.btn-secondary {
+  background: #2a2a2a;
+  color: var(--orange);
+  border: 1px solid var(--border);
+}
+
+.btn-small {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+
+/* LISTS */
+.list-container {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 8px;
+  background: #0f0f0f;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin-top: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: #1f1f1f;
+  margin: 8px 0;
+  border-radius: 10px;
+  position: relative;
+}
+.list-item.checked {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+.list-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.list-item-text {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #ddd;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list-item-delete {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+/* FORM INPUTS */
+.input-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.input {
+  padding: 13px 12px;
+  border-radius: 12px;
+  background: #0f0f0f;
+  border: 2px solid var(--orange);
+  color: white;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  outline: none;
+}
+.input:read-only {
+  opacity: 0.7;
+}
+
+/* STATS */
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+  font-size: 0.95rem;
+  color: #ccc;
+}
+.stats-text {
+  font-weight: 600;
+}
+
+/* ACTION ROW */
+.action-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* LOCATION SELECT */
+#locationSelect {
+  width: 100%;
+  padding: 12px;
+  background: #0f0f0f;
+  color: white;
+  border: 2px solid var(--orange);
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+/* IP DISPLAY */
+.ip-display {
+  background: #0f0f0f;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  border: 2px solid var(--orange);
+  margin: 10px 0;
+}
+.ip-text {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin: 8px 0;
+}
+.ip-label {
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+/* FLOATING ACTION BUTTONS */
+.fab-row {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 9999;
+  background: rgba(26, 26, 26, 0.95);
+  padding: 12px 16px;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.8);
+  max-width: 95vw;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fab {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  border-radius: 50%;
+  border: 3px solid black;
+  color: black;
+  font-size: 18px;
+  font-weight: 700;
+  background: var(--orange);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+.fab:active {
+  transform: scale(0.92);
+}
+
+/* TOAST */
+#toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--orange);
+  color: black;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  z-index: 10000;
+  opacity: 0;
+  transition: all 0.4s;
+  border: 3px solid black;
+  pointer-events: none;
+  max-width: 90vw;
+  text-align: center;
+}
+#toast.show {
+  opacity: 1;
+  bottom: 120px;
+}
+
+/* ROTATE SECTION */
+.rotate-section {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+.rotate-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--orange);
+  border: 2px solid black;
+  color: black;
+  font-weight: 600;
+  outline: none;
+}
+.rotate-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: var(--orange);
+  color: black;
+  border: 2px solid black;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f0f0f;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--orange);
+  border-radius: 4px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 380px) {
+  h1 { font-size: 1.8rem; }
+  .card-title { font-size: 1.1rem; }
+  .fab { width: 50px; height: 50px; min-width: 50px; font-size: 16px; }
+  .input-group { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
-<div style="display:flex; align-items:justify-content; justify-content:jus; gap:14px; margin:20px auto 15px; max-width:420px; padding:0 10px;">
-  <input type="text" id="ipInput" placeholder="IP last" value="1" maxlength="16" style="width:96px; height:48px; padding:8px; font-size:1.1rem; text-align:center; background:orange; color:black; border:2px solid black; border-radius:14px; font-weight:bold; outline:none; margin-left: 0px;">
-  <button id="ipToggle" style="height:48px; padding:8px; background: orange; color:black; border:2px solid black; border-radius:14px; font-weight:bold; font-size:1.05rem; min-width:148px; cursor:pointer; transition:all 0.2s;"> 192.168.1.x </button>
+
+<!-- IP TOGGLE -->
+<div class="ip-toggle-section">
+  <input type="text" id="ipInput" placeholder="IP" value="1" maxlength="16">
+  <button id="ipToggle">192.168.1.x</button>
 </div>
-<!-- PROFILE DROPDOWN -->
-<div class="dropdown">
-  <div class="dropdown-header">
-    <div class="center-btn"><button style="background:orange; border:5px solid black; cursor:default;">PROFILE</button></div>
-    <span class="arrow" id="profileArrow" onclick="toggleDropdown('profile')">↓</span>
+
+<!-- PROFILE CARD -->
+<div class="card">
+  <div class="card-header" onclick="toggleCard('profile')">
+    <div class="card-title">👤 Profile</div>
+    <span class="expand-icon" id="profileIcon">▼</span>
   </div>
-  <div class="dropdown-content" id="profileContent">
-    <div style="padding:16px 20px; max-width:100%; box-sizing:border-box;">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; margin-bottom:12px;">
-        <input type="text" id="profileName" placeholder="Name" readonly style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
-        <input type="text" id="profileUser" placeholder="Username" style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
-        <input type="text" id="profilePass" placeholder="Password" style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
-        <input type="text" id="profileID" placeholder="ID" readonly style="padding:13px 10px; border-radius:12px; background:black; border:2px solid orange; color:white; text-align:center; font-weight:bold; font-size:0.95rem; width:100%;">
-      </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
-        <button onclick="copyText('profileName'); triggerLua()" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy Email</button>
-        <button onclick="copyText('profileUser')" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy User</button>
-        <button onclick="copyText('profilePass'); triggerLua()" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy Pass</button>
-        <button onclick="copyText('profileID')" style="background:orange; color:black; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Copy ID</button>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:11px; align-items:center;">
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:9px; width:100%; max-width:380px;">
-          <button onclick="prevProfile()" style="background:black; color:orange; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Prev</button>
-          <button onclick="generatePassword(); triggerLua()" style="background:black; color:orange; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Generate</button>
-          <button onclick="pasteUsername()" style="background:black; color:orange; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Username</button>
-          <button onclick="nextProfile()" style="background:black; color:orange; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem;">Next</button>
-        </div>
-        <button onclick="saveProfile()" style="background:black; color:orange; padding:12px 8px; border-radius:12px; font-weight:bold; font-size:0.9rem; min-width:180px; width:auto; max-width:340px;"> Save </button>
-      </div>
+  <div class="card-content" id="profileContent">
+    <div class="input-group">
+      <input type="text" id="profileName" placeholder="Name" readonly class="input">
+      <input type="text" id="profileUser" placeholder="Username" class="input">
+      <input type="text" id="profilePass" placeholder="Password" class="input">
+      <input type="text" id="profileID" placeholder="ID" readonly class="input">
     </div>
+    <div class="input-group">
+      <button onclick="copyText('profileName'); triggerLua()" class="btn btn-primary btn-small">Copy Email</button>
+      <button onclick="copyText('profileUser')" class="btn btn-primary btn-small">Copy User</button>
+      <button onclick="copyText('profilePass'); triggerLua()" class="btn btn-primary btn-small">Copy Pass</button>
+      <button onclick="copyText('profileID')" class="btn btn-primary btn-small">Copy ID</button>
+    </div>
+    <div class="action-row" style="margin: 12px 0;">
+      <button onclick="prevProfile()" class="btn btn-secondary" style="flex: 1;">◀ Prev</button>
+      <button onclick="generatePassword(); triggerLua()" class="btn btn-secondary" style="flex: 1;">🔑 Gen</button>
+      <button onclick="pasteUsername()" class="btn btn-secondary" style="flex: 1;">📋 Paste</button>
+      <button onclick="nextProfile()" class="btn btn-secondary" style="flex: 1;">Next ▶</button>
+    </div>
+    <button onclick="saveProfile()" class="btn btn-primary" style="width: 100%;">💾 Save Profile</button>
   </div>
 </div>
-<!-- SUBREDDIT DROPDOWN (now with Location selector) -->
-<div class="dropdown">
-  <div class="dropdown-header">
-    <div class="center-btn"><button id="subrBtn" onclick="event.stopPropagation()" style="background:orange; border:5px solid black; cursor:default;">SubReddit</button></div>
-    <span class="arrow" id="subArrow" onclick="toggleDropdown('sub')">↓</span>
+
+<!-- SUBREDDIT CARD -->
+<div class="card">
+  <div class="card-header" onclick="toggleCard('sub')">
+    <div class="card-title">
+      📍 SubReddit
+      <span class="card-badge" id="subBadge">0/0</span>
+    </div>
+    <span class="expand-icon" id="subIcon">▼</span>
   </div>
-  <div class="dropdown-content" id="subContent">
+  <div class="card-content" id="subContent">
     <select id="locationSelect"></select>
-    <div class="content-row">
-      <span>Done <span id="subDone">0</span> / <span id="subCount">0</span></span>
-      <div style="display:flex; gap:8px;">
-        <button id="subrReset" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">Reset</button>
-        <button id="addSubBtn" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">+ Add</button>
+    <div class="stats-row">
+      <span class="stats-text">Done <span id="subDone">0</span> / <span id="subCount">0</span></span>
+      <div class="action-row">
+        <button id="subrReset" class="btn btn-secondary btn-small">Reset</button>
+        <button id="addSubBtn" class="btn btn-secondary btn-small">+ Add</button>
       </div>
     </div>
-    <div class="content-row" style="justify-content: flex-end; gap: 10px;">
-      <button id="subRefresh" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">Refresh</button>
-      <button class="toggle" id="toggleSub">List</button>
+    <div class="action-row">
+      <button id="subRefresh" class="btn btn-secondary btn-small" style="flex: 1;">🔄 Refresh</button>
+      <button class="btn btn-secondary btn-small" id="toggleSub" style="flex: 1;">📋 List</button>
     </div>
-    <ul id="subList" style="display:none;"></ul>
+    <div class="list-container" id="subList" style="display:none;"></div>
   </div>
 </div>
-<!-- TEST SUBS DROPDOWN -->
-<div class="dropdown">
-  <div class="dropdown-header">
-    <div class="center-btn"><button style="background:orange; border:5px solid black; cursor:default;">Test subs</button></div>
-    <span class="arrow" id="testArrow" onclick="toggleDropdown('test')">↓</span>
+
+<!-- TEST SUBS CARD -->
+<div class="card">
+  <div class="card-header" onclick="toggleCard('test')">
+    <div class="card-title">
+      🧪 Test Subs
+      <span class="card-badge" id="testBadge">0/0</span>
+    </div>
+    <span class="expand-icon" id="testIcon">▼</span>
   </div>
-  <div class="dropdown-content" id="testContent">
-    <div class="content-row">
-      <span>Done <span id="testDone">0</span> / <span id="testCount">0</span></span>
-      <div style="display:flex; gap:8px;">
-        <button id="testReset" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">Reset</button>
-        <button id="addTestBtn" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">+ Add</button>
+  <div class="card-content" id="testContent">
+    <div class="stats-row">
+      <span class="stats-text">Done <span id="testDone">0</span> / <span id="testCount">0</span></span>
+      <div class="action-row">
+        <button id="testReset" class="btn btn-secondary btn-small">Reset</button>
+        <button id="addTestBtn" class="btn btn-secondary btn-small">+ Add</button>
       </div>
     </div>
-    <div class="content-row" style="justify-content: flex-end; gap: 10px;">
-      <button onclick="loadFromSheet()" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;"> Refresh </button>
-      <button class="toggle" id="toggleTest"> List </button>
+    <div class="action-row">
+      <button onclick="loadFromSheet()" class="btn btn-secondary btn-small" style="flex: 1;">🔄 Refresh</button>
+      <button class="btn btn-secondary btn-small" id="toggleTest" style="flex: 1;">📋 List</button>
     </div>
-    <ul id="testList" style="display:none;"></ul>
+    <div class="list-container" id="testList" style="display:none;"></div>
   </div>
 </div>
-<!-- CAPTION DROPDOWN -->
-<div class="dropdown">
-  <div class="dropdown-header">
-    <div class="center-btn"><button id="captionBtn" onclick="event.stopPropagation()" style="background:orange; border:5px solid black; cursor:default;">CAPTION</button></div>
-    <span class="arrow" id="capArrow" onclick="toggleDropdown('cap')">↓</span>
+
+<!-- CAPTION CARD -->
+<div class="card">
+  <div class="card-header" onclick="toggleCard('cap')">
+    <div class="card-title">
+      💬 Caption
+      <span class="card-badge" id="capBadge">0/0</span>
+    </div>
+    <span class="expand-icon" id="capIcon">▼</span>
   </div>
-  <div class="dropdown-content" id="capContent">
-    <div class="content-row">
-      <span>Used <span id="capUsed">0</span> / <span id="capCount">0</span></span>
-      <div style="display:flex; gap:8px;">
-        <button id="captionReset" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">Reset</button>
-        <button id="addCapBtn" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;">+ Add</button>
+  <div class="card-content" id="capContent">
+    <div class="stats-row">
+      <span class="stats-text">Used <span id="capUsed">0</span> / <span id="capCount">0</span></span>
+      <div class="action-row">
+        <button id="captionReset" class="btn btn-secondary btn-small">Reset</button>
+        <button id="addCapBtn" class="btn btn-secondary btn-small">+ Add</button>
       </div>
     </div>
-    <div class="content-row" style="justify-content: flex-end; gap: 10px;">
-      <button onclick="updateCaptionsNow()" style="background:gray;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;"> Refresh </button>
-      <button class="toggle" id="toggleCap" style="padding:8px 16px; border-radius:12px;"> List </button>
+    <div class="action-row">
+      <button onclick="updateCaptionsNow()" class="btn btn-secondary btn-small" style="flex: 1;">🔄 Refresh</button>
+      <button class="btn btn-secondary btn-small" id="toggleCap" style="flex: 1;">📋 List</button>
     </div>
-    <ul id="captionList" style="display:none;"></ul>
+    <div class="list-container" id="captionList" style="display:none;"></div>
   </div>
 </div>
-<!-- IP & ROTATION DROPDOWN -->
-<div class="dropdown">
-  <div class="dropdown-header">
-    <div class="ip-header"><span id="ipHeader">Loading IP...</span></div>
-    <span class="arrow" id="ipArrow" onclick="toggleDropdown('ip')">↓</span>
+
+<!-- IP & ROTATION CARD -->
+<div class="card">
+  <div class="card-header" onclick="toggleCard('ip')">
+    <div class="card-title">🌐 <span id="ipHeader">Loading IP...</span></div>
+    <span class="expand-icon" id="ipIcon">▼</span>
   </div>
-  <div class="dropdown-content" id="ipContent">
-    <div style="padding:10px 0;">
-      <div style="display:flex; gap:5px; margin:10px 0;">
-        <button id="rotateBtn" onclick="rotateIP()">Go</button>
-        <input id="rotateLink" placeholder="http://87.120..." style="flex:1;padding:8px;border-radius:10px;background:orange;border:1px solid black;color:black;" />
-      </div>
-      <div style="background: black;border-radius:12px;padding:14px;text-align:center;font-family:monospace;border:2px solid orange;">
-        <div style="color:White;font-size:14px; font-weight: bold;">Old to <span id="oldIP">—</span> <span id="ip" style="color:White;font-size:14px; font-weight: bold;">Loading...</span> </div>
-        <button id="refreshBtn" onclick="refreshAndOpen()">Refresh + Scam</button>
-      </div>
+  <div class="card-content" id="ipContent">
+    <div class="rotate-section">
+      <button class="rotate-btn" onclick="rotateIP()">🔄 Go</button>
+      <input id="rotateLink" placeholder="http://87.120..." class="rotate-input" />
+    </div>
+    <div class="ip-display">
+      <div class="ip-label">Previous IP</div>
+      <div class="ip-text" id="oldIP">—</div>
+      <div class="ip-label" style="margin-top: 12px;">Current IP</div>
+      <div class="ip-text" id="ip">Loading...</div>
+      <button onclick="refreshAndOpen()" class="btn btn-primary" style="margin-top: 12px; width: 100%;">🔍 Refresh + Scam</button>
     </div>
   </div>
 </div>
+
 <!-- FLOATING BUTTONS -->
-<div class="fab-container">
-  <button id="comboFab">SAP</button>
-  <button id="testComboFab">Tes</button>
-  <button id="randomSubBtn">R</button>
+<div class="fab-row">
+  <button class="fab" id="fabD" title="DM">D</button>
+  <button class="fab" id="fabN" title="Name">N</button>
+  <button class="fab" id="fabOF" title="OF">OF</button>
+  <button class="fab" id="fabLink" title="Link">🔗</button>
+  <button class="fab" id="comboFab" title="SAP">SAP</button>
+  <button class="fab" id="testComboFab" title="Test">Tes</button>
+  <button class="fab" id="randomSubBtn" title="Random">R</button>
+  <button class="fab" id="fabCreate" title="Create">+</button>
 </div>
-<div class="fab-container">
-  <button id="fabD" class="fab" style="background:orange; border:5px solid black;">D</button>
-  <button id="fabN" class="fab" style="background:orange; border:5px solid black;">N</button>
-  <button id="fabOF" class="fab" style="background:orange; border:5px solid black;">OF</button>
-  <button id="fabLink" class="fab" style="background:orange; border:5px solid black;">Link</button>
-  <button id="fabCreate" class="fab" style="background:orange; border:5px solid black;">+</button>
-</div>
+
 <div id="toast"></div>
+
 <script>
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbz6DdYO7rdlpmRL_dCqFm2m1_tCNkK_VRdHRIHR0ebARYdOZWKnccKU1didAWYaKyQqRg/exec";
 const PROFILE_URL = SHEET_URL;
 
-let locations = {}; // { "LocationName": ["sub1", "sub2", ...] }
+let locations = {};
 let currentLocation = localStorage.getItem('currentLocation') || '';
 let subs = [];
 let testSubs = [];
@@ -201,23 +565,28 @@ let dmUsed = JSON.parse(localStorage.getItem('dmUsed') || '{}');
 let nameUsed = JSON.parse(localStorage.getItem('nameUsed') || '{}');
 let ofUsed = JSON.parse(localStorage.getItem('ofUsed') || '{}');
 
-const dmTexts = [ "I’m new here, come take a peek at my page below and enjoy a little surprise I left for you", "Still figuring things out here, check out my page and grab your free surprise", "Just getting started here, have a look at my page and claim your cute freebie", "I’m the new girl here, check my page and treat yourself to a sweet surprise", "Super new here, come visit my page and enjoy a little gift from me", "Just joined, have a look at my page and don’t miss the free surprise waiting for you", "Newbie alert, come check my page and grab the adorable surprise I made for you", "I’m fresh here, take a moment to visit my page and get your special little treat", "Still new around here, check out my page and enjoy your free surprise", "Just starting out here, come see my page and pick up the cute surprise I prepared for you" ];
+const dmTexts = [ "I'm new here, come take a peek at my page below and enjoy a little surprise I left for you", "Still figuring things out here, check out my page and grab your free surprise", "Just getting started here, have a look at my page and claim your cute freebie", "I'm the new girl here, check my page and treat yourself to a sweet surprise", "Super new here, come visit my page and enjoy a little gift from me", "Just joined, have a look at my page and don't miss the free surprise waiting for you", "Newbie alert, come check my page and grab the adorable surprise I made for you", "I'm fresh here, take a moment to visit my page and get your special little treat", "Still new around here, check out my page and enjoy your free surprise", "Just starting out here, come see my page and pick up the cute surprise I prepared for you" ];
 const names = [ "Sophyy 🌸", "Sophiaa 🌷", "Sophi 💋", "Sophiya 🌺", "Sofayuh 😍", "Soffie 🌼", "Sofey 💖", "Soffyy 😝", "Sofy 💘", "Sofiy 🦋", "Sofiahh 🍬", "Sofiaaaa 💕", "Sophie 😝", "Sophia 😊", "Sofie 🙈", "Sofiaa 😍", "Sofia 🍑", "Sofiyah ✨", "Sofiya 💞", "Sofii 💕", "Sofiee 😘", "Sofiah 💗", "Sophiyaaa 😍", "Sophiie 🙈", "Sofiyaaa ✨" ];
 const ofLines = [ "OF (nudes&dms)😜", "OF (nudez&seks)😜", "OF (nudes&dms)🙈" ];
 const linkUrl = "https://tapformysocials.me/girlygirl";
+
+function toggleCard(type) {
+  const content = document.getElementById(type + 'Content');
+  const icon = document.getElementById(type + 'Icon');
+  content.classList.toggle('open');
+  icon.classList.toggle('open');
+}
 
 async function loadFromSheet() {
   try {
     const resp = await fetch(SHEET_URL + "?action=readAll&t=" + Date.now());
     const data = await resp.json();
     
-    // Sheet1: Profile + Caption (E), Warming (F), Test (G)
     const sheet1 = data.sheet1 || [];
-    captions = sheet1.slice(1).map(row => row[4]).filter(Boolean); // Column E (index 4)
-    randomSubList = sheet1.slice(1).map(row => row[5]).filter(Boolean); // Column F Warming
-    testSubs = sheet1.slice(1).map(row => row[6]).filter(Boolean); // Column G Test
+    captions = sheet1.slice(1).map(row => row[4]).filter(Boolean);
+    randomSubList = sheet1.slice(1).map(row => row[5]).filter(Boolean);
+    testSubs = sheet1.slice(1).map(row => row[6]).filter(Boolean);
 
-    // Sheet2: Row 0 = headers (locations), Row 1+ = subs per column
     const sheet2 = data.sheet2 || [];
     if (sheet2.length < 1) throw new Error("Sheet2 empty");
 
@@ -234,7 +603,6 @@ async function loadFromSheet() {
       }
     });
 
-    // Fallback to local if empty
     if (Object.keys(locations).length === 0) locations = JSON.parse(localStorage.getItem('locations3') || '{}');
     if (captions.length === 0) captions = JSON.parse(localStorage.getItem('caps3') || '[]');
     if (testSubs.length === 0) testSubs = JSON.parse(localStorage.getItem('testSubs3') || '[]');
@@ -245,7 +613,7 @@ async function loadFromSheet() {
     render('testList', testSubs, testChecked);
     render('captionList', captions, capUsed);
     updateStats();
-    showToast(`Loaded – Locations: ${Object.keys(locations).length} | Caps: ${captions.length} | Test: ${testSubs.length}`);
+    showToast(`✅ Loaded – ${Object.keys(locations).length} locations`);
   } catch (e) {
     console.error(e);
     locations = JSON.parse(localStorage.getItem('locations3') || '{}');
@@ -256,7 +624,7 @@ async function loadFromSheet() {
     render('testList', testSubs, testChecked);
     render('captionList', captions, capUsed);
     updateStats();
-    showToast("Offline – local data");
+    showToast("⚠️ Offline – using local data");
   }
 }
 
@@ -279,7 +647,6 @@ function selectLocation(locName) {
   } else {
     subs = locations[locName];
     currentLocation = locName;
-    // Load per-location checked & index
     const keyPrefix = 'loc_' + btoa(locName).replace(/=/g,'');
     subChecked = JSON.parse(localStorage.getItem(keyPrefix + '_ch') || '{}');
     subIndex = parseInt(localStorage.getItem(keyPrefix + '_idx') || '0');
@@ -307,7 +674,6 @@ const save = () => {
     localStorage.setItem(keyPrefix + '_ch', JSON.stringify(subChecked));
     localStorage.setItem(keyPrefix + '_idx', subIndex);
   }
-  // Global subChecked fallback
   localStorage.setItem('subCh3', JSON.stringify(subChecked));
   localStorage.setItem('subIdx3', subIndex);
 };
@@ -317,13 +683,13 @@ function updateToggleButton() {
   const btn = document.getElementById('ipToggle');
   if (baseIP === '192.168.1') {
     btn.textContent = '192.168.1.x';
-    btn.style.background = 'orange';
-    btn.style.border = '2px solid black';
+    btn.style.background = 'var(--orange)';
+    btn.style.border = '3px solid black';
     btn.style.color = 'black';
   } else {
-    btn.textContent = 'FULL IP';
+    btn.textContent = 'FULL IP MODE';
     btn.style.background = 'black';
-    btn.style.border = '2px solid orange';
+    btn.style.border = '3px solid var(--orange)';
     btn.style.color = 'white';
   }
 }
@@ -331,7 +697,7 @@ document.getElementById('ipToggle').onclick = () => {
   baseIP = baseIP === '192.168.1' ? 'FULL' : '192.168.1';
   localStorage.setItem('selectedBaseIP', baseIP);
   updateToggleButton();
-  showToast(baseIP === 'FULL' ? 'Full IP mode' : '192.168.1.x mode');
+  showToast(baseIP === 'FULL' ? '🌐 Full IP mode' : '🏠 Local IP mode');
 };
 function triggerLua() {
   const input = document.getElementById("ipInput").value.trim();
@@ -345,29 +711,49 @@ function triggerLua() {
   }
   const url = `http://${finalIP}:8080/control/start_playing?path=/test.lua&t=${Date.now()}`;
   new Image().src = url;
-  showToast(`Triggered: ${finalIP}`);
+  showToast(`✅ Triggered: ${finalIP}`);
 }
 updateToggleButton();
-
-function toggleDropdown(type) {
-  const map = { sub: 'subContent', cap: 'capContent', ip: 'ipContent', profile: 'profileContent', test: 'testContent' };
-  const arrowMap = { sub: 'subArrow', cap: 'capArrow', ip: 'ipArrow', profile: 'profileArrow', test: 'testArrow' };
-  const content = document.getElementById(map[type]);
-  const arrow = document.getElementById(arrowMap[type]);
-  content.classList.toggle('open');
-  arrow.classList.toggle('open');
-}
 
 const render = (id, data, used) => {
   const ul = document.getElementById(id);
   ul.innerHTML = '';
   data.forEach((item, i) => {
-    const li = document.createElement('li');
-    li.className = used[item] ? 'checked' : '';
-    li.innerHTML = `<input type="checkbox" ${used[item]?'checked':''}> <div class="text">${item}</div> <button class="delete">X</button>`;
-    li.querySelector('input').onchange = () => { used[item] = !used[item]; save(); render(id,data,used); updateStats(); };
-    li.querySelector('.delete').onclick = () => { if(confirm('Delete?')){ data.splice(i,1); delete used[item]; if (id === 'subList') updateLocationsAfterDelete(); save(); render(id,data,used); updateStats(); }};
-    ul.appendChild(li);
+    const div = document.createElement('div');
+    div.className = 'list-item' + (used[item] ? ' checked' : '');
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = !!used[item];
+    checkbox.onchange = () => { 
+      used[item] = !used[item]; 
+      save(); 
+      render(id, data, used); 
+      updateStats(); 
+    };
+    
+    const text = document.createElement('div');
+    text.className = 'list-item-text';
+    text.textContent = item;
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'list-item-delete';
+    deleteBtn.textContent = '×';
+    deleteBtn.onclick = () => {
+      if(confirm('Delete this item?')) {
+        data.splice(i, 1);
+        delete used[item];
+        if (id === 'subList') updateLocationsAfterDelete();
+        save();
+        render(id, data, used);
+        updateStats();
+      }
+    };
+    
+    div.appendChild(checkbox);
+    div.appendChild(text);
+    div.appendChild(deleteBtn);
+    ul.appendChild(div);
   });
 };
 
@@ -378,200 +764,354 @@ function updateLocationsAfterDelete() {
 const updateStats = () => {
   document.getElementById('subCount').textContent = subs.length;
   document.getElementById('subDone').textContent = Object.values(subChecked).filter(v=>v).length;
+  document.getElementById('subBadge').textContent = `${Object.values(subChecked).filter(v=>v).length}/${subs.length}`;
+  
   document.getElementById('testCount').textContent = testSubs.length;
   document.getElementById('testDone').textContent = Object.values(testChecked).filter(v=>v).length;
+  document.getElementById('testBadge').textContent = `${Object.values(testChecked).filter(v=>v).length}/${testSubs.length}`;
+  
   document.getElementById('capCount').textContent = captions.length;
   document.getElementById('capUsed').textContent = Object.values(capUsed).filter(v=>v).length;
+  document.getElementById('capBadge').textContent = `${Object.values(capUsed).filter(v=>v).length}/${captions.length}`;
+  
   updateIPHeader();
 };
 
-document.getElementById('subrBtn').onclick = () => {
-  if(subs.length===0) return alert("Empty or no location selected!");
-  let attempts=0;
-  let startIndex = subIndex;
-  while(attempts++ < subs.length){
-    const sub = subs[subIndex];
-    if(!subChecked[sub]){
-      navigator.clipboard.writeText(sub);
-      window.open(`https://www.reddit.com/r/${sub}/submit`, '_blank');
-      subChecked[sub] = true; save(); render('subList',subs,subChecked); updateStats();
-      subIndex = (subIndex + 1) % subs.length; save(); return;
-    }
-    subIndex = (subIndex + 1) % subs.length;
+document.getElementById('subrReset').onclick = () => { 
+  if(confirm("Reset progress for current location?")) { 
+    subChecked = {}; 
+    subIndex = 0; 
+    save(); 
+    render('subList', subs, subChecked); 
+    updateStats(); 
   }
-  subChecked = {}; subIndex = 0; save(); render('subList',subs,subChecked); updateStats();
-  alert("All done → auto-reset!");
 };
 
-document.getElementById('captionBtn').onclick = () => {
-  if(captions.length===0) return alert("Empty!");
-  const unused = captions.filter(c => !capUsed[c]);
-  if(unused.length===0){ capUsed={}; save(); render('captionList',captions,capUsed); updateStats(); alert("All used → reset!"); }
-  const pick = unused.length ? unused[Math.floor(Math.random()*unused.length)] : captions[Math.floor(Math.random()*captions.length)];
-  navigator.clipboard.writeText(pick); capUsed[pick] = true; save(); render('captionList',captions,capUsed); updateStats(); triggerLua();
+document.getElementById('captionReset').onclick = () => { 
+  if(confirm("Reset all captions?")) { 
+    capUsed = {}; 
+    save(); 
+    render('captionList', captions, capUsed); 
+    updateStats(); 
+  }
 };
+
+document.getElementById('testReset').onclick = () => { 
+  if(confirm("Reset test subs progress?")) { 
+    testChecked = {}; 
+    testIndex = 0; 
+    save(); 
+    render('testList', testSubs, testChecked); 
+    updateStats(); 
+  }
+};
+
+document.getElementById('toggleSub').onclick = () => { 
+  const l = document.getElementById('subList'); 
+  l.style.display = l.style.display === 'block' ? 'none' : 'block'; 
+};
+
+document.getElementById('toggleCap').onclick = () => { 
+  const l = document.getElementById('captionList'); 
+  l.style.display = l.style.display === 'block' ? 'none' : 'block'; 
+};
+
+document.getElementById('toggleTest').onclick = () => { 
+  const l = document.getElementById('testList'); 
+  l.style.display = l.style.display === 'block' ? 'none' : 'block'; 
+};
+
+document.getElementById('addSubBtn').onclick = (e) => { 
+  e.stopPropagation(); 
+  if (!currentLocation) return alert("Select a location first!");
+  const input = prompt("Add subreddits (one per line, no r/):"); 
+  if (!input) return; 
+  const lines = input.split('\n').map(l => l.trim()).filter(l => l); 
+  let added = 0; 
+  lines.forEach(sub => { 
+    if (sub && !subs.includes(sub)) { 
+      subs.push(sub); 
+      added++; 
+    } 
+  }); 
+  if (added > 0) { 
+    locations[currentLocation] = subs; 
+    save(); 
+    render('subList', subs, subChecked); 
+    updateStats(); 
+    showToast(`✅ Added ${added} to ${currentLocation}`); 
+  } 
+};
+
+document.getElementById('addTestBtn').onclick = (e) => { 
+  e.stopPropagation(); 
+  const input = prompt("Add test subreddits (one per line, no r/):"); 
+  if (!input) return; 
+  const lines = input.split('\n').map(l => l.trim()).filter(l => l); 
+  let added = 0; 
+  lines.forEach(sub => { 
+    if (sub && !testSubs.includes(sub)) { 
+      testSubs.push(sub); 
+      added++; 
+    } 
+  }); 
+  if (added > 0) { 
+    save(); 
+    render('testList', testSubs, testChecked); 
+    updateStats(); 
+    showToast(`✅ Added ${added} test sub${added > 1 ? 's' : ''}`); 
+  } 
+};
+
+document.getElementById('addCapBtn').onclick = (e) => { 
+  e.stopPropagation(); 
+  const input = prompt("Add captions (one per line):"); 
+  if (!input) return; 
+  const lines = input.split('\n').map(l => l.trim()).filter(l => l); 
+  let added = 0; 
+  lines.forEach(cap => { 
+    if (cap && !captions.includes(cap)) { 
+      captions.push(cap); 
+      added++; 
+    } 
+  }); 
+  if (added > 0) { 
+    save(); 
+    render('captionList', captions, capUsed); 
+    updateStats(); 
+    showToast(`✅ Added ${added} caption${added > 1 ? 's' : ''}`); 
+  } 
+};
+
+document.getElementById('subRefresh').onclick = () => loadFromSheet();
+
+function updateCaptionsNow() { 
+  localStorage.removeItem('caps3'); 
+  localStorage.removeItem('capUs3'); 
+  location.reload(); 
+}
+
+let userIP = '', previousIP = '', scamalyticsWindow = null;
+
+function updateIPHeader() { 
+  const ip = document.getElementById('ip').textContent; 
+  document.getElementById('ipHeader').textContent = (ip && ip !== 'Loading...' && !ip.includes('Failed') && !ip.includes('Offline')) ? ip : 'No IP'; 
+}
+
+fetch('https://api.ipify.org?format=json')
+  .then(r => r.json())
+  .then(d => { 
+    userIP = d.ip; 
+    document.getElementById("ip").textContent = userIP; 
+    updateIPHeader(); 
+  })
+  .catch(() => { 
+    document.getElementById("ip").textContent = "Offline"; 
+    updateIPHeader(); 
+  });
+
+function rotateIP() { 
+  const btn = document.querySelector('.rotate-btn');
+  const url = document.getElementById("rotateLink").value.trim(); 
+  if (!url) return alert("Enter rotation URL"); 
+  btn.disabled = true; 
+  btn.innerHTML = "⏳ Starting..."; 
+  new Image().src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(); 
+  let s = 8; 
+  const timer = setInterval(() => { 
+    s--; 
+    btn.innerHTML = s > 0 ? `⏳ ${s}s...` : "✅ Done!"; 
+    if (s <= 0) clearInterval(timer); 
+  }, 1000); 
+  setTimeout(() => { 
+    btn.innerHTML = "🔄 Go"; 
+    btn.disabled = false; 
+    showToast("🔄 Rotation triggered!"); 
+  }, 8500); 
+}
+
+function refreshAndOpen() { 
+  const btn = event.target;
+  btn.disabled = true; 
+  btn.innerHTML = "⏳ Loading..."; 
+  if (!scamalyticsWindow || scamalyticsWindow.closed) {
+    scamalyticsWindow = window.open('about:blank', '_blank'); 
+  }
+  fetch('https://api.ipify.org?format=json')
+    .then(r => r.json())
+    .then(d => { 
+      if(userIP) { 
+        previousIP = userIP; 
+        document.getElementById("oldIP").textContent = previousIP; 
+      } 
+      userIP = d.ip; 
+      document.getElementById("ip").textContent = userIP; 
+      updateIPHeader(); 
+      scamalyticsWindow.location.href = `https://scamalytics.com/ip/${userIP}`; 
+      btn.style.backgroundColor = (previousIP && previousIP !== userIP) ? "#2e7d32" : "#d32f2f"; 
+      btn.innerHTML = (previousIP && previousIP !== userIP) ? "✅ Changed!" : "⚠️ No Change"; 
+    })
+    .catch(() => { 
+      btn.style.backgroundColor = "#b71c1c"; 
+      btn.innerHTML = "❌ Failed"; 
+    })
+    .finally(() => { 
+      btn.disabled = false; 
+    }); 
+}
+
+function showToast(m) { 
+  const t = document.getElementById('toast'); 
+  t.textContent = m; 
+  t.classList.add('show'); 
+  clearTimeout(t.timeout); 
+  t.timeout = setTimeout(() => t.classList.remove('show'), 2000); 
+}
 
 const randomNoRepeat = (arr, used) => {
   const unused = arr.filter(x => !used[x]);
-  if(unused.length===0){ Object.keys(used).forEach(k=>delete used[k]); save(); showToast("Reset!"); return randomNoRepeat(arr, used); }
-  const pick = unused[Math.floor(Math.random()*unused.length)];
-  navigator.clipboard.writeText(pick); used[pick] = true; save(); triggerLua();
+  if(unused.length === 0) { 
+    Object.keys(used).forEach(k => delete used[k]); 
+    save(); 
+    showToast("🔄 Reset!"); 
+    return randomNoRepeat(arr, used); 
+  }
+  const pick = unused[Math.floor(Math.random() * unused.length)];
+  navigator.clipboard.writeText(pick); 
+  used[pick] = true; 
+  save(); 
+  triggerLua();
+  showToast("📋 Copied!");
 };
 
 document.getElementById('fabD').onclick = () => randomNoRepeat(dmTexts, dmUsed);
 document.getElementById('fabN').onclick = () => randomNoRepeat(names, nameUsed);
 document.getElementById('fabOF').onclick = () => randomNoRepeat(ofLines, ofUsed);
-document.getElementById('fabLink').onclick = () => { navigator.clipboard.writeText(linkUrl); showToast("Link copied"); triggerLua(); };
-
-document.getElementById('subrReset').onclick = () => { if(confirm("Reset progress for current location?")){ subChecked={}; subIndex=0; save(); render('subList',subs,subChecked); updateStats(); }};
-document.getElementById('captionReset').onclick = () => { if(confirm("Reset captions?")){ capUsed={}; save(); render('captionList',captions,capUsed); updateStats(); }};
-document.getElementById('testReset').onclick = () => { if(confirm("Reset test subs progress?")){ testChecked={}; testIndex=0; save(); render('testList',testSubs,testChecked); updateStats(); }};
-
-document.getElementById('toggleSub').onclick = () => { const l = document.getElementById('subList'); l.style.display = l.style.display==='block'?'none':'block'; };
-document.getElementById('toggleCap').onclick = () => { const l = document.getElementById('captionList'); l.style.display = l.style.display==='block'?'none':'block'; };
-document.getElementById('toggleTest').onclick = () => { const l = document.getElementById('testList'); l.style.display = l.style.display==='block'?'none':'block'; };
-
-document.getElementById('addSubBtn').onclick = (e) => { 
-  e.stopPropagation(); 
-  if (!currentLocation) return alert("Select a location first!");
-  const input = prompt("Add one or more subreddits (one per line, no r/):"); 
-  if (!input) return; 
-  const lines = input.split('\n').map(l => l.trim()).filter(l => l); 
-  let added = 0; 
-  lines.forEach(sub => { if (sub && !subs.includes(sub)) { subs.push(sub); added++; } }); 
-  if (added > 0) { locations[currentLocation] = subs; save(); render('subList', subs, subChecked); updateStats(); showToast(`Added ${added} to ${currentLocation}`); } 
+document.getElementById('fabLink').onclick = () => { 
+  navigator.clipboard.writeText(linkUrl); 
+  showToast("🔗 Link copied"); 
+  triggerLua(); 
 };
-
-document.getElementById('addTestBtn').onclick = (e) => { 
-  e.stopPropagation(); 
-  const input = prompt("Add one or more test subreddits (one per line, no r/):"); 
-  if (!input) return; 
-  const lines = input.split('\n').map(l => l.trim()).filter(l => l); 
-  let added = 0; 
-  lines.forEach(sub => { if (sub && !testSubs.includes(sub)) { testSubs.push(sub); added++; } }); 
-  if (added > 0) { save(); render('testList', testSubs, testChecked); updateStats(); showToast(`Added ${added} test subreddit${added > 1 ? 's' : ''}`); } 
-};
-
-document.getElementById('addCapBtn').onclick = (e) => { 
-  e.stopPropagation(); 
-  const input = prompt("Add one or more captions (one per line):"); 
-  if (!input) return; 
-  const lines = input.split('\n').map(l => l.trim()).filter(l => l); 
-  let added = 0; 
-  lines.forEach(cap => { if (cap && !captions.includes(cap)) { captions.push(cap); added++; } }); 
-  if (added > 0) { save(); render('captionList', captions, capUsed); updateStats(); showToast(`Added ${added} caption${added > 1 ? 's' : ''}`); } 
-};
-
-document.getElementById('subRefresh').onclick = () => loadFromSheet();
-
-function updateCaptionsNow() { localStorage.removeItem('caps3'); localStorage.removeItem('capUs3'); location.reload(); }
-
-let userIP = '', previousIP = '', scamalyticsWindow = null;
-function updateIPHeader() { const ip = document.getElementById('ip').textContent; document.getElementById('ipHeader').textContent = (ip && ip !== 'Loading...' && !ip.includes('Failed') && !ip.includes('Offline')) ? ip : 'No IP'; }
-fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => { userIP = d.ip; document.getElementById("ip").textContent = userIP; updateIPHeader(); }).catch(() => { document.getElementById("ip").textContent = "Offline"; updateIPHeader(); });
-
-function rotateIP() { 
-  const btn = document.getElementById("rotateBtn"); 
-  const url = document.getElementById("rotateLink").value.trim(); 
-  if (!url) return alert("Enter URL"); 
-  btn.disabled = true; btn.innerHTML = "Starting..."; 
-  new Image().src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(); 
-  let s = 8; const timer = setInterval(() => { s--; btn.innerHTML = s > 0 ? `Wait ${s}s...` : "Done!"; if (s <= 0) clearInterval(timer); }, 1000); 
-  setTimeout(() => { btn.innerHTML = "Go"; btn.disabled = false; showToast("Rotation triggered!"); }, 8500); 
-}
-
-function refreshAndOpen() { 
-  const btn = document.getElementById("refreshBtn"); 
-  btn.disabled=true; btn.innerHTML="Loading..."; 
-  if (!scamalyticsWindow || scamalyticsWindow.closed) scamalyticsWindow = window.open('about:blank','_blank'); 
-  fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ 
-    if(userIP){ previousIP=userIP; document.getElementById("oldIP").textContent=previousIP; } 
-    userIP=d.ip; document.getElementById("ip").textContent=userIP; updateIPHeader(); 
-    scamalyticsWindow.location.href=`https://scamalytics.com/ip/${userIP}`; 
-    btn.style.backgroundColor = (previousIP && previousIP!==userIP) ? "#2e7d32" : "#d32f2f"; 
-    btn.innerHTML = (previousIP && previousIP!==userIP) ? "Changed!" : "No Change"; 
-  }).catch(()=>{ btn.style.backgroundColor="#b71c1c"; btn.innerHTML="Failed"; }).finally(()=>{ btn.disabled=false; }); 
-}
-
-function showToast(m) { 
-  const t = document.getElementById('toast'); 
-  t.textContent=m; t.classList.add('show'); 
-  clearTimeout(t.timeout); 
-  t.timeout=setTimeout(()=>t.classList.remove('show'),1800); 
-}
 
 document.getElementById('randomSubBtn').onclick = () => {
-  if (randomSubList.length === 0) return showToast("No warming subs");
+  if (randomSubList.length === 0) return showToast("⚠️ No warming subs");
   const random = randomSubList[Math.floor(Math.random() * randomSubList.length)];
   window.open("https://www.reddit.com/r/" + random, "_blank");
-  showToast("Opened r/" + random);
+  showToast("🎲 Opened r/" + random);
 };
 
-// SAP COMBO - uses selected location subs
 document.getElementById('comboFab').onclick = () => {
-  if (!currentLocation || subs.length === 0) return showToast("Select a location with subs!");
-  let sub = ''; let startIndex = subIndex;
+  if (!currentLocation || subs.length === 0) return showToast("⚠️ Select a location with subs!");
+  let sub = ''; 
+  let startIndex = subIndex;
   do { 
     sub = subs[subIndex]; 
     if (!subChecked[sub]) break; 
     subIndex = (subIndex + 1) % subs.length; 
   } while (subIndex !== startIndex);
+  
   if (subChecked[sub]) { 
-    subChecked = {}; subIndex = 0; save(); showToast("All used in " + currentLocation + " → Auto-reset!"); 
+    subChecked = {}; 
+    subIndex = 0; 
+    save(); 
+    showToast("🔄 All used in " + currentLocation + " → Reset!"); 
   }
-  subChecked[sub] = true; subIndex = (subIndex + 1) % subs.length; save();
+  
+  subChecked[sub] = true; 
+  subIndex = (subIndex + 1) % subs.length; 
+  save();
+  
   const unusedCaps = captions.filter(c => !capUsed[c]);
-  if (unusedCaps.length === 0) { capUsed = {}; save(); showToast("Captions reset!"); }
-  const caption = unusedCaps.length ? unusedCaps[Math.floor(Math.random()*unusedCaps.length)] : captions[Math.floor(Math.random()*captions.length)];
-  capUsed[caption] = true; save();
+  if (unusedCaps.length === 0) { 
+    capUsed = {}; 
+    save(); 
+    showToast("🔄 Captions reset!"); 
+  }
+  const caption = unusedCaps.length ? unusedCaps[Math.floor(Math.random() * unusedCaps.length)] : captions[Math.floor(Math.random() * captions.length)];
+  capUsed[caption] = true; 
+  save();
+  
   const encodedTitle = encodeURIComponent(caption.trim());
   const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
   window.open(redditUrl, '_blank');
+  
   render('subList', subs, subChecked); 
   render('captionList', captions, capUsed); 
   updateStats();
   navigator.clipboard.writeText(sub); 
-  showToast(`SAP → r/${sub} (${currentLocation})`);
+  showToast(`🚀 SAP → r/${sub} (${currentLocation})`);
 };
 
-// TEST COMBO
 document.getElementById('testComboFab').onclick = () => {
-  if (testSubs.length === 0) return showToast("No test subs!");
-  let sub = ''; let startIndex = testIndex;
-  do { sub = testSubs[testIndex]; if (!testChecked[sub]) break; testIndex = (testIndex + 1) % testSubs.length; } while (testIndex !== startIndex);
-  if (testChecked[sub]) { testChecked = {}; testIndex = 0; save(); showToast("All test used → Auto-reset!"); }
-  testChecked[sub] = true; testIndex = (testIndex + 1) % testSubs.length; save();
+  if (testSubs.length === 0) return showToast("⚠️ No test subs!");
+  let sub = ''; 
+  let startIndex = testIndex;
+  do { 
+    sub = testSubs[testIndex]; 
+    if (!testChecked[sub]) break; 
+    testIndex = (testIndex + 1) % testSubs.length; 
+  } while (testIndex !== startIndex);
+  
+  if (testChecked[sub]) { 
+    testChecked = {}; 
+    testIndex = 0; 
+    save(); 
+    showToast("🔄 All test used → Reset!"); 
+  }
+  
+  testChecked[sub] = true; 
+  testIndex = (testIndex + 1) % testSubs.length; 
+  save();
+  
   const unusedCaps = captions.filter(c => !capUsed[c]);
-  if (unusedCaps.length === 0) { capUsed = {}; save(); showToast("Captions reset!"); }
-  const caption = unusedCaps.length ? unusedCaps[Math.floor(Math.random()*unusedCaps.length)] : captions[Math.floor(Math.random()*captions.length)];
-  capUsed[caption] = true; save();
+  if (unusedCaps.length === 0) { 
+    capUsed = {}; 
+    save(); 
+    showToast("🔄 Captions reset!"); 
+  }
+  const caption = unusedCaps.length ? unusedCaps[Math.floor(Math.random() * unusedCaps.length)] : captions[Math.floor(Math.random() * captions.length)];
+  capUsed[caption] = true; 
+  save();
+  
   const encodedTitle = encodeURIComponent(caption.trim());
   const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
   window.open(redditUrl, '_blank');
-  render('testList', testSubs, testChecked); render('captionList', captions, capUsed); updateStats();
-  navigator.clipboard.writeText(sub); showToast(`Test → r/${sub}`);
+  
+  render('testList', testSubs, testChecked); 
+  render('captionList', captions, capUsed); 
+  updateStats();
+  navigator.clipboard.writeText(sub); 
+  showToast(`🧪 Test → r/${sub}`);
 };
 
-let profileData = []; let currentRow = 2; let currentIndex = parseInt(localStorage.getItem('lastProfileIndex') || '0');
+let profileData = []; 
+let currentRow = 2; 
+let currentIndex = parseInt(localStorage.getItem('lastProfileIndex') || '0');
+
 function loadProfiles() { 
   fetch(PROFILE_URL + "?action=read&t=" + Date.now())
     .then(r => r.json())
     .then(d => { 
       profileData = d.values || []; 
-      if (profileData.length === 0) { showToast("Sheet is empty"); clearProfileFields(); } 
-      else { 
+      if (profileData.length === 0) { 
+        showToast("⚠️ Profile sheet is empty"); 
+        clearProfileFields(); 
+      } else { 
         if (currentIndex >= profileData.length) currentIndex = profileData.length - 1; 
         loadProfile(currentIndex); 
-        showToast(`Profile ${currentIndex + 1}/${profileData.length} loaded`); 
+        showToast(`👤 Profile ${currentIndex + 1}/${profileData.length} loaded`); 
       } 
-    }).catch(() => showToast("Sheet offline")); 
+    })
+    .catch(() => showToast("⚠️ Profile sheet offline")); 
 }
+
 function clearProfileFields() { 
   document.getElementById('profileName').value = ''; 
   document.getElementById('profilePass').value = ''; 
   document.getElementById('profileUser').value = ''; 
   document.getElementById('profileID').value = ''; 
 }
+
 function loadProfile(index) { 
   if (profileData.length === 0) return; 
   if (index < 0) index = 0; 
@@ -581,59 +1121,80 @@ function loadProfile(index) {
   document.getElementById('profilePass').value = row[1] || ''; 
   document.getElementById('profileUser').value = row[2] || ''; 
   document.getElementById('profileID').value = row[3] || ''; 
-  currentRow = index + 2; currentIndex = index; 
+  currentRow = index + 2; 
+  currentIndex = index; 
   localStorage.setItem('lastProfileIndex', index); 
 }
-function prevProfile() { loadProfile(currentIndex - 1); }
-function nextProfile() { loadProfile(currentIndex + 1); }
+
+function prevProfile() { 
+  loadProfile(currentIndex - 1); 
+}
+
+function nextProfile() { 
+  loadProfile(currentIndex + 1); 
+}
+
 function generatePassword() { 
-  if (document.getElementById('profilePass').value !== '') { return showToast("Password not empty"); } 
+  if (document.getElementById('profilePass').value !== '') { 
+    return showToast("⚠️ Password field not empty"); 
+  } 
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*_-"; 
   let randomPart = ""; 
   const len = Math.floor(Math.random() * 5) + 10; 
-  for (let i = 0; i < len; i++) { randomPart += chars.charAt(Math.floor(Math.random() * chars.length)); } 
+  for (let i = 0; i < len; i++) { 
+    randomPart += chars.charAt(Math.floor(Math.random() * chars.length)); 
+  } 
   const finalPassword = "reddit" + randomPart; 
   document.getElementById('profilePass').value = finalPassword; 
   copyText('profilePass'); 
-  showToast(`Generated: ${finalPassword}`); 
+  showToast(`🔑 Generated & copied!`); 
 }
+
 async function pasteUsername() { 
   try { 
     const text = await navigator.clipboard.readText(); 
     document.getElementById('profileUser').value = text.trim(); 
-    showToast("Username pasted"); 
-  } catch { showToast("Paste failed (allow clipboard)"); } 
+    showToast("📋 Username pasted"); 
+  } catch { 
+    showToast("⚠️ Paste failed (allow clipboard)"); 
+  } 
 }
+
 function saveProfile() { 
   const pass = document.getElementById('profilePass').value.trim(); 
   const user = document.getElementById('profileUser').value.trim(); 
-  if (!pass || !user) return showToast("Fill Password & Username"); 
+  if (!pass || !user) return showToast("⚠️ Fill Password & Username"); 
   fetch(`${PROFILE_URL}?action=write&row=${currentRow}&pass=${encodeURIComponent(pass)}&user=${encodeURIComponent(user)}&t=${Date.now()}`)
     .then(r => r.json())
     .then(() => { 
-      showToast("Saved to sheet"); 
+      showToast("✅ Saved to sheet"); 
       profileData[currentIndex][1] = pass; 
       profileData[currentIndex][2] = user; 
-    }).catch(() => showToast("Save failed")); 
+    })
+    .catch(() => showToast("❌ Save failed")); 
 }
+
 function copyText(id) { 
   const el = document.getElementById(id); 
-  el.focus(); el.select(); 
+  el.focus(); 
+  el.select(); 
   navigator.clipboard.writeText(el.value); 
-  showToast((el.placeholder || el.id) + " copied"); 
+  showToast("📋 " + (el.placeholder || el.id) + " copied"); 
 }
+
 document.getElementById('fabCreate').onclick = () => { 
   const currentID = document.getElementById('profileID').value.trim(); 
-  if (!currentID) { showToast("No ID loaded"); return; } 
+  if (!currentID) { 
+    showToast("⚠️ No ID loaded"); 
+    return; 
+  } 
   navigator.clipboard.writeText(currentID); 
   window.location.href = "shortcuts://run-shortcut?name=CreateRed"; 
-  showToast("ID copied → CreateRed launched"); 
+  showToast("🚀 ID copied → CreateRed launched"); 
 };
 
 window.addEventListener('load', () => {
   updateToggleButton();
-  ['subContent','capContent','ipContent','profileContent','testContent'].forEach(id => document.getElementById(id).classList.remove('open'));
-  ['subArrow','capArrow','ipArrow','profileArrow','testArrow'].forEach(id => document.getElementById(id).classList.remove('open'));
   updateIPHeader();
   loadFromSheet();
   loadProfiles();
