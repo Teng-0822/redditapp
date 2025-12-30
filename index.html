@@ -537,6 +537,7 @@ h1 {
       <div class="ip-text" id="oldIP">—</div>
       <div class="ip-label" style="margin-top: 12px;">Current IP</div>
       <div class="ip-text" id="ip">Loading...</div>
+      <div class="ip-text" id="ipLocation" style="font-size: 0.9rem; color: #aaa; margin-top: 4px;">—</div>
       <button onclick="refreshAndOpen()" class="btn btn-primary" style="margin-top: 12px; width: 100%;">🔍 Refresh + Scam</button>
     </div>
   </div>
@@ -915,9 +916,11 @@ fetch('https://api.ipify.org?format=json')
     userIP = d.ip; 
     document.getElementById("ip").textContent = userIP; 
     updateIPHeader(); 
+    fetchIPLocation(userIP);  // ADD THIS LINE
   })
   .catch(() => { 
-    document.getElementById("ip").textContent = "Offline"; 
+    document.getElementById("ip").textContent = "Offline";
+    document.getElementById("ipLocation").textContent = "—";  // ADD THIS LINE 
     updateIPHeader(); 
   });
 
@@ -958,6 +961,7 @@ function refreshAndOpen() {
       userIP = d.ip; 
       document.getElementById("ip").textContent = userIP; 
       updateIPHeader(); 
+      fetchIPLocation(userIP);  // ADD THIS LINE
       scamalyticsWindow.location.href = `https://scamalytics.com/ip/${userIP}`; 
       btn.style.backgroundColor = (previousIP && previousIP !== userIP) ? "#2e7d32" : "#d32f2f"; 
       btn.innerHTML = (previousIP && previousIP !== userIP) ? "✅ Changed!" : "⚠️ No Change"; 
@@ -1193,6 +1197,24 @@ function copyText(id) {
   showToast("📋 " + (el.placeholder || el.id) + " copied"); 
 }
 
+function fetchIPLocation(ip) {
+  fetch(`https://ipapi.co/${ip}/json/`)
+    .then(r => r.json())
+    .then(data => {
+      let location = '';
+      if (data.country_name) {
+        location = data.country_name;
+        if (data.region) {
+          location += `, ${data.region}`;
+        }
+      }
+      document.getElementById("ipLocation").textContent = location || "Location unknown";
+    })
+    .catch(() => {
+      document.getElementById("ipLocation").textContent = "Location unavailable";
+    });
+}
+
 document.getElementById('fabCreate').onclick = () => { 
   const currentID = document.getElementById('profileID').value.trim(); 
   if (!currentID) { 
@@ -1213,3 +1235,4 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
+
