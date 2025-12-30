@@ -1198,20 +1198,43 @@ function copyText(id) {
 }
 
 function fetchIPLocation(ip) {
+  // Try ipapi.co first (more accurate for most cases)
   fetch(`https://ipapi.co/${ip}/json/`)
     .then(r => r.json())
     .then(data => {
+      if (data.error) throw new Error('ipapi.co failed');
       let location = '';
-      if (data.country_name) {
+      if (data.city && data.region && data.country_name) {
+        location = `${data.city}, ${data.region}, ${data.country_name}`;
+      } else if (data.region && data.country_name) {
+        location = `${data.region}, ${data.country_name}`;
+      } else if (data.country_name) {
         location = data.country_name;
-        if (data.region) {
-          location += `, ${data.region}`;
-        }
       }
       document.getElementById("ipLocation").textContent = location || "Location unknown";
     })
     .catch(() => {
-      document.getElementById("ipLocation").textContent = "Location unavailable";
+      // Fallback to ip-api.com which is more reliable
+      fetch(`http://ip-api.com/json/${ip}?fields=status,city,regionName,country`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === 'success') {
+            let location = '';
+            if (data.city && data.regionName && data.country) {
+              location = `${data.city}, ${data.regionName}, ${data.country}`;
+            } else if (data.regionName && data.country) {
+              location = `${data.regionName}, ${data.country}`;
+            } else if (data.country) {
+              location = data.country;
+            }
+            document.getElementById("ipLocation").textContent = location || "Location unknown";
+          } else {
+            document.getElementById("ipLocation").textContent = "Location unavailable";
+          }
+        })
+        .catch(() => {
+          document.getElementById("ipLocation").textContent = "Location unavailable";
+        });
     });
 }
 
