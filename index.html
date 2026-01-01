@@ -441,7 +441,7 @@ h1 {
       <button onclick="pasteUsername()" class="btn btn-secondary" style="flex: 1;">📋 Paste</button>
       <button onclick="nextProfile()" class="btn btn-secondary" style="flex: 1;">Next ▶</button>
     </div>
-    <button onclick="saveProfile()" class="btn btn-primary" style="width: 100%;">💾 Save Profile</button>
+    <button id="saveProfileBtn" onclick="saveProfile()" class="btn btn-primary" style="width: 100%;">💾 Save Profile</button>
   </div>
 </div>
 
@@ -581,6 +581,217 @@ const dmTexts = [ "I'm new here, come take a peek at my page below and enjoy a l
 const names = [ "Sophyy 🌸", "Sophiaa 🌷", "Sophi 💋", "Sophiya 🌺", "Sofayuh 😍", "Soffie 🌼", "Sofey 💖", "Soffyy 😝", "Sofy 💘", "Sofiy 🦋", "Sofiahh 🍬", "Sofiaaaa 💕", "Sophie 😝", "Sophia 😊", "Sofie 🙈", "Sofiaa 😍", "Sofia 🍑", "Sofiyah ✨", "Sofiya 💞", "Sofii 💕", "Sofiee 😘", "Sofiah 💗", "Sophiyaaa 😍", "Sophiie 🙈", "Sofiyaaa ✨" ];
 const ofLines = [ "OF (nudes&dms)😜", "OF (nudez&seks)😜", "OF (nudes&dms)🙈" ];
 const linkUrl = "https://tapformysocials.me/girlygirl";
+
+// Reddit username checker
+let usernameCheckInterval = null;
+
+async function checkRedditUsername(username) {
+  if (!username || username.trim() === '') {
+    return 'empty';
+  }
+  
+  const cleanUsername = username.trim();
+  
+  try {
+    // Use a CORS proxy or direct fetch with proper headers
+    // Method 1: Try to fetch the user page HTML (works better than JSON for banned detection)
+    const response = await fetch(`https://www.reddit.com/user/${cleanUsername}.json`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    
+    // Get the response text first
+    const text = await response.text();
+    
+    try {
+      const data = JSON.parse(text);
+      
+      // Check for various error conditions
+      if (data.error === 404 || data.message === 'Not Found') {
+        return 'notfound';
+      }
+      
+      // Check if we got valid user data
+      if (data && data.data && data.data.children) {
+        // User exists and has posts - likely active
+        return 'active';
+      }
+      
+      // If data.data exists but no children, could be banned or no posts
+      if (data && data.data && !data.data.children) {
+        // Try to check the about endpoint
+        const aboutResponse = await fetch(`https://www.reddit.com/user/${cleanUsername}/about.json`);
+        const aboutData = await aboutResponse.json();
+        
+        if (aboutData && aboutData.data && aboutData.data.is_suspended) {
+          return 'banned';
+        }
+        
+        if (aboutData && aboutData.data && aboutData.data.name) {
+          // User exists but has no posts - still active account
+          return 'active';
+        }
+        
+        return 'banned';
+      }
+      
+      return 'banned';
+      
+    } catch (parseError) {
+      // If we can't parse JSON, check if the text contains ban indicators
+      if (text.includes('banned') || text.includes('suspended') || text.includes('This account has been')) {
+        return 'banned';
+      }
+      
+      if (text.includes('nobody on Reddit goes by that name') || text.includes('page not found')) {
+        return 'notfound';
+      }
+      
+      return 'error';
+    }
+    
+  } catch (error) {
+    console.error('Error checking username:', error);
+    
+    // As a fallback, try opening in hidden iframe to check the actual page
+    return await checkViaIframe(cleanUsername);
+  }
+}
+
+// Fallback method using iframe to detect page content
+async function checkViaIframe(username) {
+  return new Promise((resolve) => {
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.style.position = 'absolute';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    
+    let resolved = false;
+    
+    const cleanup = () => {
+      if (iframe.parentNode) {
+        document.body.removeChild(iframe);
+      }
+    };
+    
+    const resolveOnce = (status) => {
+      if (!resolved) {
+        resolved = true;
+        cleanup();
+        resolve(status);
+      }
+    };
+    
+    iframe.onload = () => {
+      try {
+        // Try to read iframe content
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const bodyText = iframeDoc.body ? iframeDoc.body.innerText.toLowerCase() : '';
+        
+        if (bodyText.includes('banned') || bodyText.includes('suspended') || bodyText.includes('this account has been')) {
+          resolveOnce('banned');
+        } else if (bodyText.includes('nobody on reddit goes by that name') || bodyText.includes('page not found')) {
+          resolveOnce('notfound');
+        } else if (bodyText.length > 100) {
+          // If we got substantial content, account is probably active
+          resolveOnce('active');
+        } else {
+          resolveOnce('error');
+        }
+      } catch (e) {
+        // CORS will prevent reading, but we can at least check if it loaded
+        resolveOnce('error');
+      }
+    };
+    
+    iframe.onerror = () => {
+      resolveOnce('error');
+    };
+    
+    // Timeout after 5 seconds
+    setTimeout(() => {
+      resolveOnce('error');
+    }, 5000);
+    
+    document.body.appendChild(iframe);
+    iframe.src = `https://www.reddit.com/user/${username}`;
+  });
+}
+
+async function updateSaveButtonColor() {
+  const username = document.getElementById('profileUser').value.trim();
+  const saveBtn = document.getElementById('saveProfileBtn');
+  
+  if (!username) {
+    // Reset to default orange if no username
+    saveBtn.style.backgroundColor = 'var(--orange)';
+    saveBtn.style.border = '2px solid black';
+    return;
+  }
+  
+  const status = await checkRedditUsername(username);
+  
+  switch(status) {
+    case 'active':
+      // Green for active account
+      saveBtn.style.backgroundColor = '#2e7d32';
+      saveBtn.style.border = '2px solid #1b5e20';
+      saveBtn.style.color = 'white';
+      break;
+    case 'banned':
+      // Red for banned account
+      saveBtn.style.backgroundColor = '#d32f2f';
+      saveBtn.style.border = '2px solid #b71c1c';
+      saveBtn.style.color = 'white';
+      break;
+    case 'notfound':
+      // Retain original color (orange) if not found
+      saveBtn.style.backgroundColor = 'var(--orange)';
+      saveBtn.style.border = '2px solid black';
+      saveBtn.style.color = 'black';
+      break;
+    default:
+      // Keep orange for errors or unknown states
+      saveBtn.style.backgroundColor = 'var(--orange)';
+      saveBtn.style.border = '2px solid black';
+      saveBtn.style.color = 'black';
+  }
+}
+
+function startUsernameChecker() {
+  // Clear any existing interval
+  if (usernameCheckInterval) {
+    clearInterval(usernameCheckInterval);
+  }
+  
+  // Check immediately
+  updateSaveButtonColor();
+  
+  // Then check every 10 seconds
+  usernameCheckInterval = setInterval(() => {
+    updateSaveButtonColor();
+  }, 10000);
+}
+
+function stopUsernameChecker() {
+  if (usernameCheckInterval) {
+    clearInterval(usernameCheckInterval);
+    usernameCheckInterval = null;
+  }
+}
+
+// Listen to username input changes to trigger immediate check
+document.addEventListener('DOMContentLoaded', function() {
+  const usernameInput = document.getElementById('profileUser');
+  if (usernameInput) {
+    usernameInput.addEventListener('input', function() {
+      updateSaveButtonColor();
+    });
+  }
+});
 
 function toggleCard(type) {
   const content = document.getElementById(type + 'Content');
@@ -916,11 +1127,11 @@ fetch('https://api.ipify.org?format=json')
     userIP = d.ip; 
     document.getElementById("ip").textContent = userIP; 
     updateIPHeader(); 
-    fetchIPLocation(userIP);  // ADD THIS LINE
+    fetchIPLocation(userIP);
   })
   .catch(() => { 
     document.getElementById("ip").textContent = "Offline";
-    document.getElementById("ipLocation").textContent = "—";  // ADD THIS LINE 
+    document.getElementById("ipLocation").textContent = "—";
     updateIPHeader(); 
   });
 
@@ -961,7 +1172,7 @@ function refreshAndOpen() {
       userIP = d.ip; 
       document.getElementById("ip").textContent = userIP; 
       updateIPHeader(); 
-      fetchIPLocation(userIP);  // ADD THIS LINE
+      fetchIPLocation(userIP);
       scamalyticsWindow.location.href = `https://scamalytics.com/ip/${userIP}`; 
       btn.style.backgroundColor = (previousIP && previousIP !== userIP) ? "#2e7d32" : "#d32f2f"; 
       btn.innerHTML = (previousIP && previousIP !== userIP) ? "✅ Changed!" : "⚠️ No Change"; 
@@ -1198,7 +1409,6 @@ function copyText(id) {
 }
 
 function fetchIPLocation(ip) {
-  // Try ipapi.co first (more accurate for most cases)
   fetch(`https://ipapi.co/${ip}/json/`)
     .then(r => r.json())
     .then(data => {
@@ -1214,7 +1424,6 @@ function fetchIPLocation(ip) {
       document.getElementById("ipLocation").textContent = location || "Location unknown";
     })
     .catch(() => {
-      // Fallback to ip-api.com which is more reliable
       fetch(`http://ip-api.com/json/${ip}?fields=status,city,regionName,country`)
         .then(r => r.json())
         .then(data => {
@@ -1254,8 +1463,13 @@ window.addEventListener('load', () => {
   updateIPHeader();
   loadFromSheet();
   loadProfiles();
+  startUsernameChecker();
+});
+
+// Stop checker when page unloads
+window.addEventListener('beforeunload', () => {
+  stopUsernameChecker();
 });
 </script>
 </body>
 </html>
-
