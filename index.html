@@ -1452,9 +1452,9 @@ function generatePassword() {
   const selectedWords = shuffled.slice(0, numWords);
 
   // Join with hyphens
-  //const randomPart = selectedWords.join("-");
+  const randomPart = selectedWords.join("-");
 
-  const finalPassword = "reddit";
+  const finalPassword = "reddit" + randomPart;
 
   document.getElementById('profilePass').value = finalPassword;
   copyText('profilePass');
