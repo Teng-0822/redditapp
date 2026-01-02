@@ -1427,20 +1427,38 @@ function nextProfile() {
   loadProfile(currentIndex + 1); 
 }
 
-function generatePassword() { 
-  if (document.getElementById('profilePass').value !== '') { 
-    return showToast("⚠️ Password field not empty"); 
-  } 
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*_-"; 
-  let randomPart = ""; 
-  const len = Math.floor(Math.random() * 5) + 10; 
-  for (let i = 0; i < len; i++) { 
-    randomPart += chars.charAt(Math.floor(Math.random() * chars.length)); 
-  } 
-  const finalPassword = "reddit" + randomPart; 
-  document.getElementById('profilePass').value = finalPassword; 
-  copyText('profilePass'); 
-  showToast(`🔑 Generated & copied!`); 
+function generatePassword() {
+  if (document.getElementById('profilePass').value !== '') {
+    return showToast("⚠️ Password field not empty");
+  }
+
+  const words = [
+    "cat", "dog", "sun", "sky", "sea", "pen", "cup", "hat", "map", "run",
+    "walk", "talk", "play", "read", "book", "tree", "rock", "sand", "wind", "rain",
+    "fire", "snow", "moon", "star", "blue", "pink", "gold", "gray", "warm", "cool",
+    "fast", "slow", "jump", "stop", "move", "push", "pull", "hold", "open", "shut",
+    "time", "hour", "day", "week", "year", "life", "love", "hope", "calm", "kind"
+  ];
+
+  // Random number of words: 3 to 7 (adjust if you want longer/shorter)
+  const numWords = Math.floor(Math.random() * 5) + 3;
+
+  // Shuffle the array and pick the first numWords (Fisher-Yates shuffle for fairness)
+  const shuffled = words.slice(); // copy array
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  const selectedWords = shuffled.slice(0, numWords);
+
+  // Join with hyphens
+  //const randomPart = selectedWords.join("-");
+
+  const finalPassword = "reddit";
+
+  document.getElementById('profilePass').value = finalPassword;
+  copyText('profilePass');
+  showToast(`🔑 Generated & copied!`);
 }
 
 async function pasteUsername() { 
