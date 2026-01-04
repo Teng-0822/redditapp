@@ -1076,7 +1076,7 @@ async function performSAP() {
   await navigator.clipboard.writeText(caption.trim());
   
   // Open Reddit submit page WITHOUT the title parameter
-  const redditUrl = `reddit://reddit.com/r/${sub}/submit`;
+  const redditUrl = `reddit://reddit.com/r/${sub}`;
   window.location.href = redditUrl;
   
   render('subList', subs, subChecked); 
@@ -1085,14 +1085,6 @@ async function performSAP() {
   navigator.clipboard.writeText(sub); 
   showToast(`🚀 SAP → r/${sub} | Caption copied!`);
 }
-
-// Button click handler
-document.getElementById('comboFab').onclick = () => performSAP();
-// Button click handler
-document.getElementById('comboFab').onclick = () => performSAP();
-// Button click handler
-document.getElementById('comboFab').onclick = () => performSAP();
-
   
   
 async function checkViaIframe(username) {
