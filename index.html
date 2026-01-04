@@ -581,10 +581,7 @@ h1 {
 </head>
 <body>
 
-<div class="header">
-  <h1>BEAST MODE</h1>
-  <div class="subtitle">Reddit Automation Dashboard</div>
-</div>
+
 
 <div class="ip-control">
   <div class="ip-input-row">
@@ -753,6 +750,7 @@ h1 {
     <button class="fab" id="comboFab" title="SAP">SAP</button>
     <button class="fab" id="testComboFab" title="Test">Tes</button>
     <button class="fab" id="randomSubBtn" title="Random">R</button>
+    <button class="fab" id="fabUrl" title="URL">url</button>
     <button class="fab" id="fabCreate" title="Create">+</button>
   </div>
 </div>
@@ -760,8 +758,8 @@ h1 {
 <div class="toast" id="toast"></div>
 
 <script>
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbz6DdYO7rdlpmRL_dCqFm2m1_tCNkK_VRdHRIHR0ebARYdOZWKnccKU1didAWYaKyQqRg/exec";
-const PROFILE_URL = SHEET_URL;
+let SHEET_URL = localStorage.getItem('sheetURL') || "https://script.google.com/macros/s/AKfycbzqa-ajCHgQorE8y6xCkUl00ZgE-d04T5601eo1_eYqWY2jv8PSljiPE8CjTJg3NNvMeg/exec";
+let PROFILE_URL = SHEET_URL;
 
 let locations = {};
 let currentLocation = localStorage.getItem('currentLocation') || '';
@@ -779,10 +777,10 @@ let dmUsed = JSON.parse(localStorage.getItem('dmUsed') || '{}');
 let nameUsed = JSON.parse(localStorage.getItem('nameUsed') || '{}');
 let ofUsed = JSON.parse(localStorage.getItem('ofUsed') || '{}');
 
-const dmTexts = ["I'm new here, come take a peek at my page below and enjoy a little surprise I left for you", "Still figuring things out here, check out my page and grab your free surprise", "Just getting started here, have a look at my page and claim your cute freebie", "I'm the new girl here, check my page and treat yourself to a sweet surprise", "Super new here, come visit my page and enjoy a little gift from me", "Just joined, have a look at my page and don't miss the free surprise waiting for you", "Newbie alert, come check my page and grab the adorable surprise I made for you", "I'm fresh here, take a moment to visit my page and get your special little treat", "Still new around here, check out my page and enjoy your free surprise", "Just starting out here, come see my page and pick up the cute surprise I prepared for you"];
-const names = ["Sophyy 🌸", "Sophiaa 🌷", "Sophi 💋", "Sophiya 🌺", "Sofayuh 😍", "Soffie 🌼", "Sofey 💖", "Soffyy 😝", "Sofy 💘", "Sofiy 🦋", "Sofiahh 🍬", "Sofiaaaa 💕", "Sophie 😝", "Sophia 😊", "Sofie 🙈", "Sofiaa 😍", "Sofia 🍑", "Sofiyah ✨", "Sofiya 💞", "Sofii 💕", "Sofiee 😘", "Sofiah 💗", "Sophiyaaa 😍", "Sophiie 🙈", "Sofiyaaa ✨"];
-const ofLines = ["OF (nudes&dms)😜", "OF (nudez&seks)😜", "OF (nudes&dms)🙈"];
-const linkUrl = "https://tapformysocials.me/girlygirl";
+let dmTexts = [];
+let names = [];
+let ofLines = [];
+let linkUrls = [];
 
 let usernameCheckInterval = null;
 
@@ -969,9 +967,18 @@ async function loadFromSheet() {
     const resp = await fetch(SHEET_URL + "?action=readAll&t=" + Date.now());
     const data = await resp.json();
     const sheet1 = data.sheet1 || [];
+    
+    // Load existing data
     captions = sheet1.slice(1).map(row => row[4]).filter(Boolean);
     randomSubList = sheet1.slice(1).map(row => row[5]).filter(Boolean);
     testSubs = sheet1.slice(1).map(row => row[6]).filter(Boolean);
+    
+    // Load new data from columns H, I, J, K
+    dmTexts = data.dmTexts || [];
+    names = data.names || [];
+    ofLines = data.ofLines || [];
+    linkUrls = data.linkUrls || [];
+    
     const sheet2 = data.sheet2 || [];
     if (sheet2.length < 1) throw new Error("Sheet2 empty");
     const headers = sheet2[0];
@@ -986,9 +993,16 @@ async function loadFromSheet() {
         if (locSubs.length > 0) locations[loc.trim()] = locSubs;
       }
     });
+    
+    // Fallback to localStorage if data is empty
     if (Object.keys(locations).length === 0) locations = JSON.parse(localStorage.getItem('locations3') || '{}');
     if (captions.length === 0) captions = JSON.parse(localStorage.getItem('caps3') || '[]');
     if (testSubs.length === 0) testSubs = JSON.parse(localStorage.getItem('testSubs3') || '[]');
+    if (dmTexts.length === 0) dmTexts = ["I'm new here, come take a peek at my page below and enjoy a little surprise I left for you"];
+    if (names.length === 0) names = ["Sophyy 🌸"];
+    if (ofLines.length === 0) ofLines = ["OF (nudes&dms)😜"];
+    if (linkUrls.length === 0) linkUrls = ["https://tapformysocials.me/girlygirl"];
+    
     populateLocationSelect();
     selectLocation(currentLocation || Object.keys(locations)[0] || '');
     render('testList', testSubs, testChecked);
@@ -1000,6 +1014,13 @@ async function loadFromSheet() {
     locations = JSON.parse(localStorage.getItem('locations3') || '{}');
     captions = JSON.parse(localStorage.getItem('caps3') || '[]');
     testSubs = JSON.parse(localStorage.getItem('testSubs3') || '[]');
+    
+    // Set fallback values
+    if (dmTexts.length === 0) dmTexts = ["I'm new here, come take a peek at my page below and enjoy a little surprise I left for you"];
+    if (names.length === 0) names = ["Sophyy 🌸"];
+    if (ofLines.length === 0) ofLines = ["OF (nudes&dms)😜"];
+    if (linkUrls.length === 0) linkUrls = ["https://tapformysocials.me/girlygirl"];
+    
     populateLocationSelect();
     selectLocation(currentLocation || Object.keys(locations)[0] || '');
     render('testList', testSubs, testChecked);
@@ -1619,6 +1640,21 @@ document.getElementById('fabCreate').onclick = () => {
   navigator.clipboard.writeText(currentID); 
   window.location.href = "shortcuts://run-shortcut?name=CreateRed"; 
   showToast("🚀 ID copied → CreateRed launched"); 
+};
+
+document.getElementById('fabUrl').onclick = () => {
+  const currentUrl = localStorage.getItem('sheetURL') || SHEET_URL;
+  const newUrl = prompt('Edit Google Sheet URL:', currentUrl);
+  
+  if (newUrl && newUrl.trim() !== '') {
+    const trimmedUrl = newUrl.trim();
+    localStorage.setItem('sheetURL', trimmedUrl);
+    SHEET_URL = trimmedUrl;
+    PROFILE_URL = trimmedUrl;
+    showToast('✅ URL saved!');
+  } else if (newUrl === '') {
+    showToast('⚠️ URL cannot be empty');
+  }
 };
 
 window.addEventListener('load', () => {
