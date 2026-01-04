@@ -816,7 +816,7 @@ h1 {
       <div class="profile-row">
         <input type="text" id="profileID" placeholder="ID" readonly class="input">
         <button onclick="copyText('profileID')" class="btn">🆔</button>
-        <button onclick="if(linkUrls.length===0)return showToast('⚠️ No links available');const link=linkUrls[Math.floor(Math.random()*linkUrls.length)];navigator.clipboard.writeText(link);showToast('🔗 Link copied');" class="btn">🔗</button>
+        <button onclick="if(linkUrls.length===0)return showToast('⚠️ No links available');const link=linkUrls[Math.floor(Math.random()*linkUrls.length)];navigator.clipboard.writeText(link);showToast('🔗 Link copied'); triggerLua();" class="btn">🔗</button>
       </div>
       
       <div class="profile-actions">
