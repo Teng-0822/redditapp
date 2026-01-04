@@ -1076,7 +1076,7 @@ async function comboSAPFromModal() {
   }
   
   const encodedTitle = encodeURIComponent(caption.trim());
-  const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
+  const redditUrl = `reddit://reddit.com/r/${sub}/submit?title=${encodedTitle}`;
   window.location.href = redditUrl;
   
   render('subList', subs, subChecked); 
