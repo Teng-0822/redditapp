@@ -1322,6 +1322,18 @@ function rotateIP() {
   }, 8500); 
 }
 
+// Save rotate link when user types
+document.getElementById('rotateLink').addEventListener('input', function() {
+  localStorage.setItem('rotateLink', this.value);
+});
+
+// Also save when user pastes
+document.getElementById('rotateLink').addEventListener('paste', function() {
+  setTimeout(() => {
+    localStorage.setItem('rotateLink', this.value);
+  }, 10);
+});
+
 function refreshAndOpen() { 
   const btn = event.target;
   btn.disabled = true; 
@@ -1663,6 +1675,12 @@ window.addEventListener('load', () => {
   loadFromSheet();
   loadProfiles();
   startUsernameChecker();
+  
+  // Load saved rotate link
+  const savedRotateLink = localStorage.getItem('rotateLink');
+  if (savedRotateLink) {
+    document.getElementById('rotateLink').value = savedRotateLink;
+  }
 });
 
 window.addEventListener('beforeunload', () => {
