@@ -1392,10 +1392,11 @@ const randomNoRepeat = (arr, used) => {
 document.getElementById('fabD').onclick = () => randomNoRepeat(dmTexts, dmUsed);
 document.getElementById('fabN').onclick = () => randomNoRepeat(names, nameUsed);
 document.getElementById('fabOF').onclick = () => randomNoRepeat(ofLines, ofUsed);
-document.getElementById('fabLink').onclick = () => { 
-  navigator.clipboard.writeText(linkUrl); 
+document.getElementById('fabLink').onclick = () => {
+  if (linkUrls.length === 0) return showToast("⚠️ No links available");
+  const link = linkUrls[Math.floor(Math.random() * linkUrls.length)];
+  navigator.clipboard.writeText(link); 
   showToast("🔗 Link copied"); 
-  triggerLua(); 
 };
 
 document.getElementById('randomSubBtn').onclick = () => {
