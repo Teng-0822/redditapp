@@ -1073,6 +1073,8 @@ async function performSAP() {
   }
   
   const encodedTitle = encodeURIComponent(caption.trim());
+  
+  // Use Reddit app URL scheme instead of web URL
   const redditUrl = `reddit://reddit.com/r/${sub}/submit?title=${encodedTitle}`;
   window.location.href = redditUrl;
   
@@ -1083,6 +1085,8 @@ async function performSAP() {
   showToast(`🚀 SAP → r/${sub} (${currentLocation})`);
 }
 
+// Button click handler
+document.getElementById('comboFab').onclick = () => performSAP();
 // Button click handler
 document.getElementById('comboFab').onclick = () => performSAP();
 
