@@ -1039,51 +1039,67 @@ async function comboSAPFromModal() {
     showToast("⚠️ Select a location with subs!");
     return;
   }
-  
-  let sub = ''; 
+
+  let sub = '';
   let startIndex = subIndex;
-  do { 
-    sub = subs[subIndex]; 
-    if (!subChecked[sub]) break; 
-    subIndex = (subIndex + 1) % subs.length; 
+  do {
+    sub = subs[subIndex];
+    if (!subChecked[sub]) break;
+    subIndex = (subIndex + 1) % subs.length;
   } while (subIndex !== startIndex);
-  
-  if (subChecked[sub]) { 
-    subChecked = {}; 
-    subIndex = 0; 
-    save(); 
-    showToast("🔄 All used in " + currentLocation + " → Reset!"); 
+
+  if (subChecked[sub]) {
+    // All subs in this location have been used → reset
+    subChecked = {};
+    subIndex = 0;
+    save();
+    showToast("🔄 All used in " + currentLocation + " → Reset!");
   }
-  
-  subChecked[sub] = true; 
-  subIndex = (subIndex + 1) % subs.length; 
+
+  // Mark current sub as used and move to next
+  subChecked[sub] = true;
+  subIndex = (subIndex + 1) % subs.length;
   save();
-  
+
   // Fetch caption from the subreddit
   let caption = await fetchRandomCaption(sub);
-  
+
   // Fallback to local captions if fetch fails
   if (!caption) {
     showToast("⚠️ Fetch failed, using local caption");
     const unusedCaps = captions.filter(c => !capUsed[c]);
-    if (unusedCaps.length === 0) { 
-      capUsed = {}; 
-      save(); 
+    if (unusedCaps.length === 0) {
+      capUsed = {};
+      save();
     }
-    caption = unusedCaps.length ? unusedCaps[Math.floor(Math.random() * unusedCaps.length)] : captions[Math.floor(Math.random() * captions.length)];
-    capUsed[caption] = true; 
+    caption = unusedCaps.length 
+      ? unusedCaps[Math.floor(Math.random() * unusedCaps.length)] 
+      : captions[Math.floor(Math.random() * captions.length)];
+    capUsed[caption] = true;
     save();
   }
-  
+
+  // Encode the title properly
   const encodedTitle = encodeURIComponent(caption.trim());
-  const redditUrl = `reddit://reddit.com/r/${sub}/submit?title=${encodedTitle}`;
+
+  // Use HTTPS URL → opens directly in Reddit app via Universal Links (no prompt on iOS)
+  const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
+
+  // Trigger the redirect
   window.location.href = redditUrl;
-  
-  render('subList', subs, subChecked); 
-  render('captionList', captions, capUsed); 
+
+  // Update UI
+  render('subList', subs, subChecked);
+  render('captionList', captions, capUsed);
   updateStats();
-  navigator.clipboard.writeText(sub); 
+
+  // Copy subreddit name to clipboard
+  navigator.clipboard.writeText(sub);
+
+  // Success toast
   showToast(`🚀 SAP → r/${sub} (${currentLocation})`);
+
+  // Close modal
   closeProfileModal();
 }
   
