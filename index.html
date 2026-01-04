@@ -1427,6 +1427,7 @@ document.getElementById('comboFab').onclick = async () => {
   const btn = document.getElementById('comboFab');
   btn.disabled = true;
   btn.innerHTML = "⏳";
+  
   let sub = ''; 
   let startIndex = subIndex;
   do { 
@@ -1434,15 +1435,21 @@ document.getElementById('comboFab').onclick = async () => {
     if (!subChecked[sub]) break; 
     subIndex = (subIndex + 1) % subs.length; 
   } while (subIndex !== startIndex);
+  
   if (subChecked[sub]) { 
     subChecked = {}; 
     subIndex = 0; 
     save(); 
     showToast("🔄 All used in " + currentLocation + " → Reset!"); 
   }
+  
   subChecked[sub] = true; 
   subIndex = (subIndex + 1) % subs.length; 
   save();
+  
+  // Open window FIRST before async operations
+  const newWindow = window.open('about:blank', '_blank');
+  
   let caption = await fetchRandomCaption(sub);
   if (!caption) {
     showToast("⚠️ Fetch failed, using local caption");
@@ -1455,9 +1462,18 @@ document.getElementById('comboFab').onclick = async () => {
     capUsed[caption] = true; 
     save();
   }
+  
   const encodedTitle = encodeURIComponent(caption.trim());
   const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
-  window.open(redditUrl, '_blank');
+  
+  // Update the window location instead of opening new one
+  if (newWindow) {
+    newWindow.location.href = redditUrl;
+  } else {
+    // Fallback if popup was blocked
+    window.location.href = redditUrl;
+  }
+  
   render('subList', subs, subChecked); 
   render('captionList', captions, capUsed); 
   updateStats();
