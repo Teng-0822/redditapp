@@ -812,7 +812,7 @@ h1 {
       <div class="profile-actions">
         <button onclick="generatePassword(); triggerLua()" class="btn">🎲 Gen</button>
         <button onclick="pasteUsername()" class="btn">📋 Paste</button>
-        <button onclick="perform()" class="btn">SAP</button>
+        <button onclick="comboSAPFromModal()" class="btn">SAP</button>
       </div>
       
       <div class="profile-actions">
@@ -1034,8 +1034,11 @@ function closeProfileModal() {
   document.getElementById('profileModal').classList.remove('show');
 }
 
-async function performSAP() {
-  if (!currentLocation || subs.length === 0) return showToast("⚠️ Select a location with subs!");
+async function comboSAPFromModal() {
+  if (!currentLocation || subs.length === 0) {
+    showToast("⚠️ Select a location with subs!");
+    return;
+  }
   
   let sub = ''; 
   let startIndex = subIndex;
@@ -1072,18 +1075,16 @@ async function performSAP() {
     save();
   }
   
-  // Copy caption to clipboard first
-  await navigator.clipboard.writeText(caption.trim());
-  
-  // Open Reddit submit page WITHOUT the title parameter
-  const redditUrl = `reddit://reddit.com/r/${sub}`;
+  const encodedTitle = encodeURIComponent(caption.trim());
+  const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
   window.location.href = redditUrl;
   
   render('subList', subs, subChecked); 
   render('captionList', captions, capUsed); 
   updateStats();
   navigator.clipboard.writeText(sub); 
-  showToast(`🚀 SAP → r/${sub} | Caption copied!`);
+  showToast(`🚀 SAP → r/${sub} (${currentLocation})`);
+  closeProfileModal();
 }
   
   
