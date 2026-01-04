@@ -1033,6 +1033,59 @@ function closeProfileModal() {
   document.getElementById('profileModal').classList.remove('show');
 }
 
+async function comboSAPFromModal() {
+  if (!currentLocation || subs.length === 0) {
+    showToast("⚠️ Select a location with subs!");
+    return;
+  }
+  
+  let sub = ''; 
+  let startIndex = subIndex;
+  do { 
+    sub = subs[subIndex]; 
+    if (!subChecked[sub]) break; 
+    subIndex = (subIndex + 1) % subs.length; 
+  } while (subIndex !== startIndex);
+  
+  if (subChecked[sub]) { 
+    subChecked = {}; 
+    subIndex = 0; 
+    save(); 
+    showToast("🔄 All used in " + currentLocation + " → Reset!"); 
+  }
+  
+  subChecked[sub] = true; 
+  subIndex = (subIndex + 1) % subs.length; 
+  save();
+  
+  // Fetch caption from the subreddit
+  let caption = await fetchRandomCaption(sub);
+  
+  // Fallback to local captions if fetch fails
+  if (!caption) {
+    showToast("⚠️ Fetch failed, using local caption");
+    const unusedCaps = captions.filter(c => !capUsed[c]);
+    if (unusedCaps.length === 0) { 
+      capUsed = {}; 
+      save(); 
+    }
+    caption = unusedCaps.length ? unusedCaps[Math.floor(Math.random() * unusedCaps.length)] : captions[Math.floor(Math.random() * captions.length)];
+    capUsed[caption] = true; 
+    save();
+  }
+  
+  const encodedTitle = encodeURIComponent(caption.trim());
+  const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
+  window.location.href = redditUrl;
+  
+  render('subList', subs, subChecked); 
+  render('captionList', captions, capUsed); 
+  updateStats();
+  navigator.clipboard.writeText(sub); 
+  showToast(`🚀 SAP → r/${sub} (${currentLocation})`);
+  closeProfileModal();
+}
+  
 async function checkViaIframe(username) {
   return new Promise((resolve) => {
     const iframe = document.createElement('iframe');
