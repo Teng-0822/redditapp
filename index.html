@@ -1086,6 +1086,12 @@ async function performSAP() {
   showToast(`🚀 SAP → r/${sub} | Caption copied!`);
 }
 
+// Button click handler
+document.getElementById('comboFab').onclick = () => performSAP();
+// Button click handler
+document.getElementById('comboFab').onclick = () => performSAP();
+// Button click handler
+document.getElementById('comboFab').onclick = () => performSAP();
 
   
   
@@ -1701,8 +1707,9 @@ async function fetchRandomCaption(subreddit) {
   }
 }
 
-document.getElementById('comboFab').onclick = () => {
+document.getElementById('comboFab').onclick = async () => {
   if (!currentLocation || subs.length === 0) return showToast("⚠️ Select a location with subs!");
+  
   let sub = ''; 
   let startIndex = subIndex;
   do { 
@@ -1722,19 +1729,25 @@ document.getElementById('comboFab').onclick = () => {
   subIndex = (subIndex + 1) % subs.length; 
   save();
   
-  const unusedCaps = captions.filter(c => !capUsed[c]);
-  if (unusedCaps.length === 0) { 
-    capUsed = {}; 
-    save(); 
-    showToast("🔄 Captions reset!"); 
+  // Fetch caption from the subreddit
+  let caption = await fetchRandomCaption(sub);
+  
+  // Fallback to local captions if fetch fails
+  if (!caption) {
+    showToast("⚠️ Fetch failed, using local caption");
+    const unusedCaps = captions.filter(c => !capUsed[c]);
+    if (unusedCaps.length === 0) { 
+      capUsed = {}; 
+      save(); 
+    }
+    caption = unusedCaps.length ? unusedCaps[Math.floor(Math.random() * unusedCaps.length)] : captions[Math.floor(Math.random() * captions.length)];
+    capUsed[caption] = true; 
+    save();
   }
-  const caption = unusedCaps.length ? unusedCaps[Math.floor(Math.random() * unusedCaps.length)] : captions[Math.floor(Math.random() * captions.length)];
-  capUsed[caption] = true; 
-  save();
   
   const encodedTitle = encodeURIComponent(caption.trim());
   const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
-  window.open(redditUrl, '_blank');
+  window.location.href = redditUrl;
   
   render('subList', subs, subChecked); 
   render('captionList', captions, capUsed); 
