@@ -332,6 +332,10 @@ h1 {
 .fab:active {
   transform: scale(0.92);
 }
+.fab:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
 
 /* TOAST */
 #toast {
@@ -1293,8 +1297,39 @@ document.getElementById('randomSubBtn').onclick = () => {
   showToast("🎲 Opened r/" + random);
 };
 
-document.getElementById('comboFab').onclick = () => {
+// Function to fetch random caption from a subreddit
+async function fetchRandomCaption(subreddit) {
+  try {
+    const response = await fetch(`https://www.reddit.com/r/${subreddit}/hot.json?limit=50`);
+    if (!response.ok) throw new Error('Subreddit not found');
+    
+    const data = await response.json();
+    const posts = data.data.children;
+    
+    if (posts.length === 0) throw new Error('No posts found');
+    
+    // Filter out stickied posts and get titles
+    const titles = posts
+      .filter(post => !post.data.stickied)
+      .map(post => post.data.title);
+    
+    if (titles.length === 0) throw new Error('No suitable posts');
+    
+    // Pick a random title
+    return titles[Math.floor(Math.random() * titles.length)];
+  } catch (error) {
+    console.error('Error fetching caption:', error);
+    return null;
+  }
+}
+
+document.getElementById('comboFab').onclick = async () => {
   if (!currentLocation || subs.length === 0) return showToast("⚠️ Select a location with subs!");
+  
+  const btn = document.getElementById('comboFab');
+  btn.disabled = true;
+  btn.innerHTML = "⏳";
+  
   let sub = ''; 
   let startIndex = subIndex;
   do { 
@@ -1314,15 +1349,21 @@ document.getElementById('comboFab').onclick = () => {
   subIndex = (subIndex + 1) % subs.length; 
   save();
   
-  const unusedCaps = captions.filter(c => !capUsed[c]);
-  if (unusedCaps.length === 0) { 
-    capUsed = {}; 
-    save(); 
-    showToast("🔄 Captions reset!"); 
+  // Fetch caption from the subreddit
+  let caption = await fetchRandomCaption(sub);
+  
+  // Fallback to local captions if fetch fails
+  if (!caption) {
+    showToast("⚠️ Fetch failed, using local caption");
+    const unusedCaps = captions.filter(c => !capUsed[c]);
+    if (unusedCaps.length === 0) { 
+      capUsed = {}; 
+      save(); 
+    }
+    caption = unusedCaps.length ? unusedCaps[Math.floor(Math.random() * unusedCaps.length)] : captions[Math.floor(Math.random() * captions.length)];
+    capUsed[caption] = true; 
+    save();
   }
-  const caption = unusedCaps.length ? unusedCaps[Math.floor(Math.random() * unusedCaps.length)] : captions[Math.floor(Math.random() * captions.length)];
-  capUsed[caption] = true; 
-  save();
   
   const encodedTitle = encodeURIComponent(caption.trim());
   const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
@@ -1332,6 +1373,9 @@ document.getElementById('comboFab').onclick = () => {
   render('captionList', captions, capUsed); 
   updateStats();
   navigator.clipboard.writeText(sub); 
+  
+  btn.disabled = false;
+  btn.innerHTML = "SAP";
   showToast(`🚀 SAP → r/${sub} (${currentLocation})`);
 };
 
