@@ -499,6 +499,158 @@ h1 {
   transform: translateX(-50%) translateY(0);
 }
 
+.hidden {
+  display: none !important;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg-primary);
+  z-index: 10001;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal.show {
+  display: block;
+}
+
+.modal-content {
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 2px solid var(--border-normal);
+  background: var(--bg-card);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.modal-header h2 {
+  font-size: clamp(1.3rem, 5vw, 1.6rem);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.modal-close {
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-normal);
+  color: var(--text-primary);
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  transition: all 0.2s;
+  font-weight: 300;
+}
+
+.modal-close:hover {
+  background: var(--error);
+  border-color: var(--error);
+  transform: scale(1.05);
+}
+
+.modal-close:active {
+  transform: scale(0.95);
+}
+
+.modal-body {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--bg-primary);
+}
+
+.modal-body .input {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 2px solid var(--border-normal);
+  font-size: 1rem;
+  min-height: 50px;
+}
+
+.modal-body .input:focus {
+  border-color: var(--accent-orange);
+  background: var(--bg-elevated);
+  box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.1);
+}
+
+.modal-body .btn {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--border-normal);
+  background: var(--bg-card);
+  min-height: 50px;
+}
+
+.modal-body .btn:hover:not(:disabled) {
+  border-color: var(--accent-orange);
+  background: var(--bg-elevated);
+}
+
+.modal-body .btn-primary {
+  background: var(--accent-orange);
+  border-color: var(--accent-orange);
+}
+
+.modal-body .btn-primary:hover:not(:disabled) {
+  background: #ffaa33;
+  border-color: #ffaa33;
+  box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
+}
+
+.profile-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.profile-row .btn {
+  min-width: 70px;
+}
+
+.profile-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.btn-save {
+  width: 100%;
+  min-height: 56px;
+  font-size: 1.05rem;
+  margin-top: 16px;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -518,10 +670,6 @@ h1 {
   background: #ffaa33;
 }
 
-.hidden {
-  display: none !important;
-}
-
 .text-center {
   text-align: center;
 }
@@ -532,6 +680,28 @@ h1 {
 .mb-1 { margin-bottom: 8px; }
 .mb-2 { margin-bottom: 12px; }
 .mb-3 { margin-bottom: 16px; }
+
+@media (max-width: 500px) {
+  .modal-header {
+    padding: 16px;
+  }
+  
+  .modal-body {
+    padding: 16px;
+    gap: 14px;
+  }
+  
+  .profile-row .btn {
+    min-width: 60px;
+    font-size: 0.9rem;
+    padding: 10px 12px;
+  }
+  
+  .modal-body .input {
+    font-size: 0.95rem;
+    padding: 12px 14px;
+  }
+}
 
 @media (max-width: 480px) {
   body {
@@ -557,6 +727,14 @@ h1 {
   .fab-bar {
     gap: 8px;
     padding: 10px 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .profile-row .btn {
+    min-width: 50px;
+    font-size: 0.85rem;
+    padding: 10px 8px;
   }
 }
 
@@ -601,35 +779,63 @@ h1 {
 </div>
 
 <div class="card">
-  <div class="card-header" onclick="toggleCard('profile')">
+  <div class="card-header" onclick="openProfileModal()">
     <div class="card-title-wrapper">
       <span class="card-icon">👤</span>
       <span class="card-title">Profile</span>
     </div>
-    <span class="expand-icon" id="profileIcon">▼</span>
-  </div>
-  <div class="card-content" id="profileContent">
-    <div class="form-grid">
-      <input type="text" id="profileName" placeholder="Email" readonly class="input">
-      <input type="text" id="profileUser" placeholder="Username" class="input">
-      <input type="text" id="profilePass" placeholder="Password" class="input">
-      <input type="text" id="profileID" placeholder="ID" readonly class="input">
-    </div>
-    <div class="form-grid">
-      <button onclick="copyText('profileName'); triggerLua()" class="btn btn-secondary btn-sm">📧 Email</button>
-      <button onclick="copyText('profileUser')" class="btn btn-secondary btn-sm">👤 User</button>
-      <button onclick="copyText('profilePass'); triggerLua()" class="btn btn-secondary btn-sm">🔑 Pass</button>
-      <button onclick="copyText('profileID')" class="btn btn-secondary btn-sm">🆔 ID</button>
-    </div>
-    <div class="form-actions mt-2">
-      <button onclick="prevProfile()" class="btn btn-secondary">◀ Prev</button>
-      <button onclick="generatePassword(); triggerLua()" class="btn btn-secondary">🎲 Gen</button>
-      <button onclick="pasteUsername()" class="btn btn-secondary">📋 Paste</button>
-      <button onclick="nextProfile()" class="btn btn-secondary">Next ▶</button>
-    </div>
-    <button id="saveProfileBtn" onclick="saveProfile()" class="btn btn-primary mt-2" style="width: 100%;">💾 Save Profile</button>
+    <span class="expand-icon">▶</span>
   </div>
 </div>
+
+<div class="modal" id="profileModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>👤 Profile</h2>
+      <button class="modal-close" onclick="closeProfileModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="profile-row">
+        <input type="text" id="profileName" placeholder="Email" readonly class="input" value="grapple.litres-3p@icloud.com">
+        <button class="btn">📧</button>
+        <button class="btn">D</button>
+      </div>
+      
+      <div class="profile-row">
+        <input type="text" id="profileUser" placeholder="Username" class="input" value="ArgumentEither9537">
+        <button class="btn">👤</button>
+        <button class="btn">N</button>
+      </div>
+      
+      <div class="profile-row">
+        <input type="text" id="profilePass" placeholder="Password" class="input" value="redditjg3ykIFlweK6W">
+        <button class="btn">🔑</button>
+        <button class="btn">OF</button>
+      </div>
+      
+      <div class="profile-row">
+        <input type="text" id="profileID" placeholder="ID" readonly class="input" value="MYR1">
+        <button class="btn">🆔</button>
+        <button class="btn">🔗</button>
+      </div>
+      
+      <div class="profile-actions">
+        <button class="btn">🎲 Gen</button>
+        <button class="btn">📋 Paste</button>
+        <button class="btn">SAP</button>
+      </div>
+      
+      <div class="profile-actions">
+        <button class="btn">◀ Prev</button>
+        <button class="btn">+</button>
+        <button class="btn">Next ▶</button>
+      </div>
+      
+      <button class="btn btn-primary btn-save">💾 Save Profile</button>
+    </div>
+  </div>
+</div>
+
 
 <div class="card">
   <div class="card-header" onclick="toggleCard('sub')">
@@ -817,6 +1023,14 @@ async function checkRedditUsername(username) {
     console.error('Error checking username:', error);
     return await checkViaIframe(cleanUsername);
   }
+}
+
+function openProfileModal() {
+  document.getElementById('profileModal').classList.add('show');
+}
+
+function closeProfileModal() {
+  document.getElementById('profileModal').classList.remove('show');
 }
 
 async function checkViaIframe(username) {
