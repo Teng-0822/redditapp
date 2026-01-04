@@ -805,7 +805,8 @@ h1 {
       
       <div class="profile-row">
         <input type="text" id="profileID" placeholder="ID" readonly class="input">
-        <button onclick="copyText('profileID')" class="btn">🆔</button>
+        <!--<button onclick="copyText('profileID')" class="btn">🆔</button>-->
+        <button onclick="openRandomSub()" class="btn" title="Random">R</button>
         <button onclick="if(linkUrls.length===0)return showToast('⚠️ No links available');const link=linkUrls[Math.floor(Math.random()*linkUrls.length)];navigator.clipboard.writeText(link);showToast('🔗 Link copied'); triggerLua();" class="btn">🔗</button>
       </div>
       
@@ -1033,6 +1034,16 @@ function openProfileModal() {
 function closeProfileModal() {
   document.getElementById('profileModal').classList.remove('show');
 }
+
+function openRandomSub() {
+  if (randomSubList.length === 0) return showToast("⚠️ No warming subs");
+  const random = randomSubList[Math.floor(Math.random() * randomSubList.length)];
+  const appUrl = "reddit://reddit.com/r/" + random;
+  
+  window.location.href = appUrl;
+  showToast("🎲 Opening r/" + random);
+}
+document.getElementById('randomSubBtn').onclick = () => openRandomSub();
 
 async function comboSAPFromModal() {
   if (!currentLocation || subs.length === 0) {
@@ -1672,11 +1683,8 @@ document.getElementById('randomSubBtn').onclick = () => {
   const random = randomSubList[Math.floor(Math.random() * randomSubList.length)];
   const appUrl = "reddit://reddit.com/r/" + random;
   
-  
   window.location.href = appUrl;
-  
- 
-  
+
   showToast("🎲 Opening r/" + random);
 };
 
