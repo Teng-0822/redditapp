@@ -1424,9 +1424,6 @@ async function fetchRandomCaption(subreddit) {
 
 document.getElementById('comboFab').onclick = async () => {
   if (!currentLocation || subs.length === 0) return showToast("⚠️ Select a location with subs!");
-  const btn = document.getElementById('comboFab');
-  btn.disabled = true;
-  btn.innerHTML = "⏳";
   
   let sub = ''; 
   let startIndex = subIndex;
@@ -1447,10 +1444,10 @@ document.getElementById('comboFab').onclick = async () => {
   subIndex = (subIndex + 1) % subs.length; 
   save();
   
-  // Open window FIRST before async operations
-  const newWindow = window.open('about:blank', '_blank');
-  
+  // Fetch caption from the subreddit
   let caption = await fetchRandomCaption(sub);
+  
+  // Fallback to local captions if fetch fails
   if (!caption) {
     showToast("⚠️ Fetch failed, using local caption");
     const unusedCaps = captions.filter(c => !capUsed[c]);
@@ -1465,21 +1462,12 @@ document.getElementById('comboFab').onclick = async () => {
   
   const encodedTitle = encodeURIComponent(caption.trim());
   const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
-  
-  // Update the window location instead of opening new one
-  if (newWindow) {
-    newWindow.location.href = redditUrl;
-  } else {
-    // Fallback if popup was blocked
-    window.location.href = redditUrl;
-  }
+  window.location.href = redditUrl;
   
   render('subList', subs, subChecked); 
   render('captionList', captions, capUsed); 
   updateStats();
   navigator.clipboard.writeText(sub); 
-  btn.disabled = false;
-  btn.innerHTML = "SAP";
   showToast(`🚀 SAP → r/${sub} (${currentLocation})`);
 };
 
