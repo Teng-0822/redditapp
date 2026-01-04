@@ -796,42 +796,42 @@ h1 {
     </div>
     <div class="modal-body">
       <div class="profile-row">
-        <input type="text" id="profileName" placeholder="Email" readonly class="input" value="grapple.litres-3p@icloud.com">
-        <button class="btn">📧</button>
-        <button class="btn">D</button>
+        <input type="text" id="profileName" placeholder="Email" readonly class="input">
+        <button onclick="copyText('profileName'); triggerLua()" class="btn">📧</button>
+        <button onclick="randomNoRepeat(dmTexts, dmUsed)" class="btn">D</button>
       </div>
       
       <div class="profile-row">
-        <input type="text" id="profileUser" placeholder="Username" class="input" value="ArgumentEither9537">
-        <button class="btn">👤</button>
-        <button class="btn">N</button>
+        <input type="text" id="profileUser" placeholder="Username" class="input">
+        <button onclick="copyText('profileUser')" class="btn">👤</button>
+        <button onclick="randomNoRepeat(names, nameUsed)" class="btn">N</button>
       </div>
       
       <div class="profile-row">
-        <input type="text" id="profilePass" placeholder="Password" class="input" value="redditjg3ykIFlweK6W">
-        <button class="btn">🔑</button>
-        <button class="btn">OF</button>
+        <input type="text" id="profilePass" placeholder="Password" class="input">
+        <button onclick="copyText('profilePass'); triggerLua()" class="btn">🔑</button>
+        <button onclick="randomNoRepeat(ofLines, ofUsed)" class="btn">OF</button>
       </div>
       
       <div class="profile-row">
-        <input type="text" id="profileID" placeholder="ID" readonly class="input" value="MYR1">
-        <button class="btn">🆔</button>
-        <button class="btn">🔗</button>
+        <input type="text" id="profileID" placeholder="ID" readonly class="input">
+        <button onclick="copyText('profileID')" class="btn">🆔</button>
+        <button onclick="if(linkUrls.length===0)return showToast('⚠️ No links available');const link=linkUrls[Math.floor(Math.random()*linkUrls.length)];navigator.clipboard.writeText(link);showToast('🔗 Link copied');" class="btn">🔗</button>
       </div>
       
       <div class="profile-actions">
-        <button class="btn">🎲 Gen</button>
-        <button class="btn">📋 Paste</button>
-        <button class="btn">SAP</button>
+        <button onclick="generatePassword(); triggerLua()" class="btn">🎲 Gen</button>
+        <button onclick="pasteUsername()" class="btn">📋 Paste</button>
+        <button onclick="comboSAPFromModal()" class="btn">SAP</button>
       </div>
       
       <div class="profile-actions">
-        <button class="btn">◀ Prev</button>
-        <button class="btn">+</button>
-        <button class="btn">Next ▶</button>
+        <button onclick="prevProfile()" class="btn">◀ Prev</button>
+        <button onclick="const currentID=document.getElementById('profileID').value.trim();if(!currentID){showToast('⚠️ No ID loaded');return;}navigator.clipboard.writeText(currentID);window.location.href='shortcuts://run-shortcut?name=CreateRed';showToast('🚀 ID copied → CreateRed launched');" class="btn">+</button>
+        <button onclick="nextProfile()" class="btn">Next ▶</button>
       </div>
       
-      <button class="btn btn-primary btn-save">💾 Save Profile</button>
+      <button id="saveProfileBtn" onclick="saveProfile()" class="btn btn-primary btn-save">💾 Save Profile</button>
     </div>
   </div>
 </div>
