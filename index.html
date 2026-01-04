@@ -1672,14 +1672,11 @@ document.getElementById('randomSubBtn').onclick = () => {
   if (randomSubList.length === 0) return showToast("⚠️ No warming subs");
   const random = randomSubList[Math.floor(Math.random() * randomSubList.length)];
   const appUrl = "reddit://reddit.com/r/" + random;
-  const webUrl = "https://www.reddit.com/r/" + random;
+  
   
   window.location.href = appUrl;
   
-  // Fallback to browser if app doesn't open within 1 second
-  setTimeout(() => {
-    window.location.href = webUrl;
-  }, 1000);
+ 
   
   showToast("🎲 Opening r/" + random);
 };
