@@ -812,7 +812,7 @@ h1 {
       <div class="profile-actions">
         <button onclick="generatePassword(); triggerLua()" class="btn">🎲 Gen</button>
         <button onclick="pasteUsername()" class="btn">📋 Paste</button>
-        <button onclick="comboSAPFromModal()" class="btn">SAP</button>
+        <button onclick="performSAP()" class="btn">SAP</button>
       </div>
       
       <div class="profile-actions">
@@ -1034,74 +1034,59 @@ function closeProfileModal() {
   document.getElementById('profileModal').classList.remove('show');
 }
 
-async function comboSAPFromModal() {
-  if (!currentLocation || subs.length === 0) {
-    showToast("⚠️ Select a location with subs!");
-    return;
-  }
-
-  let sub = '';
+async function performSAP() {
+  if (!currentLocation || subs.length === 0) return showToast("⚠️ Select a location with subs!");
+  
+  let sub = ''; 
   let startIndex = subIndex;
-  do {
-    sub = subs[subIndex];
-    if (!subChecked[sub]) break;
-    subIndex = (subIndex + 1) % subs.length;
+  do { 
+    sub = subs[subIndex]; 
+    if (!subChecked[sub]) break; 
+    subIndex = (subIndex + 1) % subs.length; 
   } while (subIndex !== startIndex);
-
-  if (subChecked[sub]) {
-    // All subs in this location have been used → reset
-    subChecked = {};
-    subIndex = 0;
-    save();
-    showToast("🔄 All used in " + currentLocation + " → Reset!");
+  
+  if (subChecked[sub]) { 
+    subChecked = {}; 
+    subIndex = 0; 
+    save(); 
+    showToast("🔄 All used in " + currentLocation + " → Reset!"); 
   }
-
-  // Mark current sub as used and move to next
-  subChecked[sub] = true;
-  subIndex = (subIndex + 1) % subs.length;
+  
+  subChecked[sub] = true; 
+  subIndex = (subIndex + 1) % subs.length; 
   save();
-
+  
   // Fetch caption from the subreddit
   let caption = await fetchRandomCaption(sub);
-
+  
   // Fallback to local captions if fetch fails
   if (!caption) {
     showToast("⚠️ Fetch failed, using local caption");
     const unusedCaps = captions.filter(c => !capUsed[c]);
-    if (unusedCaps.length === 0) {
-      capUsed = {};
-      save();
+    if (unusedCaps.length === 0) { 
+      capUsed = {}; 
+      save(); 
     }
-    caption = unusedCaps.length 
-      ? unusedCaps[Math.floor(Math.random() * unusedCaps.length)] 
-      : captions[Math.floor(Math.random() * captions.length)];
-    capUsed[caption] = true;
+    caption = unusedCaps.length ? unusedCaps[Math.floor(Math.random() * unusedCaps.length)] : captions[Math.floor(Math.random() * captions.length)];
+    capUsed[caption] = true; 
     save();
   }
-
-  // Encode the title properly
+  
   const encodedTitle = encodeURIComponent(caption.trim());
-
-  // Use HTTPS URL → opens directly in Reddit app via Universal Links (no prompt on iOS)
   const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
-
-  // Trigger the redirect
   window.location.href = redditUrl;
-
-  // Update UI
-  render('subList', subs, subChecked);
-  render('captionList', captions, capUsed);
+  
+  render('subList', subs, subChecked); 
+  render('captionList', captions, capUsed); 
   updateStats();
-
-  // Copy subreddit name to clipboard
-  navigator.clipboard.writeText(sub);
-
-  // Success toast
+  navigator.clipboard.writeText(sub); 
   showToast(`🚀 SAP → r/${sub} (${currentLocation})`);
-
-  // Close modal
-  closeProfileModal();
 }
+
+// Button click handler
+document.getElementById('comboFab').onclick = () => performSAP();
+
+  
   
 async function checkViaIframe(username) {
   return new Promise((resolve) => {
