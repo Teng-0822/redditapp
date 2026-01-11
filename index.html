@@ -1089,15 +1089,25 @@ async function comboSAPFromModal() {
   // Transform caption
   caption = transformCaption(caption);
   
-  const encodedTitle = encodeURIComponent(caption.trim());
-  const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
+  // Copy both subreddit and caption to clipboard for mobile use
+  const clipboardText = `r/${sub}\n${caption}`;
+  navigator.clipboard.writeText(clipboardText);
+  
+  // Try to open Reddit mobile app or web
+  const redditUrl = `reddit://reddit.com/r/${sub}/submit`;
+  const fallbackUrl = `https://www.reddit.com/r/${sub}/submit`;
+  
+  // Attempt to open in app, fallback to web
   window.location.href = redditUrl;
+  setTimeout(() => {
+    window.location.href = fallbackUrl;
+  }, 500);
   
   render('subList', subs, subChecked); 
   render('captionList', captions, capUsed); 
   updateStats();
-  navigator.clipboard.writeText(sub); 
-  showToast(`🚀 SAP → r/${sub} (${currentLocation})`);
+  
+  showToast(`🚀 SAP → r/${sub}\n📋 Caption copied!`);
 }
 
 function transformCaption(caption) {
