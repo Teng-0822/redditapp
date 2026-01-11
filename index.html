@@ -1044,7 +1044,7 @@ function openRandomSub() {
   showToast("🎲 Opening r/" + random);
 }
 document.getElementById('randomSubBtn').onclick = () => openRandomSub();
-
+//=============================================================================Start Combo SAP====================================================================
 async function comboSAPFromModal() {
   if (!currentLocation || subs.length === 0) {
     showToast("⚠️ Select a location with subs!");
@@ -1070,8 +1070,8 @@ async function comboSAPFromModal() {
   subIndex = (subIndex + 1) % subs.length; 
   save();
   
-  // Fetch caption from the subreddit
-  let caption = await fetchRandomCaption(sub);
+  // Fetch caption from the subreddit (top 20 posts, under 25 chars)
+  let caption = await fetchRandomCaption(sub, 20, 25);
   
   // Fallback to local captions if fetch fails
   if (!caption) {
@@ -1086,6 +1086,9 @@ async function comboSAPFromModal() {
     save();
   }
   
+  // Transform caption
+  caption = transformCaption(caption);
+  
   const encodedTitle = encodeURIComponent(caption.trim());
   const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
   window.location.href = redditUrl;
@@ -1096,7 +1099,47 @@ async function comboSAPFromModal() {
   navigator.clipboard.writeText(sub); 
   showToast(`🚀 SAP → r/${sub} (${currentLocation})`);
 }
+
+function transformCaption(caption) {
+  let transformed = caption;
   
+  // Replace m4f, mf4mf, f4f with f4m (case insensitive)
+  transformed = transformed.replace(/\bm4f\b/gi, 'f4m');
+  transformed = transformed.replace(/\bmf4mf\b/gi, 'f4m');
+  transformed = transformed.replace(/\bf4f\b/gi, 'f4m');
+  
+  // Replace f(age) or m(age) with f18 (e.g., f29 → f18, m25 → f18)
+  transformed = transformed.replace(/\b[fm]\d+\b/gi, 'f18');
+  
+  // Replace (age)f or (age)m with 18f (e.g., 29f → 18f, 25m → 18f)
+  transformed = transformed.replace(/\b\d+[fm]\b/gi, '18f');
+  
+  return transformed;
+}
+
+async function fetchRandomCaption(sub, topCount = 20, maxLength = 25) {
+  try {
+    const response = await fetch(`https://www.reddit.com/r/${sub}/hot.json?limit=${topCount}`);
+    const data = await response.json();
+    
+    if (data?.data?.children) {
+      // Filter posts with titles under maxLength characters
+      const validPosts = data.data.children.filter(post => 
+        post.data.title && post.data.title.length < maxLength
+      );
+      
+      if (validPosts.length > 0) {
+        const randomPost = validPosts[Math.floor(Math.random() * validPosts.length)];
+        return randomPost.data.title;
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching caption:', error);
+    return null;
+  }
+}
+  //==================================================================================END of Combo SAP===============================================================================
   
 async function checkViaIframe(username) {
   return new Promise((resolve) => {
