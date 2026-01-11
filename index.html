@@ -1889,15 +1889,23 @@ function generatePassword() {
     return showToast("⚠️ Password field not empty");
   }
   const words = ["cat", "dog", "sun", "sky", "sea", "pen", "cup", "hat", "map", "run", "walk", "talk", "play", "read", "book", "tree", "rock", "sand", "wind", "rain", "fire", "snow", "moon", "star", "blue", "pink", "gold", "gray", "warm", "cool", "fast", "slow", "jump", "stop", "move", "push", "pull", "hold", "open", "shut", "time", "hour", "day", "week", "year", "life", "love", "hope", "calm", "kind"];
-  const numWords = Math.floor(Math.random() * 5) + 3;
-  const shuffled = words.slice();
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  const specialChars = "!@#$%^&*";
+  
+  // Pick 1 random word
+  const randomWord = words[Math.floor(Math.random() * words.length)];
+  
+  // Generate 5 random numbers
+  let randomNumbers = "";
+  for (let i = 0; i < 5; i++) {
+    randomNumbers += Math.floor(Math.random() * 10);
   }
-  const selectedWords = shuffled.slice(0, numWords);
-  const randomPart = selectedWords.join("");
-  const finalPassword = "reddit" + randomPart;
+  
+  // Pick 1 random special character
+  const randomSpecial = specialChars[Math.floor(Math.random() * specialChars.length)];
+  
+  // Combine everything
+  const finalPassword = "reddit" + randomWord + randomNumbers + randomSpecial;
+  
   document.getElementById('profilePass').value = finalPassword;
   copyText('profilePass');
   showToast(`🔑 Generated & copied!`);
