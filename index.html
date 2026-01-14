@@ -578,6 +578,55 @@ h1 {
   transform: scale(0.95);
 }
 
+/* Header Stats in Modal */
+.header-stats {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+  margin-right: 12px;
+}
+
+.header-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  border: 2px solid;
+  min-width: 55px;
+}
+
+.header-stat.posts {
+  border-color: var(--accent-orange);
+}
+
+.header-stat.filtered {
+  border-color: var(--error);
+}
+
+.header-stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.header-stat.posts .header-stat-value {
+  color: var(--accent-orange);
+}
+
+.header-stat.filtered .header-stat-value {
+  color: var(--error);
+}
+
+.header-stat-label {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 2px;
+}
+
 .modal-body {
   padding: 20px;
   flex: 1;
@@ -851,6 +900,16 @@ h1 {
   <div class="modal-content">
     <div class="modal-header">
       <h2>👤 Profile</h2>
+      <div class="header-stats">
+        <div class="header-stat posts">
+          <span class="header-stat-value" id="postCount">0</span>
+          <span class="header-stat-label">Active</span>
+        </div>
+        <div class="header-stat filtered">
+          <span class="header-stat-value" id="filteredCount">0</span>
+          <span class="header-stat-label">Filtered</span>
+        </div>
+      </div>
       <button class="modal-close" onclick="closeProfileModal()">×</button>
     </div>
     <div class="modal-body">
@@ -902,19 +961,7 @@ h1 {
         </div>
       </div>
       
-      <!-- Stats Row -->
-      <div class="ip-stats-row">
-        <div class="stat-box posts">
-          <div class="stat-label">Active Posts</div>
-          <div class="stat-value" id="postCount">0</div>
-        </div>
-        <div class="stat-box filtered">
-          <div class="stat-label">Filtered</div>
-          <div class="stat-value" id="filteredCount">0</div>
-        </div>
       </div>
-      
-    </div>
   </div>
 </div>
 
