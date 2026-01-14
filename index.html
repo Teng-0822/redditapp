@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,7 +83,7 @@ h1 {
 
 .stat-box {
   background: var(--bg-secondary);
-  padding: 12px;
+  padding: 10px;
   border-radius: 10px;
   text-align: center;
   border: 2px solid;
@@ -94,15 +93,15 @@ h1 {
 .stat-box.filtered { border-color: var(--error); }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .stat-value {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 700;
 }
 
@@ -652,6 +651,75 @@ h1 {
   margin-top: 16px;
 }
 
+/* Reddit Code Fetcher Styles */
+.code-fetcher-section {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 14px;
+  border: 2px solid #FF4500;
+  margin-bottom: 12px;
+}
+
+.code-fetcher-title {
+  font-size: 0.8rem;
+  color: #FF4500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.code-fetcher-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.code-get-btn {
+  background-color: #FF4500 !important;
+  color: white !important;
+  border: none !important;
+  padding: 10px 16px !important;
+  font-size: 14px !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 70px;
+}
+
+.code-get-btn:hover:not(:disabled) {
+  background-color: #cc3700 !important;
+}
+
+.code-get-btn:disabled {
+  background-color: #666 !important;
+  cursor: not-allowed;
+}
+
+.code-display-btn {
+  background-color: #dc3545 !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 16px !important;
+  font-size: 1.2rem !important;
+  font-weight: bold !important;
+  letter-spacing: 2px;
+  border-radius: 8px !important;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.code-display-btn.has-code {
+  background-color: #28a745 !important;
+}
+
+.code-display-btn.has-code:hover {
+  background-color: #218838 !important;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -824,16 +892,27 @@ h1 {
       </div>
       
       <button id="saveProfileBtn" onclick="saveProfile()" class="btn btn-primary btn-save">💾 Save Profile</button>
-        <div class="ip-stats-row">
-          <div class="stat-box posts">
-            <div class="stat-label">Active Posts</div>
-            <div class="stat-value" id="postCount">0</div>
-          </div>
-          <div class="stat-box filtered">
-            <div class="stat-label">Filtered</div>
-            <div class="stat-value" id="filteredCount">0</div>
-          </div>
+      
+      <!-- Reddit Code Fetcher Section -->
+      <div class="code-fetcher-section">
+        <div class="code-fetcher-title">🔐 Reddit Verification Code</div>
+        <div class="code-fetcher-row">
+          <button id="codeGetBtn" class="code-get-btn" onclick="fetchRedditCode()">Get</button>
+          <button id="codeDisplayBtn" class="code-display-btn" onclick="copyRedditCode()">No Code</button>
         </div>
+      </div>
+      
+      <!-- Stats Row -->
+      <div class="ip-stats-row">
+        <div class="stat-box posts">
+          <div class="stat-label">Active Posts</div>
+          <div class="stat-value" id="postCount">0</div>
+        </div>
+        <div class="stat-box filtered">
+          <div class="stat-label">Filtered</div>
+          <div class="stat-value" id="filteredCount">0</div>
+        </div>
+      </div>
       
     </div>
   </div>
@@ -969,6 +1048,56 @@ h1 {
 <script>
 let SHEET_URL = localStorage.getItem('sheetURL') || "https://script.google.com/macros/s/AKfycbzqa-ajCHgQorE8y6xCkUl00ZgE-d04T5601eo1_eYqWY2jv8PSljiPE8CjTJg3NNvMeg/exec";
 let PROFILE_URL = SHEET_URL;
+
+// Reddit Code Fetcher - REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+const CODE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXFnVS71DouLf7TKyJ11ncIF7WMH7PCkII1HTLHN3T4T4EEZCGCQmIF8Y1tUMF_EZt/exec';
+let currentRedditCode = '';
+
+async function fetchRedditCode() {
+  const getBtn = document.getElementById('codeGetBtn');
+  const codeBtn = document.getElementById('codeDisplayBtn');
+  
+  getBtn.disabled = true;
+  getBtn.textContent = 'Fetching...';
+  
+  try {
+    const response = await fetch(CODE_SCRIPT_URL);
+    const data = await response.json();
+    
+    currentRedditCode = data.code;
+    
+    // Check if we got a valid code (6 digits)
+    if (/^\d{6}$/.test(currentRedditCode)) {
+      codeBtn.textContent = currentRedditCode;
+      codeBtn.classList.add('has-code');
+      showToast('✅ Code fetched!');
+    } else {
+      codeBtn.textContent = currentRedditCode;
+      codeBtn.classList.remove('has-code');
+    }
+    
+  } catch (error) {
+    codeBtn.textContent = 'Error';
+    codeBtn.classList.remove('has-code');
+    console.error('Error:', error);
+    showToast('❌ Failed to fetch code');
+  } finally {
+    getBtn.disabled = false;
+    getBtn.textContent = 'Get';
+  }
+}
+
+function copyRedditCode() {
+  // Only copy if we have a valid code
+  if (/^\d{6}$/.test(currentRedditCode)) {
+    navigator.clipboard.writeText(currentRedditCode).then(() => {
+      showToast('✓ Code copied to clipboard!');
+    }).catch(err => {
+      showToast('Failed to copy');
+      console.error('Copy failed:', err);
+    });
+  }
+}
 
 let locations = {};
 let currentLocation = localStorage.getItem('currentLocation') || '';
@@ -1732,7 +1861,7 @@ document.getElementById('randomSubBtn').onclick = () => {
   showToast("🎲 Opening r/" + random);
 };
 
-async function fetchRandomCaption(subreddit) {
+async function fetchRandomCaptionForSAP(subreddit) {
   try {
     const response = await fetch(`https://www.reddit.com/r/${subreddit}/hot.json?limit=50`);
     if (!response.ok) throw new Error('Subreddit not found');
@@ -1771,7 +1900,7 @@ document.getElementById('comboFab').onclick = async () => {
   save();
   
   // Fetch caption from the subreddit
-  let caption = await fetchRandomCaption(sub);
+  let caption = await fetchRandomCaptionForSAP(sub);
   
   // Fallback to local captions if fetch fails
   if (!caption) {
