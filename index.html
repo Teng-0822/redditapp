@@ -627,6 +627,36 @@ h1 {
   margin-top: 2px;
 }
 
+/* Filter Button */
+.header-filter-btn {
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-normal);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  transition: all 0.2s;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.header-filter-btn:hover {
+  background: var(--accent-orange);
+  border-color: var(--accent-orange);
+  color: #000;
+  transform: scale(1.05);
+}
+
+.header-filter-btn:active {
+  transform: scale(0.95);
+}
+
 .modal-body {
   padding: 20px;
   flex: 1;
@@ -769,6 +799,80 @@ h1 {
   background-color: #218838 !important;
 }
 
+/* Profile Filter Modal Styles */
+.filter-list-container {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 10px;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  border: 1px solid var(--border-normal);
+}
+
+.filter-profile-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  padding: 14px;
+  background: var(--bg-elevated);
+  margin-bottom: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  cursor: pointer;
+  align-items: center;
+}
+
+.filter-profile-item:hover {
+  background: var(--bg-card);
+  border: 2px solid var(--accent-orange);
+  padding: 12px;
+}
+
+.filter-profile-item.selected {
+  background: var(--accent-orange);
+  color: #000;
+}
+
+.filter-profile-item.selected .filter-profile-text {
+  color: #000;
+}
+
+.filter-profile-number {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  min-width: 40px;
+  text-align: center;
+}
+
+.filter-profile-item.selected .filter-profile-number {
+  color: #000;
+}
+
+.filter-profile-text {
+  flex: 1;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.filter-profile-username {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.filter-profile-email {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.filter-profile-item.selected .filter-profile-email {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.filter-profile-status {
+  font-size: 1.5rem;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -819,6 +923,12 @@ h1 {
     font-size: 0.95rem;
     padding: 12px 14px;
   }
+  
+  .header-filter-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -853,6 +963,11 @@ h1 {
     min-width: 50px;
     font-size: 0.85rem;
     padding: 10px 8px;
+  }
+  
+  .header-stat {
+    min-width: 50px;
+    padding: 5px 10px;
   }
 }
 
@@ -910,6 +1025,7 @@ h1 {
           <span class="header-stat-label">Filtered</span>
         </div>
       </div>
+      <button class="header-filter-btn" onclick="openFilterModal()">F</button>
       <button class="modal-close" onclick="closeProfileModal()">×</button>
     </div>
     <div class="modal-body">
@@ -962,6 +1078,19 @@ h1 {
       </div>
       
       </div>
+  </div>
+</div>
+
+<!-- Profile Filter Modal -->
+<div class="modal" id="filterModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>🔍 Select Profile</h2>
+      <button class="modal-close" onclick="closeFilterModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="filter-list-container" id="filterList"></div>
+    </div>
   </div>
 </div>
 
@@ -1210,6 +1339,64 @@ function openProfileModal() {
 
 function closeProfileModal() {
   document.getElementById('profileModal').classList.remove('show');
+}
+
+function openFilterModal() {
+  renderFilterList();
+  document.getElementById('filterModal').classList.add('show');
+}
+
+function closeFilterModal() {
+  document.getElementById('filterModal').classList.remove('show');
+}
+
+function renderFilterList() {
+  const container = document.getElementById('filterList');
+  container.innerHTML = '';
+  
+  if (profileData.length === 0) {
+    container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">No profiles available</div>';
+    return;
+  }
+  
+  profileData.forEach((row, index) => {
+    const div = document.createElement('div');
+    div.className = 'filter-profile-item' + (index === currentIndex ? ' selected' : '');
+    
+    const number = document.createElement('div');
+    number.className = 'filter-profile-number';
+    number.textContent = (index + 1).toString();
+    
+    const textContainer = document.createElement('div');
+    textContainer.className = 'filter-profile-text';
+    
+    const username = document.createElement('div');
+    username.className = 'filter-profile-username';
+    username.textContent = row[2] || 'No username';
+    
+    const email = document.createElement('div');
+    email.className = 'filter-profile-email';
+    email.textContent = row[0] || 'No email';
+    
+    textContainer.appendChild(username);
+    textContainer.appendChild(email);
+    
+    const status = document.createElement('div');
+    status.className = 'filter-profile-status';
+    status.textContent = index === currentIndex ? '✓' : '';
+    
+    div.appendChild(number);
+    div.appendChild(textContainer);
+    div.appendChild(status);
+    
+    div.onclick = () => {
+      loadProfile(index);
+      closeFilterModal();
+      showToast(`👤 Profile ${index + 1} loaded`);
+    };
+    
+    container.appendChild(div);
+  });
 }
 
 function openRandomSub() {
@@ -2023,9 +2210,11 @@ function loadProfiles() {
         showToast("⚠️ Profile sheet is empty"); 
         clearProfileFields(); 
       } else { 
-        if (currentIndex >= profileData.length) currentIndex = profileData.length - 1; 
+        // Always load the latest profile (last item in array)
+        currentIndex = profileData.length - 1;
+        localStorage.setItem('lastProfileIndex', currentIndex);
         loadProfile(currentIndex); 
-        showToast(`👤 Profile ${currentIndex + 1}/${profileData.length} loaded`); 
+        showToast(`👤 Latest profile loaded (${currentIndex + 1}/${profileData.length})`); 
       } 
     })
     .catch(() => showToast("⚠️ Profile sheet offline")); 
