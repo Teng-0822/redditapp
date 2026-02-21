@@ -1454,8 +1454,9 @@ async function comboSAPFromModal() {
   caption = transformCaption(caption);
   
   const encodedTitle = encodeURIComponent(caption.trim());
-  const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
-  window.location.href = redditUrl;
+  window.location.href = `reddit://r/${sub}/submit?title=${encodedTitle}`;
+  //const redditUrl = `https://www.reddit.com/r/${sub}/submit?title=${encodedTitle}`;
+  //window.location.href = redditUrl;
   
   render('subList', subs, subChecked); 
   render('captionList', captions, capUsed); 
